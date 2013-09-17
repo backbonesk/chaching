@@ -1,0 +1,27 @@
+{
+  "name": "backbone/chaching",
+  "type": "library",
+  "version": "0.0.3",
+  "license": "MIT",
+  "description": "Universal payment librart for mostly Slovak banking products",
+  "keywords": ["chaching", "payment", "money", "slovakia"],
+  "homepage": "http://www.backbone.sk/en/",
+  "authors": [
+    {
+      "name": "Pavol Sopko",
+      "email": "pavol.sopko@backbone.sk"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "http://gitlab.backbone.sk/chaching.git"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-0": { "Chaching": "src/" }
+  }
+}
