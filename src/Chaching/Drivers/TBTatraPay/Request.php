@@ -1,37 +1,43 @@
 <?php
-namespace Chaching\Drivers\VUBePlatby;
+namespace Chaching\Drivers\TBTatraPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Exceptions\InvalidOptionsException;
 
-final class Request extends \Chaching\Messages\Hmac
+final class Request extends \Chaching\Messages\Des
 {
-	// const REQUEST_URI = 'https://ib.vub.sk/e-platbyeuro.aspx';
-	const REQUEST_URI = 'http://epaymentsimulator.monogram.sk/VUB_EPlatba2_HMAC.aspx';
+	const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
+
+	private $valid_languages = array(
+		'sk', 'en', 'de', 'hu'
+	);
 
 	public function __construct(Array $authorization, Array $options)
 	{
 		parent::__construct();
 
 		$this->readonly_fields = array(
-			'MID', 'SIGN',
+			'PT', 'MID', 'SIGN',
 		);
 
 		$this->required_fields = array(
-			'AMT', 'VS', 'CS', 'RURL'
+			'AMT', 'CURR', 'VS', 'RURL'
 		);
 
 		$this->optional_fields = array(
-			'DESC', 'SS', 'RSMS', 'REM'
+			'SS', 'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG'
 		);
 
 		$this->field_map = array(
 			Driver::AMOUNT 				=> 'AMT',
+			Driver::CURRENCY 			=> 'CURR',
 			Driver::DESCRIPTION 		=> 'DESC',
 			Driver::VARIABLE_SYMBOL 	=> 'VS',
 			Driver::CONSTANT_SYMBOL 	=> 'CS',
 			Driver::SPECIFIC_SYMBOL 	=> 'SS',
+
+			Driver::LANGUAGE 			=> 'LANG',
  
 			Driver::CALLBACK 			=> 'RURL',
 			Driver::RETURN_PHONE 		=> 'RSMS',
@@ -39,6 +45,13 @@ final class Request extends \Chaching\Messages\Hmac
 		);
 
 		$this->set_authorization($authorization);
+
+		$this->fields['PT'] 			= 'TatraPay';
+		$this->fields['AREDIR'] 		= '1';
+		$this->fields['CURR'] 			= \Chaching\Currencies::EUR;
+		$this->fields['LANG'] 			= $this->detect_client_language(
+			$this->valid_languages
+		);
 
 		if (is_array($options) AND !empty($options))
 		{
@@ -60,6 +73,8 @@ final class Request extends \Chaching\Messages\Hmac
 	 */
 	protected function validate()
 	{
+		$this->fields['LANG'] = strtolower($this->fields['LANG']);
+
 		if (!is_array($this->auth) OR count($this->auth) !== 2)
 			throw new \Chaching\Exceptions\InvalidRequestException(
 				"Merchant authorization information is missing."
@@ -69,7 +84,7 @@ final class Request extends \Chaching\Messages\Hmac
 			? $this->auth[ 0 ]
 			: '';
 
-		if (!preg_match('/^[a-z0-9]{1,20}$/', $this->fields['MID']))
+		if (!preg_match('/^[a-z0-9]{3,4}$/', $this->fields['MID']))
 			throw new InvalidOptionsException(sprintf(
 				"Authorization information (Merchant ID or MID) has an " .
 				"unacceptable value '%s'. Try changing it to value you " .
@@ -86,12 +101,25 @@ final class Request extends \Chaching\Messages\Hmac
 		// Validate all required fields first
 		$this->validate_required_fields();
 
+		if (!is_string($this->fields['AMT']))
+		{
+			$this->fields['AMT'] = sprintf('%01.2F', $this->fields['AMT']);
+		}
+
 		if (!preg_match('/^[0-9]{1,13}(\.[0-9]{1,2})?$/', $this->fields['AMT']))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or AMT) has an unacceptable value '%s'. Valid " .
 				"amount consists of up to 13 base numbers and maximum of two " .
 				"decimals separated with a dot ('.').",
 				Driver::AMOUNT, $this->fields['AMT']
+			));
+
+		if (!Currencies::validate_numeric_code($this->fields['CURR']))
+			throw new InvalidOptionsException(sprintf(
+				"Field %s (or CURR) has an unacceptable value '%s'. " .
+				"The easiest way is to use constants provided in " . 
+				"`\Chaching\Currencies` with currency codes based on ISO 4217.",
+				Driver::CURRENCY, $this->fields['CURR']
 			));
 
 		if (!preg_match('/^[0-9]{1,10}$/', $this->fields['VS']))
@@ -108,15 +136,31 @@ final class Request extends \Chaching\Messages\Hmac
 				$this->fields['RURL']
 			));
 
-		if (!preg_match('/^[0-9]{1,4}$/', $this->fields['CS']))
+		$url_restricted_characters = array('&', '?', ';', '=', '+', '%');
+
+		foreach ($url_restricted_characters as $char)
+		{
+			if (strpos($this->fields['RURL'], $char) !== FALSE)
+				throw new InvalidOptionsException(sprintf(
+					"Field %s (or RURL) contains unacceptable character " . 
+					"'%s'. Valid return URL can not contain query string " .
+					"characters.", Driver::CALLBACK, $char
+				));
+		}
+
+		// Optional fields
+		if ($this->fields['PT'] !== 'TatraPay')
+		{
+			$this->fields['PT'] = 'TatraPay';
+		}
+
+		if (isset($this->fields['CS']) AND !preg_match('/^[0-9]{1,4}$/', $this->fields['CS']))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or CS) has an unacceptable value '%s'. Valid " .
 				"constant symbol consists of up to 4 numbers.",
 				Driver::CONSTANT_SYMBOL, $this->fields['VS']
 			));
 
-
-		// Optional fields
 		if (!preg_match('/^[0-9]{1,10}$/', $this->fields['SS']))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or SS) has an unacceptable value '%s'. Valid " .
@@ -134,7 +178,7 @@ final class Request extends \Chaching\Messages\Hmac
 					Driver::RETURN_PHONE, $this->fields['RSMS']
 				));
 
-			$this->fields['RSMS'] = str_replace('+421', '0', $phone);
+			$this->fields['RSMS'] = $phone;
 		}
 
 		if (isset($this->fields['REM']))
@@ -156,13 +200,26 @@ final class Request extends \Chaching\Messages\Hmac
 					"characters.", Driver::DESCRIPTION, $this->fields['DESC']
 				));
 		}
+
+		if ($this->fields['AREDIR'] === 0 OR $this->fields['AREDIR'] === 1)
+			throw new InvalidOptionsException(sprintf(
+				"Field AREDIR has an unacceptable value '%s'. Valid value " .
+				"would be either integer 0 or 1.", $this->fields['AREDIR']
+			));
+
+		if (!in_array($this->fields['LANG'], $this->valid_languages))
+			throw new InvalidOptionsException(sprintf(
+				"Field %s (or LANG) has an unacceptable value '%s'. Valid " .
+				"language values are '%s'.", Driver::LANGUAGE,
+				$this->fields['LANG'], implode("', '", $this->valid_languages)
+			));
 	}
 
 	protected function signature_base()
 	{
 		return $this->fields['MID'] . $this->fields['AMT'] .
-			$this->fields['VS'] . $this->fields['SS'] . $this->fields['CS'] .
-			$this->fields['RURL'];
+			$this->fields['CURR'] . $this->fields['VS'] . $this->fields['SS'] .
+			$this->fields['CS'] . $this->fields['RURL'];
 	}
 
 	/**
@@ -172,28 +229,24 @@ final class Request extends \Chaching\Messages\Hmac
 	{
 		$this->validate();
 
-		if (($this->fields['SIGN'] = $this->sign($this->signature_base())) === NULL)
-			throw new \Chaching\Exceptions\InvalidRequestException(
-				"Merchant authorization information (shared secret) is invalid."
-			);
+		$this->fields['SIGN'] = $this->sign($this->signature_base());
 
-		$fields = sprintf(
-			"<form action=\"%s\" method=\"post\" id=\"eplatby\">\n",
-			self::REQUEST_URI
-		);
+		$fields = '?';
 
 		foreach ($this->fields as $key => $value)
 		{
-			$fields .= sprintf(
-				"\t<input type=\"hidden\" name=\"%s\" value=\"%s\">\n",
-				$key, $value
-			);
+			$fields .= sprintf('%s=%s&', $key, urlencode($value));
 		}
 
-		$fields .= "\t<input type=\"submit\" value=\"Odoslat\">\n</form>";
-		$fields .= "<script type=\"text/javascript\">\n";
-		$fields .= "\tdocument.getElementById('eplatby').submit();\n</script>";
+		$redirection = self::REQUEST_URI.rtrim($fields, '& ');
 
-		return $fields;
+		if ($redirect === TRUE)
+		{
+			header('Location: ' . $redirection);
+		}
+		else
+		{
+			return $redirection;
+		}
 	}
 }

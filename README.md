@@ -3,9 +3,10 @@
 Jednoduché a (v rámci možností) unifikované objektovo-orientované rozhranie pre nesledovné bankové produkty pre e-commerce poskytované najmä slovenskými bankami, napísané v jazyku PHP:
 
 * [CardPay](https://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/cardpay.html) -- Tatra banka, a.s.
+* [TatraPay](http://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/tatrapay.html) -- Tatra banka, a.s.
 * [ePlatby VÚB](https://www.vub.sk/pre-podnikatelov/nonstop-banking/e-commerce-pre-internetovych-obchodnikov/e-platby-vub/) -- VÚB, a.s.
 
-Aktuálna verzia kódu je 0.0.3.
+Aktuálna verzia kódu je 0.0.4.
 
 ## Príprava a inštalácia
 Odporúčaný spôsob inštalácie je požiť [composer](http://getcomposer.org/) a zapísať rozhranie ako závislosť projektu s priamou cestou k repozitáru dostupného v rámci firemnej VPN:

@@ -1,5 +1,5 @@
 <?php
-namespace Chaching\Drivers\TBCardPay;
+namespace Chaching\Drivers\TBTatraPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
@@ -9,20 +9,21 @@ final class Response extends \Chaching\Messages\Des
 {
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
+	public $specific_symbol 	= NULL;
 
 	public function __construct(Array $authorization, Array $options)
 	{
 		parent::__construct();
 
 		$this->readonly_fields = array(
-			'VS', 'RES', 'SIGN', 'AC'
+			'SS', 'VS', 'RES', 'SIGN'
 		);
 
 		$this->fields = array(
+			'SS' 	=> isset($options['SS']) ? $options['SS'] : NULL,
 			'VS' 	=> isset($options['VS']) ? $options['VS'] : NULL,
 			'RES' 	=> isset($options['RES']) ? $options['RES'] : NULL,
-			'SIGN' 	=> isset($options['SIGN']) ? $options['SIGN'] : NULL,
-			'AC' 	=> isset($options['AC']) ? $options['AC'] : NULL
+			'SIGN' 	=> isset($options['SIGN']) ? $options['SIGN'] : NULL
 		);
 
 		$this->set_authorization($authorization);
@@ -48,15 +49,26 @@ final class Response extends \Chaching\Messages\Des
 		$this->fields['RES'] = strtolower($this->fields['RES']);
 
 		$this->variable_symbol 	= $this->fields['VS'];
-		$this->status 			= ($this->fields['RES'] === 'ok' AND !empty($this->fields['VS']))
-			? \Chaching\Statuses::SUCCESS
-			: \Chaching\Statuses::FAILURE;
+		$this->specific_symbol 	= $this->fields['SS'];
+
+		if ($this->fields['RES'] === 'ok' AND !empty($this->fields['VS']))
+		{
+			$this->status = \Chaching\Statuses::SUCCESS;
+		}
+		else if ($this->fields['RES'] === 'tout')
+		{
+			$this->status = \Chaching\Statuses::TIMEOUT;
+		}
+		else
+		{
+			$this->status = \Chaching\Statuses::FAILURE;
+		}
 
 		return $this->status;
 	}
 
 	protected function signature_base()
 	{
-		return $this->fields['VS'] . $this->fields['RES'] . $this->fields['AC'];
+		return $this->fields['VS'] . $this->fields['SS'] . $this->fields['RES'];
 	}
 }

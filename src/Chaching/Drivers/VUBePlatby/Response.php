@@ -45,8 +45,10 @@ final class Response extends \Chaching\Messages\Hmac
 				$signature, $this->fields['SIGN']
 			));
 
+		$this->fields['RES'] = strtolower($this->fields['RES']);
+
 		$this->variable_symbol 	= $this->fields['VS'];
-		$this->status 			= ($this->fields['RES'] === 'OK' AND !empty($this->fields['VS']))
+		$this->status 			= ($this->fields['RES'] === 'ok' AND !empty($this->fields['VS']))
 			? \Chaching\Statuses::SUCCESS
 			: \Chaching\Statuses::FAILURE;
 

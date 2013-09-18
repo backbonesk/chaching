@@ -1,7 +1,7 @@
 <?php
 namespace Chaching\Messages;
 
-class Hmac extends \Chaching\Messages\Message
+class Hmac extends \Chaching\Message
 {
 	protected function sign($value)
 	{

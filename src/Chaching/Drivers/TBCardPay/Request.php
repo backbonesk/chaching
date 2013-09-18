@@ -7,8 +7,7 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 final class Request extends \Chaching\Messages\Des
 {
-	// const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
-	const REQUEST_URI = 'http://epaymentsimulator.monogram.sk/TB_CardPay.aspx';
+	const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
 
 	private $valid_languages = array(
 		'sk', 'en', 'de', 'hu', 'cz', 'es', 'fr', 'it', 'pl'
@@ -23,11 +22,11 @@ final class Request extends \Chaching\Messages\Des
 		);
 
 		$this->required_fields = array(
-			'AMT', 'CURR', 'VS', 'RURL', 'IPC', 'NAME', 'IPC'
+			'AMT', 'CURR', 'VS', 'RURL', 'IPC', 'NAME'
 		);
 
 		$this->optional_fields = array(
-			'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG', 'TXN', 'AREDIR'
+			'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG', 'TXN'
 		);
 
 		$this->field_map = array(
@@ -52,10 +51,9 @@ final class Request extends \Chaching\Messages\Des
 		$this->fields['AREDIR'] 		= '1';
 
 		$this->fields['CURR'] 			= \Chaching\Currencies::EUR;
-		// $this->fields['IPC'] 			= isset($_SERVER['REMOTE_ADDR'])
-		// 	? $_SERVER['REMOTE_ADDR']
-		// 	: $_SERVER['SERVER_ADDR'];
-		$this->fields['IPC'] 			= '188.167.181.34';
+		$this->fields['IPC'] 			= isset($_SERVER['REMOTE_ADDR'])
+			? $_SERVER['REMOTE_ADDR']
+			: $_SERVER['SERVER_ADDR'];
 
 		$this->fields['MOBILE_DEVICE'] 	= (int) $this->detect_mobile_request();
 		$this->fields['LANG'] 			= $this->detect_client_language(
@@ -109,6 +107,11 @@ final class Request extends \Chaching\Messages\Des
 
 		// Validate all required fields first
 		$this->validate_required_fields();
+
+		if (!is_string($this->fields['AMT']))
+		{
+			$this->fields['AMT'] = sprintf('%01.2F', $this->fields['AMT']);
+		}
 
 		if (!preg_match('/^[0-9]{1,13}(\.[0-9]{1,2})?$/', $this->fields['AMT']))
 			throw new InvalidOptionsException(sprintf(
@@ -224,8 +227,6 @@ final class Request extends \Chaching\Messages\Des
 				"language values are '%s'.", Driver::LANGUAGE,
 				$this->fields['LANG'], implode("', '", $this->valid_languages)
 			));
-
-		print_r($this->fields);
 	}
 
 	protected function signature_base()

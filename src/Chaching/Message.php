@@ -1,5 +1,5 @@
 <?php
-namespace Chaching\Messages;
+namespace Chaching;
 
 use \Chaching\Exceptions\InvalidOptionsException;
 
@@ -25,12 +25,20 @@ abstract class Message
 			: '';
 	}
 
-	/*
-	public function __get()
+	public function __get($name)
 	{
-		
+		if (in_array($name, array_keys($this->fields)))
+			return $this->fields[ $name ];
+
+		if (in_array($name, array_keys($this->field_map)))
+			return isset($this->fields[ $this->field_map[ $name ] ])
+				? $this->fields[ $this->field_map[ $name ] ]
+				: NULL;
+
+		throw new InvalidOptionsException(sprintf(
+			"Trying to get field '%s'.", $name
+		));
 	}
-	*/
 
 	public function __set($name, $value)
 	{

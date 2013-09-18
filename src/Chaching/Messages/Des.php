@@ -1,7 +1,7 @@
 <?php
 namespace Chaching\Messages;
 
-class Des extends \Chaching\Messages\Message
+class Des extends \Chaching\Message
 {
 	protected function sign($value)
 	{
@@ -9,7 +9,7 @@ class Des extends \Chaching\Messages\Message
 
 		if (function_exists('mcrypt_module_open'))
 		{
-			$td = mcrypt_module_open(MCRYPT_TripleDES, '', MCRYPT_MODE_ECB, '');
+			$td = mcrypt_module_open(MCRYPT_TRIPLEDES, '', MCRYPT_MODE_ECB, '');
 			$iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
 
 			mcrypt_generic_init($td, $this->auth[ 1 ], $iv);
