@@ -6,7 +6,7 @@ Jednoduché a (v rámci možností) unifikované objektovo-orientované rozhrani
 * [TatraPay](http://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/tatrapay.html) -- Tatra banka, a.s.
 * [ePlatby VÚB](https://www.vub.sk/pre-podnikatelov/nonstop-banking/e-commerce-pre-internetovych-obchodnikov/e-platby-vub/) -- VÚB, a.s.
 
-Aktuálna verzia kódu je 0.0.4.
+Aktuálna verzia kódu je 0.5.0.
 
 ## Príprava a inštalácia
 Odporúčaný spôsob inštalácie je požiť [composer](http://getcomposer.org/) a zapísať rozhranie ako závislosť projektu s priamou cestou k repozitáru dostupného v rámci firemnej VPN:

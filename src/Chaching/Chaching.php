@@ -11,7 +11,7 @@ class Chaching
 	/*
 	 * Verzia.
 	 */
-	const VERSION = '1.0.0';
+	const VERSION = '0.5.0';
 
 	const CARDPAY 	= 'cardpay';
 	const TATRAPAY 	= 'tatrapay';
