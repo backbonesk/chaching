@@ -11,7 +11,7 @@
 
 namespace Chaching\Drivers;
 
-class TBCardPay extends \Chaching\Driver
+class TrustPay extends \Chaching\Driver
 {
 	public function request(Array $options)
 	{
@@ -19,7 +19,7 @@ class TBCardPay extends \Chaching\Driver
 
 		if ($request === NULL)
 		{
-			$request = new \Chaching\Drivers\TBCardPay\Request(
+			$request = new \Chaching\Drivers\TrustPay\Request(
 				$this->authorization, $options
 			);
 		}
@@ -33,11 +33,25 @@ class TBCardPay extends \Chaching\Driver
 
 		if ($response === NULL)
 		{
-			$response = new \Chaching\Drivers\TBCardPay\Response(
+			$response = new \Chaching\Drivers\TrustPay\Response(
 				$this->authorization, $options
 			);
 		}
 
 		return $response;
+	}
+
+	public function notification(Array $options)
+	{
+		static $notification = NULL;
+
+		if ($notification === NULL)
+		{
+			$notification = new \Chaching\Drivers\TrustPay\Notification(
+				$this->authorization, $options
+			);
+		}
+
+		return $notification;
 	}
 }

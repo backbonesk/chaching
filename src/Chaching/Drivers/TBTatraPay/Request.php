@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * This file is part of Chaching.
+ *
+ * (c) 2013 BACKBONE, s.r.o.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Chaching\Drivers\TBTatraPay;
 
 use \Chaching\Driver;
@@ -114,7 +124,7 @@ final class Request extends \Chaching\Messages\Des
 				Driver::AMOUNT, $this->fields['AMT']
 			));
 
-		if (!Currencies::validate_numeric_code($this->fields['CURR']))
+		if (Currencies::validate_code($this->fields['CURR']) === NULL)
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or CURR) has an unacceptable value '%s'. " .
 				"The easiest way is to use constants provided in " . 

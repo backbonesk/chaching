@@ -1,25 +1,29 @@
 <?php
-/**
- * @package Chaching;
+
+/*
+ * This file is part of Chaching.
+ *
+ * (c) 2013 BACKBONE, s.r.o.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 namespace Chaching;
 
 use \Chaching\Exceptions\InvalidOptionsException;
 
 class Chaching
 {
-	/*
-	 * Verzia.
-	 */
-	const VERSION = '0.5.0';
-
 	const CARDPAY 	= 'cardpay';
 	const TATRAPAY 	= 'tatrapay';
+	const TRUSTPAY 	= 'trustpay';
 	const EPLATBY 	= 'eplatby';
 
 	private $payment_drivers = array(
 		self::CARDPAY 	=> 'TBCardPay',
 		self::TATRAPAY 	=> 'TBTatraPay',
+		self::TRUSTPAY 	=> 'TrustPay',
 		self::EPLATBY 	=> 'VUBEplatby'
 	);
 
@@ -50,6 +54,18 @@ class Chaching
 			));
 
 		$this->driver = new $driver($authorization);
+	}
+
+	public function __call($method, $arguments)
+	{
+		if (method_exists($this->driver, $method))
+			return call_user_func_array(
+				array($this->driver, $method), $arguments
+			);
+
+		throw new \BadMethodCallException(sprintf(
+			"Method %s not implemented in driver", $method
+		));
 	}
 
 	public function request($options)

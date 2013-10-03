@@ -3,7 +3,7 @@
   "type": "library",
   "version": "0.5.0",
   "license": "MIT",
-  "description": "Universal payment library for mostly Slovak banking products",
+  "description": "Universal payment library for Slovak banking services",
   "keywords": ["chaching", "payment", "money", "slovakia"],
   "homepage": "http://www.backbone.sk/en/",
   "authors": [

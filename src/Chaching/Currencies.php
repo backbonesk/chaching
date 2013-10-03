@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * This file is part of Chaching.
+ *
+ * (c) 2013 BACKBONE, s.r.o.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Chaching;
 
 class Currencies
@@ -14,11 +24,27 @@ class Currencies
 		)
 	);
 
-	public static function validate_numeric_code($numeric_code)
+	public static function get($code)
 	{
-		if (!is_numeric($numeric_code))
-			return FALSE;
+		if (is_numeric($code))
+			return isset(self::$currencies[ (int) $code ])
+				? self::$currencies[ (int) $code ]
+				: array();
 
-		return (bool) isset(self::$currencies[ (int) $numeric_code ]);
+		foreach (self::$currencies as $numeric_code => $data)
+		{
+			if (isset($data['alpha_code']) AND $data['alpha_code'] == $code)
+				return $data;
+		}
+
+		return NULL;
+	}
+
+	public static function validate_code($code)
+	{
+		if (is_numeric($numeric_code))
+			return (bool) isset(self::$currencies[ (int) $numeric_code ]);
+
+		
 	}
 }

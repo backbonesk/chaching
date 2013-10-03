@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * This file is part of Chaching.
+ *
+ * (c) 2013 BACKBONE, s.r.o.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Chaching\Messages;
 
 class Hmac extends \Chaching\Message
@@ -7,10 +17,9 @@ class Hmac extends \Chaching\Message
 	{
 		$signature_base = pack('A*', $this->signature_base());
 
-		if (strlen($this->auth[ 1 ]) !== 64)
-			return NULL;
-
-		$shared_secret = pack('A*', $this->auth[ 1 ]);
+		$shared_secret = (strlen($this->auth[ 1 ]) === 128)
+			? pack('A*', pack('H*', $this->auth[ 1 ]))
+			: pack('A*', $this->auth[ 1 ]);
 
 		return strtoupper(hash_hmac(
 			'sha256', $signature_base, $shared_secret, FALSE
