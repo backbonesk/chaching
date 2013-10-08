@@ -29,7 +29,7 @@ class Currencies
 		if (is_numeric($code))
 			return isset(self::$currencies[ (int) $code ])
 				? self::$currencies[ (int) $code ]
-				: array();
+				: NULL;
 
 		foreach (self::$currencies as $numeric_code => $data)
 		{
@@ -45,6 +45,12 @@ class Currencies
 		if (is_numeric($numeric_code))
 			return (bool) isset(self::$currencies[ (int) $numeric_code ]);
 
-		
+		foreach (self::$currencies as $numeric_code => $data)
+		{
+			if (isset($data['alpha_code']) AND $data['alpha_code'] == $code)
+				return TRUE;
+		}
+
+		return FALSE;
 	}
 }
