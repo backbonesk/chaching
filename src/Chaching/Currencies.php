@@ -42,15 +42,6 @@ class Currencies
 
 	public static function validate_code($code)
 	{
-		if (is_numeric($numeric_code))
-			return (bool) isset(self::$currencies[ (int) $numeric_code ]);
-
-		foreach (self::$currencies as $numeric_code => $data)
-		{
-			if (isset($data['alpha_code']) AND $data['alpha_code'] == $code)
-				return TRUE;
-		}
-
-		return FALSE;
+		return (bool) (self::get($code) !== NULL);
 	}
 }
