@@ -171,7 +171,7 @@ final class Request extends \Chaching\Messages\Des
 				Driver::CONSTANT_SYMBOL, $this->fields['VS']
 			));
 
-		if (!preg_match('/^[0-9]{1,10}$/', $this->fields['SS']))
+		if (isset($this->fields['SS']) AND !preg_match('/^[0-9]{1,10}$/', $this->fields['SS']))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or SS) has an unacceptable value '%s'. Valid " .
 				"specific symbol consists of up to 10 digits.",
