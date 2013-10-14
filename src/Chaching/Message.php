@@ -108,7 +108,7 @@ abstract class Message
 
 		if (preg_match('/^0[0-9]{9}$/', $mobile_number))
 		{
-			$mobile_number = preg_replace('^0', '+421', $mobile_number);
+			$mobile_number = preg_replace('/^0/', '+421', $mobile_number);
 		}
 		else if (preg_match('/^[0-9]{9}$/', $mobile_number))
 		{
