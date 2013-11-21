@@ -91,6 +91,7 @@ final class Request extends \Chaching\Messages\Des
 	protected function validate()
 	{
 		$this->fields['LANG'] = strtolower($this->fields['LANG']);
+		$this->fields['NAME'] = $this->deaccentize($this->fields['NAME']);
 
 		if (!is_array($this->auth) OR count($this->auth) !== 2)
 			throw new \Chaching\Exceptions\InvalidRequestException(

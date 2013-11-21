@@ -83,6 +83,43 @@ abstract class Message
 		}
 	}
 
+	protected function deaccentize($string)
+	{
+		$return = '';
+
+		$string = str_replace(
+			array(
+				' - ', ' ', '-', 'á', 'ä', 'Á', 'č', 'Č', 'ď',
+				'Ď', 'é', 'ě', 'ë', 'É', 'Ě', 'í', 'Í', 'ľ',
+				'ĺ', 'Ľ', 'Ĺ', 'ň', 'Ň', 'ó', 'ö', 'ô', 'Ó',
+				'ř', 'Ř', 'š', 'Š', 'ť', 'Ť', 'ú', 'ů', 'ü',
+				'Ú', 'ý', 'Ý', 'ž', 'Ž'
+			),
+			array(
+				'-', ' ', '-', 'a', 'a', 'a', 'c', 'c', 'd',
+				'd', 'e', 'e', 'e', 'e', 'e', 'i', 'i', 'l',
+				'l', 'l', 'l', 'n', 'n', 'o', 'o', 'o', 'o',
+				'r', 'r', 's', 's', 't', 't', 'u', 'u', 'u',
+				'u', 'y', 'y', 'z', 'z'
+			),
+			$string
+		);
+
+		$string = strtolower($string);
+
+		for ($i = 0; $i < strlen($string); $i++)
+		{
+			$tmp = ord($string[ $i ]);
+
+			if (($tmp < 58 AND $tmp > 47) OR ($tmp > 96 AND $tmp < 123) OR $tmp == 45)
+			{
+				$return .= $string[ $i ];
+			}
+		}
+
+		return $return;
+	}
+
 	protected function set_authorization(Array $auth)
 	{
 		if (count($auth) === 2)
