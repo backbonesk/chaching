@@ -223,8 +223,8 @@ abstract class Message
 	}
 
 	/**
-	 * Urcuje, ci ide o poziadavku vykonanu z mobilneho zariadenia. Tablety
-	 * nie su v tomto pripade ratane za mobilne zariadenia.
+	 * Detect (based on user agent string from the client) whether a mobile
+	 * device is being used (tablets are not considered to be mobile here).
 	 *
 	 * @return 	bool
 	 * @author 	Chad Smith <http://detectmobilebrowsers.com>

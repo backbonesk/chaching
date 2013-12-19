@@ -84,7 +84,6 @@ final class Request extends \Chaching\Messages\Des
 	protected function validate()
 	{
 		$this->fields['LANG'] = strtolower($this->fields['LANG']);
-		$this->fields['NAME'] = $this->deaccentize($this->fields['NAME']);
 
 		if (!is_array($this->auth) OR count($this->auth) !== 2)
 			throw new \Chaching\Exceptions\InvalidRequestException(
@@ -229,7 +228,8 @@ final class Request extends \Chaching\Messages\Des
 	protected function signature_base()
 	{
 		return $this->fields['MID'] . $this->fields['AMT'] .
-			$this->fields['CURR'] . $this->fields['VS'] . $this->fields['SS'] .
+			$this->fields['CURR'] . $this->fields['VS'] .
+			(isset($this->fields['SS']) ? $this->fields['SS'] : '') .
 			$this->fields['CS'] . $this->fields['RURL'];
 	}
 
