@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2013 BACKBONE, s.r.o.
+ * (c) 2014 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -166,7 +166,7 @@ final class Request extends \Chaching\Messages\Des
 				));
 		}
 
-		if (!filter_var($this->fields['IPC'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE))
+		if (!filter_var($this->fields['IPC'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_RES_RANGE))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or IPC) has an unacceptable value '%s'. Valid " .
 				"client IP address has to be a properly formatted IPv4.",
