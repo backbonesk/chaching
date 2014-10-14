@@ -32,7 +32,7 @@ final class Request extends \Chaching\Messages\Des
 		);
 
 		$this->required_fields = array(
-			'AMT', 'CURR', 'VS', 'RURL'
+			'AMT', 'CURR', 'CS', 'VS', 'RURL'
 		);
 
 		$this->optional_fields = array(
@@ -123,6 +123,15 @@ final class Request extends \Chaching\Messages\Des
 				"decimals separated with a dot ('.').",
 				Driver::AMOUNT, $this->fields['AMT']
 			));
+
+		if (is_string($this->fields['CURR']) AND !is_numeric($this->fields['CURR']))
+		{
+			$currency = Currencies::get($this->fields['CURR']);
+
+			$this->fields['CURR'] = ($currency !== NULL)
+				? $currency['numeric_code']
+				: NULL;
+		}
 
 		if (Currencies::validate_code($this->fields['CURR']) === NULL)
 			throw new InvalidOptionsException(sprintf(

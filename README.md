@@ -8,7 +8,7 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 * [TrustCard](http://www.trustpay.eu/contact-references-payment-methods-news/dokumenty-na-stiahnutie-en-GB/) -- TrustPay, a.s.
 * [SporoPay](http://www.slsp.sk/6415/sporopay-elektronicke-platby-na-internete.html) -- Slovenská sporiteľna, a.s.
 
-The current version of the library is v0.7.0 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.8.1 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -113,6 +113,10 @@ TrustPay is a special case with response handling as they use notification mecha
 ## Changelog
 
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.8.1: 2014/10/14
+
+Small fixes for currency compatibility problems with TatraPay service.
 
 ### v0.8.0: 2014/10/14
 

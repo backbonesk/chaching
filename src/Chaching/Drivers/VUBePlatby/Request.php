@@ -17,8 +17,7 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 final class Request extends \Chaching\Messages\Hmac
 {
-	// const REQUEST_URI = 'https://ib.vub.sk/e-platbyeuro.aspx';
-	const REQUEST_URI = 'http://epaymentsimulator.monogram.sk/VUB_EPlatba2_HMAC.aspx';
+	const REQUEST_URI = 'https://ib.vub.sk/e-platbyeuro.aspx';
 
 	public function __construct(Array $authorization, Array $options)
 	{
