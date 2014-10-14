@@ -16,11 +16,13 @@ use \Chaching\Exceptions\InvalidOptionsException;
 class Chaching
 {
 	const CARDPAY 	= 'cardpay';
+	const SPOROPAY 	= 'sporopay';
 	const TATRAPAY 	= 'tatrapay';
 	const TRUSTPAY 	= 'trustpay';
 	const EPLATBY 	= 'eplatby';
 
 	private $payment_drivers = array(
+		self::SPOROPAY 	=> 'SLSPSporoPay',
 		self::CARDPAY 	=> 'TBCardPay',
 		self::TATRAPAY 	=> 'TBTatraPay',
 		self::TRUSTPAY 	=> 'TrustPay',

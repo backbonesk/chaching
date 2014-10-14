@@ -132,6 +132,15 @@ final class Request extends \Chaching\Messages\Des
 				Driver::AMOUNT, $this->fields['AMT']
 			));
 
+		if (is_string($this->fields['CURR']) AND !is_numeric($this->fields['CURR']))
+		{
+			$currency = Currencies::get($this->fields['CURR']);
+
+			$this->fields['CURR'] = ($currency !== NULL)
+				? $currency['numeric_code']
+				: NULL;
+		}
+
 		if (Currencies::validate_code($this->fields['CURR']) === NULL)
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or CURR) has an unacceptable value '%s'. " .
@@ -242,10 +251,19 @@ final class Request extends \Chaching\Messages\Des
 
 	protected function signature_base()
 	{
-		return $this->fields['MID'] . $this->fields['AMT'] .
-			$this->fields['CURR'] . $this->fields['VS'] . $this->fields['CS'] .
-			$this->fields['RURL'] . $this->fields['IPC'] .
-			$this->fields['NAME'];
+		$field_list 		= [
+			'MID', 'AMT', 'CURR', 'VS', 'CS', 'RURL', 'IPC', 'NAME'
+		];
+		$signature_base 	= '';
+
+		foreach ($field_list as $field)
+		{
+			$signature_base .= isset($this->fields[ $field ])
+				? $this->fields[ $field ]
+				: '';
+		}
+
+		return $signature_base;
 	}
 
 	/**

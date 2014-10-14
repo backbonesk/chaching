@@ -1,10 +1,10 @@
 {
   "name": "backbone/chaching",
   "type": "library",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "license": "MIT",
   "description": "Universal payment library for banking services in Slovakia",
-  "keywords": ["chaching", "payment", "money", "slovakia"],
+  "keywords": ["chaching", "payment", "money", "slovakia", "cardpay", "tatrapay", "trustpay", "sporopay", "eplatby"],
   "homepage": "http://www.backbone.sk/en/",
   "authors": [
     {

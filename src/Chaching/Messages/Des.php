@@ -26,7 +26,9 @@ class Des extends \Chaching\Message
 
 			$signature = strtoupper(bin2hex(mcrypt_generic($td, $hash)));
 
-			mcrypt_generic_end($td);
+			mcrypt_generic_deinit($td);
+
+			mcrypt_module_close($td);
 		}
 		else
 		{

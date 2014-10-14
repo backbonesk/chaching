@@ -28,6 +28,9 @@ abstract class Driver
 	const CALLBACK 			= 'callback';
 	const RETURN_PHONE 		= 'return_phone';
 	const RETURN_EMAIL 		= 'return_email';
+	const PREFIX 			= 'account_prefix';
+	const ACCOUNT_NO 		= 'account_no';
+	const BANK_CODE 		= 'bank_code';
 
 	protected $authorization = array();
 

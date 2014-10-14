@@ -68,16 +68,7 @@ abstract class Message
 		else
 		{
 			if (!in_array($name, array_keys($this->field_map)))
-			{
-				$all_fields = implode("', '", array_merge(
-					$all_field_names, array_keys($this->field_map)
-				));
-
-				throw new InvalidOptionsException(sprintf(
-					"Trying to set invalid field '%s'. Valid fields are '%s'.",
-					$name, $all_fields
-				));
-			}
+				return;
 
 			$this->fields[ $this->field_map[ $name ] ] = $value;
 		}
@@ -125,10 +116,7 @@ abstract class Message
 
 	protected function set_authorization(Array $auth)
 	{
-		if (count($auth) === 2)
-		{
-			$this->auth = $auth;
-		}
+		$this->auth = $auth;
 	}
 
 	protected function validate_required_fields()

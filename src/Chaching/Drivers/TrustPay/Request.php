@@ -17,7 +17,6 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 final class Request extends \Chaching\Messages\Hmac
 {
-	// const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
 	const REQUEST_URI = 'https://test.trustpay.eu/mapi/pay.aspx';
 
 	private $valid_languages = array(
