@@ -78,7 +78,7 @@ final class Request extends \Chaching\Messages\Hmac
 			? $this->auth[ 0 ]
 			: '';
 
-		if (!preg_match('/^[a-z0-9]{1,20}$/', $this->fields['MID']))
+		if (!preg_match('/^[a-zA-Z0-9]{1,20}$/', $this->fields['MID']))
 			throw new InvalidOptionsException(sprintf(
 				"Authorization information (Merchant ID or MID) has an " .
 				"unacceptable value '%s'. Try changing it to value you " .
@@ -126,7 +126,7 @@ final class Request extends \Chaching\Messages\Hmac
 
 
 		// Optional fields
-		if (!preg_match('/^[0-9]{1,10}$/', $this->fields['SS']))
+		if (!empty($this->fields['SS']) AND !preg_match('/^[0-9]{1,10}$/', $this->fields['SS']))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or SS) has an unacceptable value '%s'. Valid " .
 				"specific symbol consists of up to 10 digits.",

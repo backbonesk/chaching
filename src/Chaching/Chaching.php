@@ -26,7 +26,7 @@ class Chaching
 		self::CARDPAY 	=> 'TBCardPay',
 		self::TATRAPAY 	=> 'TBTatraPay',
 		self::TRUSTPAY 	=> 'TrustPay',
-		self::EPLATBY 	=> 'VUBEplatby'
+		self::EPLATBY 	=> 'VUBePlatby'
 	);
 
 	/**
