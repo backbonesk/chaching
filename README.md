@@ -17,7 +17,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.8.0"
+	    "backbone/chaching": "0.8.2"
 	  }
 	}
 
@@ -114,6 +114,10 @@ TrustPay is a special case with response handling as they use notification mecha
 
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
 
+### v0.9.0
+
+Shorten the name accroding to the specification when using CardPay driver.
+
 ### v0.8.2: 2014/10/16
 
 Small fixes for incorrect initialization of ePlatby payment service and their specific symbol policy that depends on the contract with the bank.
@@ -130,7 +134,7 @@ Fail silently when passing arguments that are not supported by particular paymen
 
 ### v0.7.0: 2014/08/11
 
-Further documentation and some minor fixes. 
+Further documentation and some minor fixes.
 
 ### v0.6.0: 2013/19/12
 

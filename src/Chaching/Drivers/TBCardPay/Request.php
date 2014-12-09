@@ -49,7 +49,7 @@ final class Request extends \Chaching\Messages\Des
 			Driver::CLIENT_NAME 		=> 'NAME',
 			Driver::CLIENT_IP 			=> 'IPC',
 			Driver::LANGUAGE 			=> 'LANG',
- 
+
 			Driver::CALLBACK 			=> 'RURL',
 			Driver::RETURN_PHONE 		=> 'RSMS',
 			Driver::RETURN_EMAIL 		=> 'REM'
@@ -144,7 +144,7 @@ final class Request extends \Chaching\Messages\Des
 		if (Currencies::validate_code($this->fields['CURR']) === NULL)
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or CURR) has an unacceptable value '%s'. " .
-				"The easiest way is to use constants provided in " . 
+				"The easiest way is to use constants provided in " .
 				"`\Chaching\Currencies` with currency codes based on ISO 4217.",
 				Driver::CURRENCY, $this->fields['CURR']
 			));
@@ -169,7 +169,7 @@ final class Request extends \Chaching\Messages\Des
 		{
 			if (strpos($this->fields['RURL'], $char) !== FALSE)
 				throw new InvalidOptionsException(sprintf(
-					"Field %s (or RURL) contains unacceptable character " . 
+					"Field %s (or RURL) contains unacceptable character " .
 					"'%s'. Valid return URL can not contain query string " .
 					"characters.", Driver::CALLBACK, $char
 				));
@@ -181,6 +181,12 @@ final class Request extends \Chaching\Messages\Des
 				"client IP address has to be a properly formatted IPv4.",
 				Driver::CLIENT_IP, $this->fields['IPC']
 			));
+
+
+		if (strlen($this->fields['NAME']) > 30)
+		{
+			$this->fields['NAME'] = substr($this->fields['NAME'], 0, 29);
+		}
 
 		if (!preg_match('/^[0-9a-zA-Z \.-\_@]{1,30}/', $this->fields['NAME']))
 			throw new InvalidOptionsException(sprintf(
