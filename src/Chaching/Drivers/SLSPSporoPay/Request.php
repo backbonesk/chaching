@@ -14,8 +14,9 @@ namespace Chaching\Drivers\SLSPSporoPay;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Exceptions\InvalidAuthorizationException;
 
-final class Request extends \Chaching\Messages\TripleDes
+class Request extends \Chaching\Messages\TripleDes
 {
 	const REQUEST_URI = 'https://ib.slsp.sk/epayment/epayment/epayment.xml';
 
@@ -49,7 +50,7 @@ final class Request extends \Chaching\Messages\TripleDes
 			Driver::DESCRIPTION 		=> 'param',
 			Driver::VARIABLE_SYMBOL 	=> 'vs',
 			Driver::SPECIFIC_SYMBOL 	=> 'ss',
- 
+
 			Driver::CALLBACK 			=> 'url',
 			Driver::RETURN_EMAIL 		=> 'email_adr'
 		);
@@ -67,14 +68,6 @@ final class Request extends \Chaching\Messages\TripleDes
 		}
 	}
 
-	public function set_options(Array $options)
-	{
-		foreach ($options as $option => $value)
-		{
-			$this->$option = $value;
-		}
-	}
-
 	/**
 	 * @return 	bool
 	 * @throw 	\Chaching\Exceptions\InvalidRequestException
@@ -82,7 +75,7 @@ final class Request extends \Chaching\Messages\TripleDes
 	protected function validate()
 	{
 		if (!is_array($this->auth) OR count($this->auth) !== 4 OR !isset($this->auth['prefix']) OR !isset($this->auth['shared_secret']))
-			throw new \Chaching\Exceptions\InvalidRequestException(
+			throw new InvalidAuthorizationException(
 				"Merchant authorization information is missing."
 			);
 
@@ -130,7 +123,7 @@ final class Request extends \Chaching\Messages\TripleDes
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or `suma`) has an unacceptable value '%s'. Valid " .
 				"amount consists of up to 13 base numbers and maximum of two " .
-				"decimals separated with a dot ('.').",
+				"decimals separated by a dot ('.').",
 				Driver::AMOUNT, $this->fields['suma']
 			));
 
@@ -146,7 +139,7 @@ final class Request extends \Chaching\Messages\TripleDes
 		if (Currencies::validate_code($this->fields['mena']) === NULL)
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or `mena`) has an unacceptable value '%s'. " .
-				"The easiest way is to use constants provided in " . 
+				"The easiest way is to use constants provided in " .
 				"`\Chaching\Currencies` with currency codes based on ISO 4217.",
 				Driver::CURRENCY, $this->fields['mena']
 			));

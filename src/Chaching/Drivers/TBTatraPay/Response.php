@@ -13,9 +13,10 @@ namespace Chaching\Drivers\TBTatraPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
 
-final class Response extends \Chaching\Messages\Des
+class Response extends \Chaching\Messages\Des
 {
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
@@ -63,15 +64,15 @@ final class Response extends \Chaching\Messages\Des
 
 		if ($this->fields['RES'] === 'ok' AND !empty($this->fields['VS']))
 		{
-			$this->status = \Chaching\Statuses::SUCCESS;
+			$this->status = TransactionStatuses::SUCCESS;
 		}
 		else if ($this->fields['RES'] === 'tout')
 		{
-			$this->status = \Chaching\Statuses::TIMEOUT;
+			$this->status = TransactionStatuses::TIMEOUT;
 		}
 		else
 		{
-			$this->status = \Chaching\Statuses::FAILURE;
+			$this->status = TransactionStatuses::FAILURE;
 		}
 
 		return $this->status;

@@ -12,6 +12,7 @@
 namespace Chaching;
 
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Exceptions\InvalidRequestException;
 
 abstract class Message
 {
@@ -74,6 +75,14 @@ abstract class Message
 		}
 	}
 
+	public function set_options(Array $options)
+	{
+		foreach ($options as $option => $value)
+		{
+			$this->$option = $value;
+		}
+	}
+
 	/**
 	 * Remove common accents from given string.
 	 */
@@ -124,7 +133,7 @@ abstract class Message
 		foreach ($this->required_fields as $required_field)
 		{
 			if (!isset($this->fields[ $required_field ]) OR empty($this->fields[ $required_field ]))
-				throw new \Chaching\Exceptions\InvalidRequestException(sprintf(
+				throw new InvalidRequestException(sprintf(
 					"Required field '%s' is missing a value.", $required_field
 				));
 		}
@@ -156,22 +165,22 @@ abstract class Message
 	{
 		$http_accept_language = 'auto';
 
-		// If $http_accept_language was left out, read it from the HTTP-Header 
+		// If $http_accept_language was left out, read it from the HTTP-Header
 		if ($http_accept_language === 'auto')
 		{
 			$http_accept_language = isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
 				? $_SERVER['HTTP_ACCEPT_LANGUAGE']
-				: ''; 
+				: '';
 		}
 
-		// Standard  for HTTP_ACCEPT_LANGUAGE is defined under 
-		// http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4 
-		preg_match_all("/([[:alpha:]]{1,8})(-([[:alpha:]|-]{1,8}))?" . 
-			"(\s*;\s*q\s*=\s*(1\.0{0,3}|0\.\d{0,3}))?\s*(,|$)/i", 
+		// Standard  for HTTP_ACCEPT_LANGUAGE is defined under
+		// http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
+		preg_match_all("/([[:alpha:]]{1,8})(-([[:alpha:]|-]{1,8}))?" .
+			"(\s*;\s*q\s*=\s*(1\.0{0,3}|0\.\d{0,3}))?\s*(,|$)/i",
 			$http_accept_language, $hits, PREG_SET_ORDER
-		); 
+		);
 
-		// Default language (in case of no hits) is the first in the array 
+		// Default language (in case of no hits) is the first in the array
 		$bestlang = $available_languages[ 0 ];
 		$bestqval = 0;
 
@@ -183,7 +192,7 @@ abstract class Message
 			{
 				$langrange = strtolower ($arr[3]);
 				$language = $langprefix . '-' . $langrange;
-			} 
+			}
 			else
 			{
 				$language = $langprefix;
@@ -195,11 +204,11 @@ abstract class Message
 			{
 				$qvalue = floatval($arr[ 5 ]);
 			}
-      
-			// Find q-maximal language  
-			if (in_array($language, $available_languages) AND ($qvalue > $bestqval)) { 
-				$bestlang = $language; 
-				$bestqval = $qvalue; 
+
+			// Find q-maximal language
+			if (in_array($language, $available_languages) AND ($qvalue > $bestqval)) {
+				$bestlang = $language;
+				$bestqval = $qvalue;
 	        }
 			// If no direct hit, try the prefix only but decrease q-value
 			// by 10% (as http_negotiate_language does)

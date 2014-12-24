@@ -9,15 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace Chaching;
+namespace Chaching\Exceptions;
 
-/*
- * Payment statuses.
- */
-final class Statuses
+class InvalidAuthorizationException extends \Exception
 {
-	const SUCCESS 	= 'success';
-	const PENDING 	= 'pending';
-	const TIMEOUT 	= 'timeout';
-	const FAILURE 	= 'failure';
 }

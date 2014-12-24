@@ -15,28 +15,30 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Chaching
 {
-	const CARDPAY 	= 'cardpay';
-	const SPOROPAY 	= 'sporopay';
-	const TATRAPAY 	= 'tatrapay';
-	const TRUSTPAY 	= 'trustpay';
-	const EPLATBY 	= 'eplatby';
+	const VERSION 		= '0.9.0';
+
+	const CARDPAY 		= 'cardpay';
+	const SPOROPAY 		= 'sporopay';
+	const TATRAPAY 		= 'tatrapay';
+	const TRUSTPAY 		= 'trustpay';
+	const EPLATBY 		= 'eplatby';
 
 	private $payment_drivers = array(
-		self::SPOROPAY 	=> 'SLSPSporoPay',
-		self::CARDPAY 	=> 'TBCardPay',
-		self::TATRAPAY 	=> 'TBTatraPay',
-		self::TRUSTPAY 	=> 'TrustPay',
-		self::EPLATBY 	=> 'VUBePlatby'
+		self::SPOROPAY 		=> 'SLSPSporoPay',
+		self::CARDPAY 		=> 'TBCardPay',
+		self::TATRAPAY 		=> 'TBTatraPay',
+		self::TRUSTPAY 		=> 'TrustPay',
+		self::EPLATBY 		=> 'VUBePlatby'
 	);
 
 	/**
-	 * Vytvara objekt na pracu s platbami cez specifikovany radic.
+	 * Create object to work with payments via specified driver.
 	 *
-	 * @param 	int 	$driver 		kod radica banky, cez ktory ma byt
-	 * 									vykonavana platba
-	 * @param 	array 	$authorization 	pole s autentifikacnymi prvkami 
-	 * 									na prihlasenie do banky a podpis
-	 * 									poziadavky
+	 * @param 	int 		$driver 		driver handle
+	 * @param 	array 		$authorization 	basic authentication information
+	 * 										to service
+	 * @param 	array|NULL 	$additional_information 	additional information
+	 * 													to service
 	 **/
 	public function __construct($driver, Array $authorization)
 	{

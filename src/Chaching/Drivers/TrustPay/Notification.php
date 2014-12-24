@@ -13,9 +13,10 @@ namespace Chaching\Drivers\TrustPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
 
-final class Notification extends \Chaching\Messages\Hmac
+class Notification extends \Chaching\Messages\Hmac
 {
 	public $status 				= FALSE;
 	public $reference_number 	= NULL;
@@ -73,15 +74,15 @@ final class Notification extends \Chaching\Messages\Hmac
 
 		if (in_array($this->fields['RES'], $correct_statuses))
 		{
-			$this->status = \Chaching\Statuses::SUCCESS;
+			$this->status = TransactionStatuses::SUCCESS;
 		}
 		else if ($this->fields['RES'] == self::PAYMENT_ANNOUNCED)
 		{
-			$this->status = \Chaching\Statuses::PENDING;
+			$this->status = TransactionStatuses::PENDING;
 		}
 		else
 		{
-			$this->status = \Chaching\Statuses::FAILURE;
+			$this->status = TransactionStatuses::FAILURE;
 		}
 
 		return $this->status;

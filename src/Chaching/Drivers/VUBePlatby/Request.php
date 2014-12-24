@@ -14,8 +14,9 @@ namespace Chaching\Drivers\VUBePlatby;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Exceptions\InvalidAuthorizationException;
 
-final class Request extends \Chaching\Messages\Hmac
+class Request extends \Chaching\Messages\Hmac
 {
 	const REQUEST_URI = 'https://ib.vub.sk/e-platbyeuro.aspx';
 
@@ -41,7 +42,7 @@ final class Request extends \Chaching\Messages\Hmac
 			Driver::VARIABLE_SYMBOL 	=> 'VS',
 			Driver::CONSTANT_SYMBOL 	=> 'CS',
 			Driver::SPECIFIC_SYMBOL 	=> 'SS',
- 
+
 			Driver::CALLBACK 			=> 'RURL',
 			Driver::RETURN_PHONE 		=> 'RSMS',
 			Driver::RETURN_EMAIL 		=> 'REM'
@@ -55,14 +56,6 @@ final class Request extends \Chaching\Messages\Hmac
 		}
 	}
 
-	public function set_options(Array $options)
-	{
-		foreach ($options as $option => $value)
-		{
-			$this->$option = $value;
-		}
-	}
-
 	/**
 	 * @return 	bool
 	 * @throw 	\Chaching\Exceptions\InvalidRequestException
@@ -70,7 +63,7 @@ final class Request extends \Chaching\Messages\Hmac
 	protected function validate()
 	{
 		if (!is_array($this->auth) OR count($this->auth) !== 2)
-			throw new \Chaching\Exceptions\InvalidRequestException(
+			throw new InvalidAuthorizationException(
 				"Merchant authorization information is missing."
 			);
 
@@ -99,7 +92,7 @@ final class Request extends \Chaching\Messages\Hmac
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or AMT) has an unacceptable value '%s'. Valid " .
 				"amount consists of up to 13 base numbers and maximum of two " .
-				"decimals separated with a dot ('.').",
+				"decimals separated by a dot ('.').",
 				Driver::AMOUNT, $this->fields['AMT']
 			));
 

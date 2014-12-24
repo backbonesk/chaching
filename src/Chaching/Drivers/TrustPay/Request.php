@@ -14,8 +14,9 @@ namespace Chaching\Drivers\TrustPay;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Exceptions\InvalidAuthorizationException;
 
-final class Request extends \Chaching\Messages\Hmac
+class Request extends \Chaching\Messages\Hmac
 {
 	const REQUEST_URI = 'https://test.trustpay.eu/mapi/pay.aspx';
 
@@ -50,7 +51,7 @@ final class Request extends \Chaching\Messages\Hmac
 			Driver::CLIENT_EMAIL 		=> 'EMA',
 			Driver::CLIENT_COUNTRY 		=> 'CNT',
 			Driver::LANGUAGE 			=> 'LNG',
- 
+
 			Driver::CALLBACK 			=> 'URL'
 		);
 
@@ -67,14 +68,6 @@ final class Request extends \Chaching\Messages\Hmac
 		}
 	}
 
-	public function set_options(Array $options)
-	{
-		foreach ($options as $option => $value)
-		{
-			$this->$option = $value;
-		}
-	}
-
 	/**
 	 * @return 	bool
 	 * @throw 	\Chaching\Exceptions\InvalidRequestException
@@ -84,7 +77,7 @@ final class Request extends \Chaching\Messages\Hmac
 		$this->fields['LNG'] = strtolower($this->fields['LNG']);
 
 		if (!is_array($this->auth) OR count($this->auth) !== 2)
-			throw new \Chaching\Exceptions\InvalidRequestException(
+			throw new InvalidAuthorizationException(
 				"Merchant authorization information is missing."
 			);
 
@@ -118,7 +111,7 @@ final class Request extends \Chaching\Messages\Hmac
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or AMT) has an unacceptable value '%s'. Valid " .
 				"amount consists of up to 13 base numbers and maximum of two " .
-				"decimals separated with a dot ('.').",
+				"decimals separated by a dot ('.').",
 				Driver::AMOUNT, $this->fields['AMT']
 			));
 
@@ -198,7 +191,7 @@ final class Request extends \Chaching\Messages\Hmac
 			if (($currency = Currencies::get($this->fields['CUR'])) === NULL)
 				throw new InvalidOptionsException(sprintf(
 					"Field %s (or CUR) has an unacceptable value '%s'. " .
-					"The easiest way is to use constants provided in " . 
+					"The easiest way is to use constants provided in " .
 					"`\Chaching\Currencies` with currency codes based " .
 					"on ISO 4217.",
 					Driver::CURRENCY, $this->fields['CUR']

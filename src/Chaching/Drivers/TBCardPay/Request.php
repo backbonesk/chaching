@@ -14,12 +14,13 @@ namespace Chaching\Drivers\TBCardPay;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Exceptions\InvalidAuthorizationException;
 
-final class Request extends \Chaching\Messages\Des
+class Request extends \Chaching\Messages\Des
 {
 	const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
 
-	private $valid_languages = array(
+	protected $valid_languages = array(
 		'sk', 'en', 'de', 'hu', 'cz', 'es', 'fr', 'it', 'pl'
 	);
 
@@ -28,15 +29,16 @@ final class Request extends \Chaching\Messages\Des
 		parent::__construct();
 
 		$this->readonly_fields = array(
-			'PT', 'MID', 'MOBILE_DEVICE', 'SIGN',
+			'PT', 'MID', 'MOBILE_DEVICE', 'SIGN'
 		);
 
 		$this->required_fields = array(
-			'AMT', 'CURR', 'VS', 'RURL', 'IPC', 'NAME'
+			'AMT', 'CURR', 'VS', 'RURL', 'IPC', 'NAME', 'TPAY'
 		);
 
 		$this->optional_fields = array(
-			'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG', 'TXN'
+			'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG', 'TXN',
+			'CID', 'TEM', 'TSMS'
 		);
 
 		$this->field_map = array(
@@ -52,12 +54,15 @@ final class Request extends \Chaching\Messages\Des
 
 			Driver::CALLBACK 			=> 'RURL',
 			Driver::RETURN_PHONE 		=> 'RSMS',
-			Driver::RETURN_EMAIL 		=> 'REM'
+			Driver::RETURN_EMAIL 		=> 'REM',
+
+			Driver::CARD_ID 			=> 'CID'
 		);
 
 		$this->set_authorization($authorization);
 
 		$this->fields['PT'] 			= 'CardPay';
+		$this->fields['TPAY'] 			= 'N';
 		$this->fields['AREDIR'] 		= '1';
 
 		$this->fields['CURR'] 			= \Chaching\Currencies::EUR;
@@ -76,25 +81,17 @@ final class Request extends \Chaching\Messages\Des
 		}
 	}
 
-	public function set_options(Array $options)
-	{
-		foreach ($options as $option => $value)
-		{
-			$this->$option = $value;
-		}
-	}
-
 	/**
 	 * @return 	bool
 	 * @throw 	\Chaching\Exceptions\InvalidRequestException
 	 */
 	protected function validate()
 	{
-		$this->fields['LANG'] = strtolower($this->fields['LANG']);
-		$this->fields['NAME'] = $this->deaccentize($this->fields['NAME']);
+		$this->fields['LANG'] 	= strtolower($this->fields['LANG']);
+		$this->fields['NAME'] 	= $this->deaccentize($this->fields['NAME']);
 
 		if (!is_array($this->auth) OR count($this->auth) !== 2)
-			throw new \Chaching\Exceptions\InvalidRequestException(
+			throw new InvalidAuthorizationException(
 				"Merchant authorization information is missing."
 			);
 
@@ -128,7 +125,7 @@ final class Request extends \Chaching\Messages\Des
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or AMT) has an unacceptable value '%s'. Valid " .
 				"amount consists of up to 13 base numbers and maximum of two " .
-				"decimals separated with a dot ('.').",
+				"decimals separated by a dot ('.').",
 				Driver::AMOUNT, $this->fields['AMT']
 			));
 
@@ -181,7 +178,6 @@ final class Request extends \Chaching\Messages\Des
 				"client IP address has to be a properly formatted IPv4.",
 				Driver::CLIENT_IP, $this->fields['IPC']
 			));
-
 
 		if (strlen($this->fields['NAME']) > 30)
 		{
@@ -253,14 +249,62 @@ final class Request extends \Chaching\Messages\Des
 				"language values are '%s'.", Driver::LANGUAGE,
 				$this->fields['LANG'], implode("', '", $this->valid_languages)
 			));
+
+		if (isset($this->fields['TPAY']) AND $this->fields['TPAY'] === 'Y')
+		{
+			unset($this->fields['CS']);
+
+			if (isset($this->fields['CID']))
+			{
+				$this->fields['CID'] = (int) $this->fields['CID'];
+
+				if (strlen($this->fields['CID']) > 19)
+					throw new InvalidOptionsException(sprintf(
+						"Field %s has an unacceptable value '%s'. ",
+						$this->fields['TSMS']
+					));
+			}
+
+			if (isset($this->fields['TSMS']))
+			{
+				$phone = $this->format_mobile_number($this->fields['TSMS']);
+
+				if ($phone === NULL)
+					throw new InvalidOptionsException(sprintf(
+						"Field %s has an unacceptable value '%s'. ",
+						$this->fields['TSMS']
+					));
+
+				$this->fields['TSMS'] = $phone;
+			}
+
+			if (isset($this->fields['TEM']))
+			{
+				if (!filter_var($this->fields['TEM'], FILTER_VALIDATE_EMAIL))
+					throw new InvalidOptionsException(sprintf(
+						"Field TEM has an unacceptable value '%s'. Valid " .
+						"return email address has to be properly formatted.",
+						$this->fields['TEM']
+					));
+			}
+		}
 	}
 
 	protected function signature_base()
 	{
-		$field_list 		= [
+		$field_list = [
 			'MID', 'AMT', 'CURR', 'VS', 'CS', 'RURL', 'IPC', 'NAME'
 		];
-		$signature_base 	= '';
+
+		if (isset($this->fields['TPAY']) AND $this->fields['TPAY'] === 'Y')
+		{
+			// ComfortPat doesn't use constant symbols.
+			unset($field_list[ 4 ]);
+
+			$field_list = array_merge($field_list, [ 'TPAY', 'CID' ]);
+		}
+
+		$signature_base = '';
 
 		foreach ($field_list as $field)
 		{

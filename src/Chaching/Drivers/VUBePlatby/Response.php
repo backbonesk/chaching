@@ -13,9 +13,10 @@ namespace Chaching\Drivers\VUBePlatby;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
 
-final class Response extends \Chaching\Messages\Hmac
+class Response extends \Chaching\Messages\Hmac
 {
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
@@ -59,8 +60,8 @@ final class Response extends \Chaching\Messages\Hmac
 
 		$this->variable_symbol 	= $this->fields['VS'];
 		$this->status 			= ($this->fields['RES'] === 'ok' AND !empty($this->fields['VS']))
-			? \Chaching\Statuses::SUCCESS
-			: \Chaching\Statuses::FAILURE;
+			? TransactionStatuses::SUCCESS
+			: TransactionStatuses::FAILURE;
 
 		return $this->status;
 	}

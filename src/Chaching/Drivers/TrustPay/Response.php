@@ -13,9 +13,10 @@ namespace Chaching\Drivers\TrustPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
 
-final class Response extends \Chaching\Messages\Hmac
+class Response extends \Chaching\Messages\Hmac
 {
 	public $status 				= FALSE;
 	public $reference_number 	= NULL;
@@ -49,11 +50,11 @@ final class Response extends \Chaching\Messages\Hmac
 
 		if ($this->fields['RES'] == 0)
 		{
-			$this->status = \Chaching\Statuses::SUCCESS;
+			$this->status = TransactionStatuses::SUCCESS;
 		}
 		else
 		{
-			$this->status = \Chaching\Statuses::FAILURE;
+			$this->status = TransactionStatuses::FAILURE;
 		}
 
 		return $this->status;

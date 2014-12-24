@@ -14,8 +14,9 @@ namespace Chaching\Drivers\TBTatraPay;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Exceptions\InvalidAuthorizationException;
 
-final class Request extends \Chaching\Messages\Des
+class Request extends \Chaching\Messages\Des
 {
 	const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
 
@@ -48,7 +49,7 @@ final class Request extends \Chaching\Messages\Des
 			Driver::SPECIFIC_SYMBOL 	=> 'SS',
 
 			Driver::LANGUAGE 			=> 'LANG',
- 
+
 			Driver::CALLBACK 			=> 'RURL',
 			Driver::RETURN_PHONE 		=> 'RSMS',
 			Driver::RETURN_EMAIL 		=> 'REM'
@@ -69,14 +70,6 @@ final class Request extends \Chaching\Messages\Des
 		}
 	}
 
-	public function set_options(Array $options)
-	{
-		foreach ($options as $option => $value)
-		{
-			$this->$option = $value;
-		}
-	}
-
 	/**
 	 * @return 	bool
 	 * @throw 	\Chaching\Exceptions\InvalidRequestException
@@ -86,7 +79,7 @@ final class Request extends \Chaching\Messages\Des
 		$this->fields['LANG'] = strtolower($this->fields['LANG']);
 
 		if (!is_array($this->auth) OR count($this->auth) !== 2)
-			throw new \Chaching\Exceptions\InvalidRequestException(
+			throw new InvalidAuthorizationException(
 				"Merchant authorization information is missing."
 			);
 
@@ -120,7 +113,7 @@ final class Request extends \Chaching\Messages\Des
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or AMT) has an unacceptable value '%s'. Valid " .
 				"amount consists of up to 13 base numbers and maximum of two " .
-				"decimals separated with a dot ('.').",
+				"decimals separated by a dot ('.').",
 				Driver::AMOUNT, $this->fields['AMT']
 			));
 
@@ -136,7 +129,7 @@ final class Request extends \Chaching\Messages\Des
 		if (Currencies::validate_code($this->fields['CURR']) === NULL)
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or CURR) has an unacceptable value '%s'. " .
-				"The easiest way is to use constants provided in " . 
+				"The easiest way is to use constants provided in " .
 				"`\Chaching\Currencies` with currency codes based on ISO 4217.",
 				Driver::CURRENCY, $this->fields['CURR']
 			));
@@ -161,7 +154,7 @@ final class Request extends \Chaching\Messages\Des
 		{
 			if (strpos($this->fields['RURL'], $char) !== FALSE)
 				throw new InvalidOptionsException(sprintf(
-					"Field %s (or RURL) contains unacceptable character " . 
+					"Field %s (or RURL) contains unacceptable character " .
 					"'%s'. Valid return URL can not contain query string " .
 					"characters.", Driver::CALLBACK, $char
 				));

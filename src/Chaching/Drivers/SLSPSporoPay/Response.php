@@ -13,9 +13,11 @@ namespace Chaching\Drivers\SLSPSporoPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Exceptions\InvalidResponseException;
 
-final class Response extends \Chaching\Messages\TripleDes
+class Response extends \Chaching\Messages\TripleDes
 {
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
@@ -51,7 +53,7 @@ final class Response extends \Chaching\Messages\TripleDes
 		$signature = $this->sign($this->signature_base());
 
 		if ($this->fields['SIGN2'] !== $signature)
-			throw new \Chaching\Exceptions\InvalidResponseException(sprintf(
+			throw new InvalidResponseException(sprintf(
 				"Signature received as part of the response is incorrect (" .
 				"'%s' expected, got '%s'). If this persists contact the bank.",
 				$signature, $this->fields['SIGN2']
@@ -65,12 +67,12 @@ final class Response extends \Chaching\Messages\TripleDes
 		if ($this->fields['result'] === 'ok')
 		{
 			$this->status = $this->fields['real'] === 'ok'
-				? \Chaching\Statuses::SUCCESS
-				: \Chaching\Statuses::PENDING;
+				? TransactionStatuses::SUCCESS
+				: TransactionStatuses::PENDING;
 		}
 		else
 		{
-			$this->status = \Chaching\Statuses::FAILURE;
+			$this->status = TransactionStatuses::FAILURE;
 		}
 
 		return $this->status;

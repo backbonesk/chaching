@@ -2,13 +2,13 @@
 
 Simple and unified object-oriented library written in PHP for e-commerce services offered by Slovak banks and financial institutions.
 
-* [CardPay](https://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/cardpay.html) -- Tatra banka, a.s.
+* [CardPay](https://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/cardpay.html) with optional addition for [ComfortPay](http://www.tatrabanka.sk/cardpay/CardPay_ComfortPay_technicka_prirucka.pdf) service -- Tatra banka, a.s.
 * [TatraPay](http://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/tatrapay.html) -- Tatra banka, a.s.
 * [ePlatby VÚB](https://www.vub.sk/pre-podnikatelov/nonstop-banking/e-commerce-pre-internetovych-obchodnikov/e-platby-vub/) -- VÚB, a.s.
 * [TrustCard](http://www.trustpay.eu/contact-references-payment-methods-news/dokumenty-na-stiahnutie-en-GB/) -- TrustPay, a.s.
 * [SporoPay](http://www.slsp.sk/6415/sporopay-elektronicke-platby-na-internete.html) -- Slovenská sporiteľna, a.s.
 
-The current version of the library is v0.8.2 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.9.0 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -17,7 +17,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.8.2"
+	    "backbone/chaching": "0.9.0"
 	  }
 	}
 
@@ -114,7 +114,9 @@ TrustPay is a special case with response handling as they use notification mecha
 
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
 
-### v0.9.0
+### v0.9.0: 2014/12/24
+
+Adds support for ComfortPay transactions using CardPay driver.
 
 Shorten the name accroding to the specification when using CardPay driver.
 
