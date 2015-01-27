@@ -26,13 +26,17 @@ class Response extends \Chaching\Messages\Hmac
 		parent::__construct();
 
 		$this->readonly_fields = array(
-			'REF', 'RES', 'PID'
+			'RES', 'REF', 'PID'
 		);
 
 		$this->fields = array(
-			'REF' 	=> isset($options['REF']) ? $options['REF'] : NULL,
 			'RES' 	=> isset($options['RES']) ? $options['RES'] : NULL,
-			'PID' 	=> isset($options['PID']) ? $options['PID'] : NULL
+			'REF' 	=> (isset($options['REF']) AND !empty($options['REF']))
+				? $options['REF']
+				: NULL,
+			'PID' 	=> (isset($options['PID']) AND !empty($options['PID']))
+				? $options['PID']
+				: NULL
 		);
 
 		$this->set_authorization($authorization);

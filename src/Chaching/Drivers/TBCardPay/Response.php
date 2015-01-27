@@ -32,10 +32,18 @@ class Response extends \Chaching\Messages\Des
 		);
 
 		$this->fields = array(
-			'VS' 	=> isset($options['VS']) ? $options['VS'] : NULL,
-			'RES' 	=> isset($options['RES']) ? $options['RES'] : NULL,
-			'SIGN' 	=> isset($options['SIGN']) ? $options['SIGN'] : NULL,
-			'AC' 	=> isset($options['AC']) ? $options['AC'] : NULL
+			'VS' 	=> (isset($options['VS']) AND !empty($options['VS']))
+				? $options['VS']
+				: NULL,
+			'RES' 	=> (isset($options['RES']) AND !empty($options['RES']))
+				? $options['RES']
+				: NULL,
+			'SIGN' 	=> (isset($options['SIGN']) AND !empty($options['SIGN']))
+				? $options['SIGN']
+				: NULL,
+			'AC' 	=> (isset($options['AC']) AND !empty($options['AC']))
+				? $options['AC']
+				: NULL
 		);
 
 		if (isset($options['TRES']))
@@ -44,8 +52,12 @@ class Response extends \Chaching\Messages\Des
 			$this->readonly_fields[] = 'CID';
 
 			$this->fields = array_merge($this->fields, array(
-				'TRES' 	=> isset($options['TRES']) ? $options['TRES'] : NULL,
-				'CID' 	=> isset($options['CID']) ? $options['CID'] : NULL
+				'TRES' 	=> (isset($options['TRES']) AND !empty($options['TRES']))
+					? $options['TRES']
+					: NULL,
+				'CID' 	=> (isset($options['CID']) AND !empty($options['CID']))
+					? $options['CID']
+					: NULL
 			));
 		}
 
@@ -69,11 +81,11 @@ class Response extends \Chaching\Messages\Des
 				$signature, $this->fields['SIGN']
 			));
 
-		$this->variable_symbol 	= $this->fields['VS'];
+		$this->variable_symbol = $this->fields['VS'];
 
 		if (isset($this->fields['TRES']))
 		{
-			$this->fields['TRES'] = strtolower($this->fields['TRES']);
+			$this->fields['TRES'] 	= strtolower($this->fields['TRES']);
 
 			$this->card_id 			= $this->fields['CID'];
 			$this->status 			= ($this->fields['TRES'] === 'ok' AND !empty($this->fields['VS']) AND !empty($this->fields['CID']))
@@ -82,7 +94,7 @@ class Response extends \Chaching\Messages\Des
 		}
 		else
 		{
-			$this->fields['RES'] = strtolower($this->fields['RES']);
+			$this->fields['RES'] 	= strtolower($this->fields['RES']);
 
 			$this->status 			= ($this->fields['RES'] === 'ok' AND !empty($this->fields['VS']))
 				? TransactionStatuses::SUCCESS
@@ -94,7 +106,7 @@ class Response extends \Chaching\Messages\Des
 
 	protected function signature_base()
 	{
-		return isset($this->fields['TRES'])
+		return (isset($this->fields['TRES']) AND !empty($this->fields['TRES']))
 			? $this->fields['VS'] . $this->fields['TRES'] . $this->fields['AC'] . $this->fields['CID']
 			: $this->fields['VS'] . $this->fields['RES'] . $this->fields['AC'];
 	}

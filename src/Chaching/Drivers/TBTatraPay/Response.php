@@ -31,10 +31,18 @@ class Response extends \Chaching\Messages\Des
 		);
 
 		$this->fields = array(
-			'SS' 	=> isset($options['SS']) ? $options['SS'] : NULL,
-			'VS' 	=> isset($options['VS']) ? $options['VS'] : NULL,
-			'RES' 	=> isset($options['RES']) ? $options['RES'] : NULL,
-			'SIGN' 	=> isset($options['SIGN']) ? $options['SIGN'] : NULL
+			'SS' 	=> (isset($options['SS']) AND !empty($options['SS']))
+				? $options['SS']
+				: NULL,
+			'VS' 	=> (isset($options['VS']) AND !empty($options['VS']))
+				? $options['VS']
+				: NULL,
+			'RES' 	=> (isset($options['RES']) AND !empty($options['RES']))
+				? $options['RES']
+				: NULL,
+			'SIGN' 	=> (isset($options['SIGN']) AND !empty($options['SIGN']))
+				? $options['SIGN']
+				: NULL
 		);
 
 		$this->set_authorization($authorization);

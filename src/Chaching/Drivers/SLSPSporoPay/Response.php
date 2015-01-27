@@ -34,7 +34,7 @@ class Response extends \Chaching\Messages\TripleDes
 
 		foreach ($this->readonly_fields as $field)
 		{
-			$this->fields[ $field ] = isset($options[ $field ])
+			$this->fields[ $field ] = (isset($options[ $field ]) AND !empty($options[ $field ]))
 				? $options[ $field ]
 				: NULL;
 		}

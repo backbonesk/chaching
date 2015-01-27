@@ -26,14 +26,22 @@ class Response extends \Chaching\Messages\Hmac
 		parent::__construct();
 
 		$this->readonly_fields = array(
-			'RES', 'SIGN', 'VS', 'SS'
+			'SS', 'VS', 'RES', 'SIGN'
 		);
 
 		$this->fields = array(
-			'RES' 	=> isset($options['RES']) ? $options['RES'] : NULL,
-			'SIGN' 	=> isset($options['SIGN']) ? $options['SIGN'] : NULL,
-			'VS' 	=> isset($options['VS']) ? $options['VS'] : NULL,
-			'SS' 	=> isset($options['SS']) ? $options['SS'] : NULL
+			'SS' 	=> (isset($options['SS']) AND !empty($options['SS']))
+				? $options['SS']
+				: NULL,
+			'VS' 	=> (isset($options['VS']) AND !empty($options['VS']))
+				? $options['VS']
+				: NULL,
+			'RES' 	=> (isset($options['RES']) AND !empty($options['RES']))
+				? $options['RES']
+				: NULL,
+			'SIGN' 	=> (isset($options['SIGN']) AND !empty($options['SIGN']))
+				? $options['SIGN']
+				: NULL
 		);
 
 		$this->set_authorization($authorization);

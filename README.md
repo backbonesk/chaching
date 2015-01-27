@@ -17,7 +17,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.9.0"
+	    "backbone/chaching": "0.9.1"
 	  }
 	}
 
@@ -113,6 +113,10 @@ TrustPay is a special case with response handling as they use notification mecha
 ## Changelog
 
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.9.1: 2015/01/27
+
+Minor changes concerning input of the bank response.
 
 ### v0.9.0: 2014/12/24
 
