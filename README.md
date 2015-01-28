@@ -5,10 +5,13 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 * [CardPay](https://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/cardpay.html) with optional addition for [ComfortPay](http://www.tatrabanka.sk/cardpay/CardPay_ComfortPay_technicka_prirucka.pdf) service -- Tatra banka, a.s.
 * [TatraPay](http://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/tatrapay.html) -- Tatra banka, a.s.
 * [ePlatby VÚB](https://www.vub.sk/pre-podnikatelov/nonstop-banking/e-commerce-pre-internetovych-obchodnikov/e-platby-vub/) -- VÚB, a.s.
+
+* [VÚB eCard](http://www.vub.sk/pre-firmy/nonstop-banking/e-commerce-pre-internetovych-obchodnikov/ecard/) -- VÚB, a.s.
+
 * [TrustCard](http://www.trustpay.eu/contact-references-payment-methods-news/dokumenty-na-stiahnutie-en-GB/) -- TrustPay, a.s.
 * [SporoPay](http://www.slsp.sk/6415/sporopay-elektronicke-platby-na-internete.html) -- Slovenská sporiteľna, a.s.
 
-The current version of the library is v0.9.0 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.10.0 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -17,7 +20,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.9.1"
+	    "backbone/chaching": "0.10.0"
 	  }
 	}
 
@@ -37,7 +40,7 @@ The library follows the PSR-0 convention of naming classes and after installing 
 
 	$chaching = new Chaching($driver, $authorization);
 
-As already mentioned in the introduction, currently there are four different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY` and `Chaching::EPLATBY`.
+As already mentioned in the introduction, currently there are four different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY` and `Chaching::ECARD`.
 
 First, we need to create a request for the external service with specific information about the payment.
 
@@ -56,7 +59,7 @@ By running the `process` method in the next code block, we are getting back (whe
 
 	try
 	{
-		$redirect_uri = $payment->process($auto_redirect = FALSE);
+		$redirect_url = $payment->process($auto_redirect = FALSE);
 	}
 	catch (\Chaching\Exceptions\InvalidOptionsException $e)
 	{
@@ -71,7 +74,7 @@ Remember the `callback` key in the request options? It is a full URL that the ba
 
 	try
 	{
-		$payment = $chaching->response($_GET);
+		$payment = $chaching->response($_REQUEST);
 
 		if ($payment->status === \Chaching\Statuses::SUCCESS)
 		{
@@ -113,6 +116,10 @@ TrustPay is a special case with response handling as they use notification mecha
 ## Changelog
 
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.10.0: 2015/01/28
+
+Added support for VÚB eCard service (VÚB, a.s.).
 
 ### v0.9.1: 2015/01/27
 
@@ -158,4 +165,4 @@ First version of the Chaching library with support for CardPay and TatraPay serv
 
 ---
 
-&copy; 2014 BACKBONE, s.r.o.
+&copy; 2015 BACKBONE, s.r.o.
