@@ -33,7 +33,7 @@ class Request extends \Chaching\Messages\Des
 		);
 
 		$this->required_fields = array(
-			'AMT', 'CURR', 'VS', 'RURL', 'IPC', 'NAME', 'TPAY'
+			'AMT', 'CURR', 'VS', 'RURL', 'IPC', 'NAME'
 		);
 
 		$this->optional_fields = array(
@@ -62,7 +62,6 @@ class Request extends \Chaching\Messages\Des
 		$this->set_authorization($authorization);
 
 		$this->fields['PT'] 			= 'CardPay';
-		$this->fields['TPAY'] 			= 'N';
 		$this->fields['AREDIR'] 		= '1';
 
 		$this->fields['CURR'] 			= \Chaching\Currencies::EUR;
