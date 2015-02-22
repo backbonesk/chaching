@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,10 +13,11 @@ namespace Chaching\Drivers\SLSPSporoPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Encryption\TripleDes;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 
-class Request extends \Chaching\Messages\TripleDes
+class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://ib.slsp.sk/epayment/epayment/epayment.xml';
 
@@ -177,7 +178,7 @@ class Request extends \Chaching\Messages\TripleDes
 		}
 	}
 
-	protected function signature_base()
+	protected function sign()
 	{
 		$field_list 		= [
 			'pu_predcislo', 'pu_cislo', 'pu_kbanky', 'suma', 'mena',
@@ -198,7 +199,7 @@ class Request extends \Chaching\Messages\TripleDes
 				: '';
 		}
 
-		return $signature_base;
+		return (new TripleDes($this->auth))->sign($signature_base);
 	}
 
 	/**
@@ -208,7 +209,7 @@ class Request extends \Chaching\Messages\TripleDes
 	{
 		$this->validate();
 
-		$this->fields['sign1'] = $this->sign($this->signature_base());
+		$this->fields['sign1'] = $this->sign();
 
 		$fields = '?';
 

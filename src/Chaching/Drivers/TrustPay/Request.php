@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,10 +13,11 @@ namespace Chaching\Drivers\TrustPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Encryption\Hmac;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 
-class Request extends \Chaching\Messages\Hmac
+class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://test.trustpay.eu/mapi/pay.aspx';
 
@@ -218,10 +219,12 @@ class Request extends \Chaching\Messages\Hmac
 			));
 	}
 
-	protected function signature_base()
+	protected function sign()
 	{
-		return $this->fields['AID'] . $this->fields['AMT'] .
+		$signature_base = $this->fields['AID'] . $this->fields['AMT'] .
 			$this->fields['CUR'] . $this->fields['REF'];
+
+		return (new Hmac($this->auth))->sign($signature_base);
 	}
 
 	/**
@@ -231,7 +234,7 @@ class Request extends \Chaching\Messages\Hmac
 	{
 		$this->validate();
 
-		$this->fields['SIGN'] = $this->sign($this->signature_base());
+		$this->fields['SIGN'] = $this->sign();
 
 		$fields = '?';
 

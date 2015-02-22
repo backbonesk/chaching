@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,10 +14,11 @@ namespace Chaching\Drivers\VUBeCard;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\TransactionStatuses;
+use \Chaching\Encryption\Base64;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidResponseException;
 
-class Response extends \Chaching\Messages\Base64
+class Response extends \Chaching\Message
 {
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
@@ -56,7 +57,7 @@ class Response extends \Chaching\Messages\Base64
 				"changing it to value you got from the bank."
 			);
 
-		$signature = $this->sign($this->signature_base());
+		$signature = $this->sign();
 
 		if ($this->fields['HASH'] !== $signature)
 			throw new InvalidResponseException(sprintf(
@@ -86,7 +87,7 @@ class Response extends \Chaching\Messages\Base64
 		return $this->status;
 	}
 
-	protected function signature_base()
+	protected function sign()
 	{
 		$signature_base = '';
 
@@ -104,6 +105,6 @@ class Response extends \Chaching\Messages\Base64
 
 		$signature_base .= $this->auth[ 1 ];
 
-		return $signature_base;
+		return (new Base64($this->auth))->sign($signature_base);
 	}
 }

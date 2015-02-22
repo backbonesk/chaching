@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,10 +13,11 @@ namespace Chaching\Drivers\VUBePlatby;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Encryption\Hmac;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 
-class Request extends \Chaching\Messages\Hmac
+class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://ib.vub.sk/e-platbyeuro.aspx';
 
@@ -119,7 +120,7 @@ class Request extends \Chaching\Messages\Hmac
 
 
 		// Optional fields
-		if (!empty($this->fields['SS']) AND !preg_match('/^[0-9]{1,10}$/', $this->fields['SS']))
+		if (isset($this->fields['SS']) AND !empty($this->fields['SS']) AND !preg_match('/^[0-9]{1,10}$/', $this->fields['SS']))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or SS) has an unacceptable value '%s'. Valid " .
 				"specific symbol consists of up to 10 digits.",
@@ -160,11 +161,14 @@ class Request extends \Chaching\Messages\Hmac
 		}
 	}
 
-	protected function signature_base()
+	protected function sign()
 	{
-		return $this->fields['MID'] . $this->fields['AMT'] .
-			$this->fields['VS'] . $this->fields['SS'] . $this->fields['CS'] .
-			$this->fields['RURL'];
+		$signature_base =
+			$this->fields['MID'] . $this->fields['AMT'] . $this->fields['VS'] .
+			(isset($this->fields['SS']) ? $this->fields['SS'] : '') .
+			$this->fields['CS'] . $this->fields['RURL'];
+
+		return (new Hmac($this->auth))->sign($signature_base);
 	}
 
 	/**
@@ -174,7 +178,7 @@ class Request extends \Chaching\Messages\Hmac
 	{
 		$this->validate();
 
-		if (($this->fields['SIGN'] = $this->sign($this->signature_base())) === NULL)
+		if (($this->fields['SIGN'] = $this->sign()) === NULL)
 			throw new \Chaching\Exceptions\InvalidRequestException(
 				"Merchant authorization information (shared secret) is invalid."
 			);

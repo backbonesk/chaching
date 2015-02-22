@@ -3,26 +3,26 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace Chaching\Messages;
+namespace Chaching\Encryption;
 
-class TripleDes extends \Chaching\Message
+class TripleDes extends \Chaching\Encryption
 {
-	protected function sign($value)
+	public function sign($signature_base)
 	{
-		$hash = sha1($value, TRUE);
+		$hash = sha1($signature_base, TRUE);
 
 		while (strlen($hash) < 24)
 		{
 			$hash .= chr(0xFF);
 		}
 
-		$shared_secret 	= base64_decode($this->auth['shared_secret']);
+		$shared_secret 	= base64_decode($this->authorization['shared_secret']);
 		$key 			= $shared_secret . substr($shared_secret, 0, 8);
 
 		$iv = chr(0x00);

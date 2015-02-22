@@ -9,8 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Chaching\Exceptions;
+namespace Chaching\Encryption;
 
-class InvalidOptionsException extends \Exception
+class Base64 extends \Chaching\Encryption
 {
+	public function sign($signature_base)
+	{
+		return base64_encode(pack('H*', sha1($signature_base)));
+	}
 }

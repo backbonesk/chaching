@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,10 +13,12 @@ namespace Chaching\Drivers\TBTatraPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Encryption\Des;
+use \Chaching\Encryption\Aes256;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 
-class Request extends \Chaching\Messages\Des
+class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
 
@@ -227,14 +229,6 @@ class Request extends \Chaching\Messages\Des
 			));
 	}
 
-	protected function signature_base()
-	{
-		return $this->fields['MID'] . $this->fields['AMT'] .
-			$this->fields['CURR'] . $this->fields['VS'] .
-			(isset($this->fields['SS']) ? $this->fields['SS'] : '') .
-			$this->fields['CS'] . $this->fields['RURL'];
-	}
-
 	/**
 	 * @throw 	\Chaching\Exceptions\InvalidRequestException
 	 */
@@ -242,7 +236,7 @@ class Request extends \Chaching\Messages\Des
 	{
 		$this->validate();
 
-		$this->fields['SIGN'] = $this->sign($this->signature_base());
+		$this->fields['SIGN'] = $this->sign();
 
 		$fields = '?';
 
@@ -261,5 +255,19 @@ class Request extends \Chaching\Messages\Des
 		{
 			return $redirection;
 		}
+	}
+
+	protected function sign()
+	{
+		$signature_base =
+			$this->fields['MID'] . $this->fields['AMT'] .
+			$this->fields['CURR'] . $this->fields['VS'] .
+			(isset($this->fields['SS']) ? $this->fields['SS'] : '') .
+			$this->fields['CS'] . $this->fields['RURL'];
+
+		if (strlen($this->auth[ 1 ]) === 8)
+			return (new Des($this->auth))->sign($signature_base);
+
+		return (new Aes256($this->auth))->sign($signature_base);
 	}
 }

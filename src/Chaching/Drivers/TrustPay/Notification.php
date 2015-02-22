@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,10 +13,11 @@ namespace Chaching\Drivers\TrustPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Encryption\Hmac;
 use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
 
-class Notification extends \Chaching\Messages\Hmac
+class Notification extends \Chaching\Message
 {
 	public $status 				= FALSE;
 	public $reference_number 	= NULL;
@@ -55,7 +56,7 @@ class Notification extends \Chaching\Messages\Hmac
 	 */
 	protected function validate()
 	{
-		$signature = $this->sign($this->signature_base());
+		$signature = $this->sign();
 
 		if ($this->fields['SIG2'] !== $signature)
 			throw new \Chaching\Exceptions\InvalidResponseException(sprintf(
@@ -88,14 +89,16 @@ class Notification extends \Chaching\Messages\Hmac
 		return $this->status;
 	}
 
-	protected function signature_base()
+	protected function sign()
 	{
-		return $this->fields['AID'] . $this->fields['TYP'] .
+		$signature_base = $this->fields['AID'] . $this->fields['TYP'] .
 			$this->fields['AMT'] . $this->fields['CUR'] . $this->fields['REF'] .
 			$this->fields['RES'] . $this->fields['TID'] . $this->fields['OID'] .
 			$this->fields['TSS'] . $this->fields['CardId'] .
 			$this->fields['CardMask'] . $this->fields['CardExp'] .
 			$this->fields['AuthNumber'] . $this->fields['CardRecTxSec'] .
 			$this->fields['CardAcquirerResponseId'];
+
+		return (new Hmac($this->auth))->sign($signature_base);
 	}
 }

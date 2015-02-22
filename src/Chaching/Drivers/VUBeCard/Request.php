@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,10 +13,11 @@ namespace Chaching\Drivers\VUBeCard;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Encryption\Base64;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 
-class Request extends \Chaching\Messages\Base64
+class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://vub.eway2pay.com/fim/est3dgate';
 
@@ -171,7 +172,7 @@ class Request extends \Chaching\Messages\Base64
 			));
 	}
 
-	protected function signature_base()
+	protected function sign()
 	{
 		$field_list = [
 			'clientid', 'oid', 'amount', 'okurl', 'failurl', 'trantype',
@@ -189,14 +190,14 @@ class Request extends \Chaching\Messages\Base64
 
 		$signature_base .= $this->auth[ 1 ];
 
-		return $signature_base;
+		return (new Base64($this->auth))->sign($signature_base);
 	}
 
 	public function process($redirect = TRUE)
 	{
 		$this->validate();
 
-		$this->fields['hash'] = $this->sign($this->signature_base());
+		$this->fields['hash'] = $this->sign();
 
 		$fields = sprintf(
 			"<form action=\"%s\" method=\"post\" id=\"ecard\">\n",

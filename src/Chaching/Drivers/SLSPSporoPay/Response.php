@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,10 +14,11 @@ namespace Chaching\Drivers\SLSPSporoPay;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\TransactionStatuses;
+use \Chaching\Encryption\TripleDes;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidResponseException;
 
-class Response extends \Chaching\Messages\TripleDes
+class Response extends \Chaching\Message
 {
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
@@ -50,7 +51,7 @@ class Response extends \Chaching\Messages\TripleDes
 	 */
 	protected function validate()
 	{
-		$signature = $this->sign($this->signature_base());
+		$signature = $this->sign();
 
 		if ($this->fields['SIGN2'] !== $signature)
 			throw new InvalidResponseException(sprintf(
@@ -78,7 +79,7 @@ class Response extends \Chaching\Messages\TripleDes
 		return $this->status;
 	}
 
-	protected function signature_base()
+	protected function sign()
 	{
 		$field_list 		= [
 			'u_predcislo', 'u_cislo', 'u_kbanky', 'pu_predcislo', 'pu_cislo',
@@ -100,6 +101,6 @@ class Response extends \Chaching\Messages\TripleDes
 				: '';
 		}
 
-		return $signature_base;
+		return (new TripleDes($this->auth))->sign($signature_base);
 	}
 }

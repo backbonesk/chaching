@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2014 BACKBONE, s.r.o.
+ * (c) 2015 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,10 +13,12 @@ namespace Chaching\Drivers\TBCardPay;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Encryption\Des;
+use \Chaching\Encryption\Aes256;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 
-class Request extends \Chaching\Messages\Des
+class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
 
@@ -289,7 +291,7 @@ class Request extends \Chaching\Messages\Des
 		}
 	}
 
-	protected function signature_base()
+	protected function sign()
 	{
 		$field_list = [
 			'MID', 'AMT', 'CURR', 'VS', 'CS', 'RURL', 'IPC', 'NAME'
@@ -297,7 +299,7 @@ class Request extends \Chaching\Messages\Des
 
 		if (isset($this->fields['TPAY']) AND $this->fields['TPAY'] === 'Y')
 		{
-			// ComfortPat doesn't use constant symbols.
+			// ComfortPay doesn't use constant symbols.
 			unset($field_list[ 4 ]);
 
 			$field_list = array_merge($field_list, [ 'TPAY', 'CID' ]);
@@ -312,7 +314,10 @@ class Request extends \Chaching\Messages\Des
 				: '';
 		}
 
-		return $signature_base;
+		if (strlen($this->auth[ 1 ]) === 8)
+			return (new Des($this->auth))->sign($signature_base);
+
+		return (new Aes256($this->auth))->sign($signature_base);
 	}
 
 	/**
@@ -322,7 +327,7 @@ class Request extends \Chaching\Messages\Des
 	{
 		$this->validate();
 
-		$this->fields['SIGN'] = $this->sign($this->signature_base());
+		$this->fields['SIGN'] = $this->sign();
 
 		$fields = '?';
 
