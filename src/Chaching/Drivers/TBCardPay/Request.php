@@ -280,6 +280,10 @@ class Request extends \Chaching\Message
 
 				$this->fields['TSMS'] = $phone;
 			}
+			else if (isset($this->fields['RSMS']))
+			{
+				$this->fields['TSMS'] = $this->fields['RSMS'];
+			}
 
 			if (isset($this->fields['TEM']))
 			{
@@ -289,6 +293,10 @@ class Request extends \Chaching\Message
 						"return email address has to be properly formatted.",
 						$this->fields['TEM']
 					));
+			}
+			else if (isset($this->fields['REM']))
+			{
+				$this->fields['TEM'] = $this->fields['REM'];
 			}
 		}
 	}

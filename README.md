@@ -118,6 +118,10 @@ TrustPay is a special case with response handling as they use notification mecha
 
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
 
+### v0.11.x
+
+If client requests email notification after a payment when using ComfortPay, always request also the longer notification with `CID` (`card_id`).
+
 ### v0.11.1: 2015/03/26
 
 Fixes support for Tatra banka's ComfortPay registration.
