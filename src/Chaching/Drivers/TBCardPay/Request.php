@@ -264,39 +264,18 @@ class Request extends \Chaching\Message
 				if (strlen($this->fields['CID']) > 19)
 					throw new InvalidOptionsException(sprintf(
 						"Field %s has an unacceptable value '%s'. ",
-						$this->fields['TSMS']
+						$this->fields['CID']
 					));
 			}
 
-			if (isset($this->fields['TSMS']))
+			if (isset($this->fields['RSMS']) AND (!isset($this->fields['TSMS']) OR empty($this->fields['TSMS'])))
 			{
-				$phone = $this->format_mobile_number($this->fields['TSMS']);
-
-				if ($phone === NULL)
-					throw new InvalidOptionsException(sprintf(
-						"Field %s has an unacceptable value '%s'. ",
-						$this->fields['TSMS']
-					));
-
-				$this->fields['TSMS'] = $phone;
-			}
-			else if (isset($this->fields['RSMS']))
-			{
-				$this->fields['TSMS'] = $this->fields['RSMS'];
+				$this->fields['TSMS'] = 'Y';
 			}
 
-			if (isset($this->fields['TEM']))
+			if (isset($this->fields['REM']) AND (!isset($this->fields['TEM']) OR empty($this->fields['TEM'])))
 			{
-				if (!filter_var($this->fields['TEM'], FILTER_VALIDATE_EMAIL))
-					throw new InvalidOptionsException(sprintf(
-						"Field TEM has an unacceptable value '%s'. Valid " .
-						"return email address has to be properly formatted.",
-						$this->fields['TEM']
-					));
-			}
-			else if (isset($this->fields['REM']))
-			{
-				$this->fields['TEM'] = $this->fields['REM'];
+				$this->fields['TEM'] = 'Y';
 			}
 		}
 	}

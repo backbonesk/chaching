@@ -12,7 +12,7 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 * [TrustCard](http://www.trustpay.eu/contact-references-payment-methods-news/dokumenty-na-stiahnutie-en-GB/) -- TrustPay, a.s.
 * [SporoPay](http://www.slsp.sk/6415/sporopay-elektronicke-platby-na-internete.html) -- Slovenská sporiteľna, a.s.
 
-The current version of the library is v0.11.1 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.11.2 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -21,7 +21,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.11.1"
+	    "backbone/chaching": "0.11.2"
 	  }
 	}
 
@@ -118,9 +118,9 @@ TrustPay is a special case with response handling as they use notification mecha
 
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
 
-### v0.11.x
+### v0.11.2: 2015/03/27
 
-If client requests email notification after a payment when using ComfortPay, always request also the longer notification with `CID` (`card_id`).
+If client requests email notification after a payment when using ComfortPay, always request also the longer notification with `CID` (card identifier). Just as well, if `REM` (return email) attribute is present with a valid value `TEM` will be set automatically.
 
 ### v0.11.1: 2015/03/26
 
