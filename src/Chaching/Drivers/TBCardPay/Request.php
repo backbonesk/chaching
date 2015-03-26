@@ -39,7 +39,7 @@ class Request extends \Chaching\Message
 		);
 
 		$this->optional_fields = array(
-			'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG', 'TXN',
+			'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG', 'TXN', 'TPAY',
 			'CID', 'TEM', 'TSMS'
 		);
 
@@ -64,7 +64,7 @@ class Request extends \Chaching\Message
 		$this->set_authorization($authorization);
 
 		$this->fields['PT'] 			= 'CardPay';
-		$this->fields['AREDIR'] 		= '1';
+		$this->fields['AREDIR'] 		= 1;
 
 		$this->fields['CURR'] 			= \Chaching\Currencies::EUR;
 		$this->fields['IPC'] 			= isset($_SERVER['REMOTE_ADDR'])
@@ -238,7 +238,9 @@ class Request extends \Chaching\Message
 				));
 		}
 
-		if ($this->fields['AREDIR'] === 0 OR $this->fields['AREDIR'] === 1)
+		$this->fields['AREDIR'] = (int) $this->fields['AREDIR'];
+
+		if (!in_array($this->fields['AREDIR'], array(0, 1)))
 			throw new InvalidOptionsException(sprintf(
 				"Field AREDIR has an unacceptable value '%s'. Valid value " .
 				"would be either integer 0 or 1.", $this->fields['AREDIR']

@@ -60,7 +60,7 @@ class Request extends \Chaching\Message
 		$this->set_authorization($authorization);
 
 		$this->fields['PT'] 			= 'TatraPay';
-		$this->fields['AREDIR'] 		= '1';
+		$this->fields['AREDIR'] 		= 1;
 		$this->fields['CURR'] 			= \Chaching\Currencies::EUR;
 		$this->fields['LANG'] 			= $this->detect_client_language(
 			$this->valid_languages
@@ -215,7 +215,9 @@ class Request extends \Chaching\Message
 				));
 		}
 
-		if ($this->fields['AREDIR'] === 0 OR $this->fields['AREDIR'] === 1)
+		$this->fields['AREDIR'] = (int) $this->fields['AREDIR'];
+
+		if (!in_array($this->fields['AREDIR'], array(0, 1)))
 			throw new InvalidOptionsException(sprintf(
 				"Field AREDIR has an unacceptable value '%s'. Valid value " .
 				"would be either integer 0 or 1.", $this->fields['AREDIR']
