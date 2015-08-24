@@ -19,8 +19,7 @@ use \Chaching\Exceptions\InvalidAuthorizationException;
 
 class Request extends \Chaching\Message
 {
-	// const REQUEST_URI = 'https://www.paypal.com/cgi-bin/webscr';
-	const REQUEST_URI = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+	const REQUEST_URI = 'https://www.paypal.com/cgi-bin/webscr';
 
 	protected $valid_languages = array(
 		'sk', 'cz', 'hu', 'en'

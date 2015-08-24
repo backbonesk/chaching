@@ -19,7 +19,7 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Notification extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_notify-validate';
+	const REQUEST_URI = 'https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate';
 
 	public $status 					= FALSE;
 	public $reference_number 		= NULL;
