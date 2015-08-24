@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Chaching\Drivers\VUBeCard;
+namespace Chaching\Drivers\PayPal;
 
 use \Chaching\Driver;
 use \Chaching\Currencies;
@@ -19,7 +19,8 @@ use \Chaching\Exceptions\InvalidAuthorizationException;
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://vub.eway2pay.com/fim/est3dgate';
+	// const REQUEST_URI = 'https://www.paypal.com/cgi-bin/webscr';
+	const REQUEST_URI = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
 
 	protected $valid_languages = array(
 		'sk', 'cz', 'hu', 'en'
@@ -30,36 +31,35 @@ class Request extends \Chaching\Message
 		parent::__construct();
 
 		$this->readonly_fields = array(
-			'clientid', 'storetype', 'trantype', 'rnd', 'hash'
+			'business', 'cmd', 'charset'
 		);
 
 		$this->required_fields = array(
-			'oid', 'amount', 'currency', 'okurl'
+			'amount', 'currency_code', 'return', 'description'
 		);
 
 		$this->optional_fields = array(
-			'failurl', 'lang'
+			'no_note', 'no_shipping', 'shipping', 'address_override',
+			'cancel_return', 'email', 'first_name', 'last_name', 'address1',
+			'zip', 'city', 'country', 'address_override', 'cancel_return',
+			'notify_url',
+			'cpp_logo_image', 'cpp_cart_border_color'
 		);
 
 		$this->field_map = array(
-			Driver::VARIABLE_SYMBOL 	=> 'oid',
+			Driver::VARIABLE_SYMBOL 	=> 'custom',
 
 			Driver::AMOUNT 				=> 'amount',
-			Driver::CURRENCY 			=> 'currency',
+			Driver::CURRENCY 			=> 'currency_code',
 
 			Driver::LANGUAGE 			=> 'language',
 
-			Driver::CALLBACK 			=> 'okurl'
+			Driver::CALLBACK 			=> 'return'
 		);
 
 		$this->set_authorization($authorization);
 
-		$this->fields['trantype'] 	= 'Auth';
-		$this->fields['storetype'] 	= '3d_pay_hosting';
-		$this->fields['rnd'] 		= uniqid();
-
-		$this->fields['currency'] 	= \Chaching\Currencies::EUR;
-		$this->fields['lang'] 		= $this->detect_client_language(
+		$this->fields['lang'] 			= $this->detect_client_language(
 			$this->valid_languages
 		);
 
@@ -77,28 +77,23 @@ class Request extends \Chaching\Message
 	{
 		$this->fields['lang'] 	= strtolower($this->fields['lang']);
 
-		if (!is_array($this->auth) OR count($this->auth) !== 2)
-			throw new InvalidAuthorizationException(
-				"Merchant authorization information is missing."
-			);
+		$this->fields['business'] = strtolower($this->auth[0]);
 
-		$this->fields['clientid'] = isset($this->auth[ 0 ])
-			? $this->auth[ 0 ]
-			: '';
+		$this->fields['cmd'] = '_xclick';
 
-		if (!preg_match('/^[0-9]+$/', $this->fields['clientid']))
-			throw new InvalidOptionsException(sprintf(
-				"Authorization information (Client ID) has an " .
-				"unacceptable value '%s'. Try changing it to value you " .
-				"got from the bank.", $this->fields['clientid']
-			));
+		if (isset($this->fields['description']))
+		{
+			$this->fields['item_name'] = $this->fields['description'];
+		}
 
-		if (!isset($this->auth[ 1 ]) OR empty($this->auth[ 1 ]))
-			throw new InvalidOptionsException(
-				"Authorization information are unacceptable as it does " .
-				"not include the store key to sign requests. Try " .
-				"changing it to value you got from the bank."
-			);
+		if (isset($this->fields['address1']) OR isset($this->fields['zip']) OR isset($this->fields['city']) OR isset($this->fields['country']))
+		{
+			$this->fields['address_override'] = 1;
+		}
+
+		$this->fields['no_shipping'] = isset($this->fields['shipping'])
+			? 0
+			: 1;
 
 		// Validate all required fields first
 		$this->validate_required_fields();
@@ -118,6 +113,7 @@ class Request extends \Chaching\Message
 				Driver::AMOUNT, $this->fields['amount']
 			));
 
+		/*
 		if (is_string($this->fields['currency']) AND !is_numeric($this->fields['currency']))
 		{
 			$currency = Currencies::get($this->fields['currency']);
@@ -134,32 +130,36 @@ class Request extends \Chaching\Message
 				"`\Chaching\Currencies` with currency codes based on ISO 4217.",
 				Driver::CURRENCY, $this->fields['currency']
 			));
+		*/
 
-		if (!preg_match('/^[0-9]{1,10}$/', $this->fields['oid']))
+		if (!filter_var($this->fields['return'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
 			throw new InvalidOptionsException(sprintf(
-				"Field %s (or oid) has an unacceptable value '%s'. Valid " .
-				"order ID consists of up to 10 digits.",
-				Driver::VARIABLE_SYMBOL, $this->fields['oid']
-			));
-
-		if (!filter_var($this->fields['okurl'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
-			throw new InvalidOptionsException(sprintf(
-				"Field %s (or okurl) has an unacceptable value '%s'. Valid " .
+				"Field return has an unacceptable value '%s'. Valid " .
 				"return URL has to be properly formatted.", Driver::CALLBACK,
-				$this->fields['okurl']
+				$this->fields['return']
 			));
 
-		if (empty($this->fields['failurl']))
+		if (empty($this->fields['cancel_return']))
 		{
-			$this->fields['failurl'] = $this->fields['okurl'];
+			$this->fields['cancel_return'] = $this->fields['return'];
 		}
 		else
 		{
-			if (!filter_var($this->fields['failurl'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+			if (!filter_var($this->fields['cancel_return'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
 				throw new InvalidOptionsException(sprintf(
-					"Field failurl has an unacceptable value '%s'. Valid " .
+					"Field cancel_return has an unacceptable value '%s'. " .
+					"Valid return URL has to be properly formatted.",
+					$this->fields['cancel_return']
+				));
+		}
+
+		if (!empty($this->fields['notify_url']))
+		{
+			if (!filter_var($this->fields['notify_url'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+				throw new InvalidOptionsException(sprintf(
+					"Field notify_url has an unacceptable value '%s'. Valid " .
 					"return URL has to be properly formatted.",
-					$this->fields['failurl']
+					$this->fields['notify_url']
 				));
 		}
 
@@ -172,35 +172,12 @@ class Request extends \Chaching\Message
 			));
 	}
 
-	protected function sign()
-	{
-		$field_list = [
-			'clientid', 'oid', 'amount', 'okurl', 'failurl', 'trantype',
-			'rnd', 'storekey'
-		];
-
-		$signature_base = '';
-
-		foreach ($field_list as $field)
-		{
-			$signature_base .= isset($this->fields[ $field ])
-				? $this->fields[ $field ]
-				: '';
-		}
-
-		$signature_base .= $this->auth[ 1 ];
-
-		return (new Base64($this->auth))->sign($signature_base);
-	}
-
 	public function process($redirect = TRUE)
 	{
 		$this->validate();
 
-		$this->fields['hash'] = $this->sign();
-
 		$fields = sprintf(
-			"<form action=\"%s\" method=\"post\" id=\"ecard\">\n",
+			"<form action=\"%s\" method=\"post\" id=\"paypal\">\n<input type=\"hidden\" name=\"charset\" value=\"utf-8\">\n",
 			self::REQUEST_URI
 		);
 
@@ -212,9 +189,10 @@ class Request extends \Chaching\Message
 			);
 		}
 
-		$fields .= "\t<input type=\"submit\" value=\"Odoslat\">\n</form>";
+		$fields .= "\t<input type=\"image\" name=\"submit\" border=\"0\" src=\"https://www.paypal.com/en_US/i/btn/btn_buynow_LG.gif\" alt=\"PayPal - The safer, easier way to pay online\"><img alt=\"\" border=\"0\" width=\"1\" height=\"1\" src=\"https://www.paypal.com/en_US/i/scr/pixel.gif\" style=\"outline: none;\">\n</form>";
+
 		$fields .= "<script type=\"text/javascript\">\n";
-		$fields .= "\tdocument.getElementById('ecard').submit();\n</script>";
+		$fields .= "\tdocument.getElementById('paypal').submit();\n</script>";
 
 		return $fields;
 	}

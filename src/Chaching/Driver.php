@@ -32,6 +32,7 @@ abstract class Driver
 	const ACCOUNT_NO 		= 'account_no';
 	const BANK_CODE 		= 'bank_code';
 	const CARD_ID 			= 'card_id';
+	const NOTIFICATION_URL 	= 'notification_url';
 
 	protected $authorization 			= array();
 

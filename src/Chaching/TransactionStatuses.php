@@ -16,8 +16,10 @@ namespace Chaching;
  */
 final class TransactionStatuses
 {
-	const SUCCESS 					= 'success';
-	const FAILURE 					= 'failure';
-	const PENDING 					= 'pending';
-	const TIMEOUT 					= 'timeout';
+	const SUCCESS 	= 'success';
+	const FAILURE 	= 'failure';
+	const PENDING 	= 'pending';
+	const EXPIRED 	= 'expired';
+	const TIMEOUT 	= 'timeout';
+	const UNKNOWN 	= 'unknown';
 }
