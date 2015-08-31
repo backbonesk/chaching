@@ -38,7 +38,7 @@ class Request extends \Chaching\Message
 		);
 
 		$this->optional_fields = array(
-			'failurl', 'lang'
+			'failurl', 'lang', 'encoding'
 		);
 
 		$this->field_map = array(
@@ -59,6 +59,7 @@ class Request extends \Chaching\Message
 		$this->fields['rnd'] 		= uniqid();
 
 		$this->fields['currency'] 	= \Chaching\Currencies::EUR;
+		$this->fields['encoding'] 	= 'utf-8';
 		$this->fields['lang'] 		= $this->detect_client_language(
 			$this->valid_languages
 		);

@@ -23,7 +23,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.12.0"
+	    "backbone/chaching": "0.12.1"
 	  }
 	}
 
@@ -119,6 +119,10 @@ TrustPay is a special case with response handling as they use notification mecha
 ## Changelog
 
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.12.1: 2015/08/31
+
+Send automatically optional `encoding` attribute to VÚB eCard service to fix for default turkish encoding on payment gateway.
 
 ### v0.12.0: 2015/08/24
 
