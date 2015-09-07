@@ -15,24 +15,26 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Chaching
 {
-	const VERSION 		= '0.12.1';
+	const VERSION 		= '0.13.0';
 
-	const CARDPAY 		= 'cardpay';
-	const SPOROPAY 		= 'sporopay';
-	const TATRAPAY 		= 'tatrapay';
-	const TRUSTPAY 		= 'trustpay';
-	const EPLATBY 		= 'eplatby';
-	const ECARD 		= 'ecard';
-	const PAYPAL		= 'paypal';
+	const CARDPAY 	= 'cardpay';
+	const SPOROPAY 	= 'sporopay';
+	const TATRAPAY 	= 'tatrapay';
+	const TRUSTPAY 	= 'trustpay';
+	const EPLATBY 	= 'eplatby';
+	const ECARD 	= 'ecard';
+	const PAYPAL	= 'paypal';
+	const GPWEBPAY 	= 'gpwebpay';
 
 	private $payment_drivers = array(
-		self::SPOROPAY 		=> 'SLSPSporoPay',
-		self::CARDPAY 		=> 'TBCardPay',
-		self::TATRAPAY 		=> 'TBTatraPay',
-		self::TRUSTPAY 		=> 'TrustPay',
-		self::EPLATBY 		=> 'VUBePlatby',
-		self::ECARD 		=> 'VUBeCard',
-		self::PAYPAL		=> 'PayPal'
+		self::SPOROPAY 	=> 'SLSPSporoPay',
+		self::CARDPAY 	=> 'TBCardPay',
+		self::TATRAPAY 	=> 'TBTatraPay',
+		self::TRUSTPAY 	=> 'TrustPay',
+		self::EPLATBY 	=> 'VUBePlatby',
+		self::ECARD 	=> 'VUBeCard',
+		self::PAYPAL	=> 'PayPal',
+		self::GPWEBPAY 	=> 'GPwebpay'
 	);
 
 	/**

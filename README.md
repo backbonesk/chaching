@@ -12,9 +12,11 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 * [TrustCard](http://www.trustpay.eu/contact-references-payment-methods-news/dokumenty-na-stiahnutie-en-GB/) -- TrustPay, a.s.
 * [SporoPay](http://www.slsp.sk/6415/sporopay-elektronicke-platby-na-internete.html) -- Slovenská sporiteľna, a.s.
 
+* [GP webpay](http://gpwebpay.cz/Content/downloads/GP_webpay_Seznameni_se_systemem_072013.pdf) -- Global Payments Europe, s.r.o.
+
 * [PayPal](http://www.paypal.com) -- PayPal, a.s.
 
-The current version of the library is v0.11.2 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.13.0 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -23,7 +25,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.12.1"
+	    "backbone/chaching": "0.13.0"
 	  }
 	}
 
@@ -43,9 +45,21 @@ The library follows the PSR-0 convention of naming classes and after installing 
 
 	$chaching = new Chaching($driver, $authorization);
 
-As already mentioned in the introduction, currently there are four different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY` and `Chaching::ECARD`.
+As already mentioned in the introduction, currently there are seven different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY`, `Chaching::ECARD`, `Chaching::PAYPAL` and `Chaching::GPWEBPAY`.
 
-First, we need to create a request for the external service with specific information about the payment.
+In case of `Chaching::GPWEBPAY` use an associated array instead of password, so authentication information would look like this:
+
+	$authorization = [
+	  'merchant_id', [
+	    'key'         => '...../gpwebpay.crt',
+	    'passphrase'  => 'passphrase',
+	    'certificate' => '...../powergears_gpwebpay.key'
+	  ]
+	];
+
+Public and private key needs to be created according to GP webpay's documentation.
+
+Afterwards, we need to create a request for the external service with specific information about the payment.
 
 	$payment = $chaching->request([
 		'currency'        => \Chaching\Currencies::EUR,
@@ -117,8 +131,11 @@ TrustPay is a special case with response handling as they use notification mecha
 3. Send a pull request
 
 ## Changelog
-
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.13.0: 2015/09/07
+
+Added support for GP webpay. The difference is that it does not use a shared_key, but set of private / public keys generated according to their documentation, so an associated array with `certificate`, `key` and `passphrase` keys needs to be provided as the second argument to the constructor of `Chaching` object.
 
 ### v0.12.1: 2015/08/31
 
