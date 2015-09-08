@@ -19,7 +19,7 @@ use \Chaching\Exceptions\InvalidAuthorizationException;
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://test.3dsecure.gpwebpay.com/csobsk/order.do';
+	const REQUEST_URI = 'https://3dsecure.gpwebpay.com/csobsk/order.do';
 
 	public function __construct(Array $authorization, Array $options)
 	{
