@@ -53,7 +53,7 @@ In case of `Chaching::GPWEBPAY` use an associated array instead of password, so 
 	  'merchant_id', [
 	    'key'         => '...../gpwebpay.crt',
 	    'passphrase'  => 'passphrase',
-	    'certificate' => '...../powergears_gpwebpay.key'
+	    'certificate' => '...../gpwebpay.key'
 	  ]
 	];
 
