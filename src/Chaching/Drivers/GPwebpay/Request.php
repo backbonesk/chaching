@@ -51,6 +51,7 @@ class Request extends \Chaching\Message
 		$this->fields['OPERATION'] 		= 'CREATE_ORDER';
 		$this->fields['CURRENCY'] 		= Currencies::EUR;
 		$this->fields['MERORDERNUM'] 	= '';
+		$this->fields['MD'] 			= '';
 
 		if (is_array($options) AND !empty($options))
 		{
