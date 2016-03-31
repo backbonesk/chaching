@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,8 +14,9 @@ namespace Chaching\Drivers\GPwebpay;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Encryption\PemKeys;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
+use \Chaching\Exceptions\InvalidOptionsException;
+
 
 class Request extends \Chaching\Message
 {
@@ -25,25 +26,20 @@ class Request extends \Chaching\Message
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
-			'OPERATION', 'DEPOSITFLAG', 'DIGEST'
-		);
-
-		$this->required_fields = array(
+		$this->readonly_fields = [ 'OPERATION', 'DEPOSITFLAG', 'DIGEST' ];
+		$this->required_fields = [
 			'MERCHANTNUMBER', 'ORDERNUMBER', 'AMOUNT', 'CURRENCY', 'URL'
-		);
+		];
 
-		$this->optional_fields = array(
-			'MERORDERNUM', 'MD', 'DESCRIPTION'
-		);
+		$this->optional_fields = [ 'MERORDERNUM', 'MD', 'DESCRIPTION' ];
 
-		$this->field_map = array(
+		$this->field_map = [
 			Driver::AMOUNT 				=> 'AMOUNT',
 			Driver::CURRENCY 			=> 'CURRENCY',
 			Driver::DESCRIPTION 		=> 'DESCRIPTION',
 			Driver::VARIABLE_SYMBOL 	=> 'ORDERNUMBER',
 			Driver::CALLBACK 			=> 'URL'
-		);
+		];
 
 		$this->set_authorization($authorization);
 

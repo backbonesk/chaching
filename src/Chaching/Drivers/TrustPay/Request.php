@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,50 +11,44 @@
 
 namespace Chaching\Drivers\TrustPay;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
+use \Chaching\Exceptions\InvalidOptionsException;
+
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://test.trustpay.eu/mapi/pay.aspx';
+	const REQUEST_URI = 'https://ib.trustpay.eu/mapi/pay.aspx';
 
-	private $valid_languages = array(
-		'bg', 'bs', 'cz', 'en', 'et', 'hr', 'hu', 'lt', 'lv', 'pl', 'ro', 'ru',
-		'sk', 'sl', 'sr', 'uk'
-	);
+	private $valid_languages = [
+		'bg', 'bs', 'cz', 'en', 'es', 'et', 'hr', 'hu', 'it', 'lt', 'lv',
+		'pl', 'ro', 'ru', 'sk', 'sl', 'sr', 'tr', 'uk'
+	];
 
 	public function __construct(Array $authorization, Array $options)
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
-			'AID', 'SIG'
-		);
+		$this->readonly_fields = [ 'AID', 'SIG' ];
+		$this->required_fields = [ 'AMT', 'CUR' ];
 
-		$this->required_fields = array(
-			'AMT', 'CUR'
-		);
-
-		$this->optional_fields = array(
+		$this->optional_fields = [
 			'REF', 'URL', 'RURL', 'CURL', 'EURL', 'NURL', 'LNG', 'CNT',
 			'DSC', 'EMA'
-		);
+		];
 
-		$this->field_map = array(
+		$this->field_map = [
 			Driver::AMOUNT 				=> 'AMT',
 			Driver::CURRENCY 			=> 'CUR',
 			Driver::DESCRIPTION 		=> 'DSC',
 			Driver::REFERENCE_NUMBER 	=> 'REF',
-
 			Driver::CLIENT_EMAIL 		=> 'EMA',
 			Driver::CLIENT_COUNTRY 		=> 'CNT',
 			Driver::LANGUAGE 			=> 'LNG',
-
 			Driver::CALLBACK 			=> 'URL'
-		);
+		];
 
 		$this->set_authorization($authorization);
 

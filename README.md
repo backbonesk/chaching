@@ -16,7 +16,7 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 
 * [PayPal](http://www.paypal.com) -- PayPal, a.s.
 
-The current version of the library is v0.13.1 and requires PHP 5.4 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.14.0 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -25,7 +25,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.13.1"
+	    "backbone/chaching": "0.14.0"
 	  }
 	}
 
@@ -39,11 +39,10 @@ The library follows the PSR-0 convention of naming classes and after installing 
 	use Chaching\Chaching;
 
 	$driver        = Chaching::CARDPAY;
-	$authorization = [
-	  'merchant_id', 'password'
-	];
+	$authorization = [ 'merchant_id', 'password' ];
+	$options       = [];
 
-	$chaching = new Chaching($driver, $authorization);
+	$chaching = new Chaching($driver, $authorization, $options);
 
 As already mentioned in the introduction, currently there are seven different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY`, `Chaching::ECARD`, `Chaching::PAYPAL` and `Chaching::GPWEBPAY`.
 
@@ -133,6 +132,10 @@ TrustPay is a special case with response handling as they use notification mecha
 ## Changelog
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
 
+### v0.14.0: 2016/03/31
+
+Added support for HMAC encoding required from all new clients to Tatra banka's CardPay and TatraPay services along with ECDSA message signing (for the signing to work correctly, `openssl` PHP extension is required).
+
 ### v0.13.1: 2015/09/09
 
 Fixes minor issue for handling empty "merchant data" field with GP webpay payment method.
@@ -209,4 +212,4 @@ First version of the Chaching library with support for CardPay and TatraPay serv
 
 ---
 
-&copy; 2015 BACKBONE, s.r.o.
+&copy; 2016 BACKBONE, s.r.o.

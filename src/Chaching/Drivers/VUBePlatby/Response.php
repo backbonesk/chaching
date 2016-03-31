@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,11 +11,12 @@
 
 namespace Chaching\Drivers\VUBePlatby;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;
-use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\TransactionStatuses;
+
 
 class Response extends \Chaching\Message
 {
@@ -26,11 +27,9 @@ class Response extends \Chaching\Message
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
-			'SS', 'VS', 'RES', 'SIGN'
-		);
+		$this->readonly_fields = [ 'SS', 'VS', 'RES', 'SIGN' ];
 
-		$this->fields = array(
+		$this->fields = [
 			'SS' 	=> (isset($options['SS']) AND !empty($options['SS']))
 				? $options['SS']
 				: NULL,
@@ -43,7 +42,7 @@ class Response extends \Chaching\Message
 			'SIGN' 	=> (isset($options['SIGN']) AND !empty($options['SIGN']))
 				? $options['SIGN']
 				: NULL
-		);
+		];
 
 		$this->set_authorization($authorization);
 

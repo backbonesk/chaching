@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,62 +11,61 @@
 
 namespace Chaching\Drivers\TBCardPay;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
-use \Chaching\Encryption\Des;
+use \Chaching\Driver;
 use \Chaching\Encryption\Aes256;
-use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Encryption\Des;
+use \Chaching\Encryption\Hmac;
 use \Chaching\Exceptions\InvalidAuthorizationException;
+use \Chaching\Exceptions\InvalidOptionsException;
+
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
+	private $request_uri = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay';
 
-	protected $valid_languages = array(
+	protected $valid_languages = [
 		'sk', 'en', 'de', 'hu', 'cz', 'es', 'fr', 'it', 'pl'
-	);
+	];
 
 	public function __construct(Array $authorization, Array $options)
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
-			'PT', 'MID', 'MOBILE_DEVICE', 'SIGN'
-		);
+		$this->readonly_fields = [
+			'SIGN', 'PT', 'MID', 'MOBILE_DEVICE', 'TIMESTAMP'
+		];
 
-		$this->required_fields = array(
+		$this->required_fields = [
 			'AMT', 'CURR', 'VS', 'RURL', 'IPC', 'NAME'
-		);
+		];
 
-		$this->optional_fields = array(
+		$this->optional_fields = [
 			'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG', 'TXN', 'TPAY',
 			'CID', 'TEM', 'TSMS'
-		);
+		];
 
-		$this->field_map = array(
+		$this->field_map = [
 			Driver::AMOUNT 				=> 'AMT',
 			Driver::CURRENCY 			=> 'CURR',
 			Driver::DESCRIPTION 		=> 'DESC',
 			Driver::VARIABLE_SYMBOL 	=> 'VS',
 			Driver::CONSTANT_SYMBOL 	=> 'CS',
-
 			Driver::CLIENT_NAME 		=> 'NAME',
 			Driver::CLIENT_IP 			=> 'IPC',
 			Driver::LANGUAGE 			=> 'LANG',
-
 			Driver::CALLBACK 			=> 'RURL',
 			Driver::RETURN_PHONE 		=> 'RSMS',
 			Driver::RETURN_EMAIL 		=> 'REM',
-
 			Driver::CARD_ID 			=> 'CID'
-		);
+		];
 
 		$this->set_authorization($authorization);
 
 		$this->fields['PT'] 			= 'CardPay';
 		$this->fields['AREDIR'] 		= 1;
 
-		$this->fields['CURR'] 			= \Chaching\Currencies::EUR;
+		$this->fields['CURR'] 			= Currencies::EUR;
 		$this->fields['IPC'] 			= isset($_SERVER['REMOTE_ADDR'])
 			? $_SERVER['REMOTE_ADDR']
 			: $_SERVER['SERVER_ADDR'];
@@ -75,6 +74,15 @@ class Request extends \Chaching\Message
 		$this->fields['LANG'] 			= $this->detect_client_language(
 			$this->valid_languages
 		);
+
+		// Timestamp used in communication with the bank has to be in UTC.
+		// Used only with HMAC encoding.
+		$old_timezone = date_default_timezone_get();
+		date_default_timezone_set('UTC');
+
+		$this->fields['TIMESTAMP'] = date('dmYHis');
+
+		date_default_timezone_set($old_timezone);
 
 		if (is_array($options) AND !empty($options))
 		{
@@ -161,7 +169,7 @@ class Request extends \Chaching\Message
 				$this->fields['RURL']
 			));
 
-		$url_restricted_characters = array('&', '?', ';', '=', '+', '%');
+		$url_restricted_characters = [ '&', '?', ';', '=', '+', '%' ];
 
 		foreach ($url_restricted_characters as $char)
 		{
@@ -205,7 +213,7 @@ class Request extends \Chaching\Message
 				Driver::CONSTANT_SYMBOL, $this->fields['VS']
 			));
 
-		if (isset($this->fields['RSMS']))
+		if (isset($this->fields['RSMS']) AND !empty($this->fields['RSMS']))
 		{
 			$phone = $this->format_mobile_number($this->fields['RSMS']);
 
@@ -240,7 +248,7 @@ class Request extends \Chaching\Message
 
 		$this->fields['AREDIR'] = (int) $this->fields['AREDIR'];
 
-		if (!in_array($this->fields['AREDIR'], array(0, 1)))
+		if (!in_array($this->fields['AREDIR'], [ 0, 1 ]))
 			throw new InvalidOptionsException(sprintf(
 				"Field AREDIR has an unacceptable value '%s'. Valid value " .
 				"would be either integer 0 or 1.", $this->fields['AREDIR']
@@ -288,10 +296,32 @@ class Request extends \Chaching\Message
 
 		if (isset($this->fields['TPAY']) AND $this->fields['TPAY'] === 'Y')
 		{
-			// ComfortPay doesn't use constant symbols.
+			// ComfortPay service and / or HMAC signatures don't use constant
+			// symbols at all.
 			unset($field_list[ 4 ]);
 
 			$field_list = array_merge($field_list, [ 'TPAY', 'CID' ]);
+		}
+
+		switch (strlen($this->auth[ 1 ]))
+		{
+			case 8:
+				$encryption = new Des($this->auth);
+				break;
+
+			case 64:
+				$encryption = new Aes256($this->auth);
+				break;
+
+			case 128:
+			default:
+				$field_list = [
+					'MID', 'AMT', 'CURR', 'VS', 'TXN', 'RURL', 'IPC', 'NAME',
+					'REM', 'TPAY', 'CID', 'TIMESTAMP'
+				];
+
+				$encryption = new Hmac($this->auth);
+				break;
 		}
 
 		$signature_base = '';
@@ -303,10 +333,10 @@ class Request extends \Chaching\Message
 				: '';
 		}
 
-		if (strlen($this->auth[ 1 ]) === 8)
-			return (new Des($this->auth))->sign($signature_base);
+		if ($encryption instanceof Hmac)
+			return strtolower($encryption->sign($signature_base));
 
-		return (new Aes256($this->auth))->sign($signature_base);
+		return $encryption->sign($signature_base);
 	}
 
 	/**
@@ -316,7 +346,18 @@ class Request extends \Chaching\Message
 	{
 		$this->validate();
 
-		$this->fields['SIGN'] = $this->sign();
+		if (strlen($this->auth[ 1 ]) === 128)
+		{
+			$this->readonly_fields[ 0 ] = 'HMAC';
+
+			$this->fields['HMAC'] = $this->sign();
+		}
+		else
+		{
+			$this->fields['SIGN'] = $this->sign();
+
+			$this->request_uri = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
+		}
 
 		$fields = '?';
 
@@ -325,7 +366,7 @@ class Request extends \Chaching\Message
 			$fields .= sprintf('%s=%s&', $key, urlencode($value));
 		}
 
-		$redirection = self::REQUEST_URI.rtrim($fields, '& ');
+		$redirection = $this->request_uri.rtrim($fields, '& ');
 
 		if ($redirect === TRUE)
 		{

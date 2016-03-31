@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,10 +11,11 @@
 
 namespace Chaching\Drivers\TrustPay;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
-use \Chaching\TransactionStatuses;
+use \Chaching\Driver;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\TransactionStatuses;
+
 
 class Response extends \Chaching\Message
 {
@@ -25,11 +26,9 @@ class Response extends \Chaching\Message
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
-			'RES', 'REF', 'PID'
-		);
+		$this->readonly_fields = [ 'RES', 'REF', 'PID' ];
 
-		$this->fields = array(
+		$this->fields = [
 			'RES' 	=> isset($options['RES']) ? $options['RES'] : NULL,
 			'REF' 	=> (isset($options['REF']) AND !empty($options['REF']))
 				? $options['REF']
@@ -37,7 +36,7 @@ class Response extends \Chaching\Message
 			'PID' 	=> (isset($options['PID']) AND !empty($options['PID']))
 				? $options['PID']
 				: NULL
-		);
+		];
 
 		$this->set_authorization($authorization);
 

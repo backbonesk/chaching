@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,46 +11,37 @@
 
 namespace Chaching\Drivers\VUBeCard;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Driver;
 use \Chaching\Encryption\Base64;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
+use \Chaching\Exceptions\InvalidOptionsException;
+
 
 class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://vub.eway2pay.com/fim/est3dgate';
 
-	protected $valid_languages = array(
-		'sk', 'cz', 'hu', 'en'
-	);
+	protected $valid_languages = [ 'sk', 'cz', 'hu', 'en' ];
 
 	public function __construct(Array $authorization, Array $options)
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
+		$this->readonly_fields = [
 			'clientid', 'storetype', 'trantype', 'rnd', 'hash'
-		);
+		];
 
-		$this->required_fields = array(
-			'oid', 'amount', 'currency', 'okurl'
-		);
+		$this->required_fields = [ 'oid', 'amount', 'currency', 'okurl' ];
+		$this->optional_fields = [ 'failurl', 'lang', 'encoding' ];
 
-		$this->optional_fields = array(
-			'failurl', 'lang', 'encoding'
-		);
-
-		$this->field_map = array(
+		$this->field_map = [
 			Driver::VARIABLE_SYMBOL 	=> 'oid',
-
 			Driver::AMOUNT 				=> 'amount',
 			Driver::CURRENCY 			=> 'currency',
-
 			Driver::LANGUAGE 			=> 'language',
-
 			Driver::CALLBACK 			=> 'okurl'
-		);
+		];
 
 		$this->set_authorization($authorization);
 
@@ -58,7 +49,7 @@ class Request extends \Chaching\Message
 		$this->fields['storetype'] 	= '3d_pay_hosting';
 		$this->fields['rnd'] 		= uniqid();
 
-		$this->fields['currency'] 	= \Chaching\Currencies::EUR;
+		$this->fields['currency'] 	= Currencies::EUR;
 		$this->fields['encoding'] 	= 'utf-8';
 		$this->fields['lang'] 		= $this->detect_client_language(
 			$this->valid_languages

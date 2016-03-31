@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,8 +14,9 @@ namespace Chaching\Drivers\PayPal;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Encryption\Hmac;
-use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\TransactionStatuses;
+
 
 class Notification extends \Chaching\Message
 {
@@ -31,7 +32,7 @@ class Notification extends \Chaching\Message
 		parent::__construct();
 
 		$this->notification_options = $options;
-		$this->readonly_fields = array('business', 'custom', 'payment_status');
+		$this->readonly_fields = [ 'business', 'custom', 'payment_status' ];
 
 		foreach ($this->readonly_fields as $field_name)
 		{

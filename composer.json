@@ -1,22 +1,41 @@
 {
-  "name": "backbone/chaching",
-  "type": "library",
-  "version": "0.13.1",
-  "license": "MIT",
-  "description": "Universal payment library for banking services in Slovakia",
-  "keywords": ["chaching", "payment", "money", "slovakia", "czech republic", "latvia", "cardpay", "comfortpay", "tatrapay", "trustpay", "sporopay", "eplatby", "ecard", "paypal", "gpwebpay"],
-  "homepage": "http://www.backbone.sk/en/",
-  "authors": [
-    {
-      "name": "Palo Sopko",
-      "email": "pavol.sopko@backbone.sk"
+    "name": "backbone/chaching",
+    "type": "library",
+    "version": "0.14.0",
+    "license": "MIT",
+    "description": "Universal payment library for banking services in Slovakia",
+    "keywords": [
+        "chaching",
+        "payment",
+        "money",
+        "slovakia",
+        "czech republic",
+        "latvia",
+        "cardpay",
+        "comfortpay",
+        "tatrapay",
+        "trustpay",
+        "sporopay",
+        "eplatby",
+        "ecard",
+        "paypal",
+        "gpwebpay"
+    ],
+    "homepage": "http://www.backbone.sk/en/",
+    "authors": [
+        {
+            "name": "Palo Sopko",
+            "email": "pavol.sopko@backbone.sk"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "ext-mcrypt": "*",
+        "ext-openssl": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Chaching": "src/"
+        }
     }
-  ],
-  "require": {
-    "php": ">=5.4.0",
-    "ext-mcrypt": "*"
-  },
-  "autoload": {
-    "psr-0": { "Chaching": "src/" }
-  }
 }

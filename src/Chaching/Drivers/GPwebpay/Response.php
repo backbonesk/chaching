@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,6 +16,7 @@ use \Chaching\Encryption\PemKeys;
 use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
 
+
 class Response extends \Chaching\Message
 {
 	public $card_id 			= NULL;
@@ -27,12 +28,12 @@ class Response extends \Chaching\Message
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
+		$this->readonly_fields = [
 			'OPERATION', 'ORDERNUMBER', 'MERORDERNUM', 'MD',
 			'PRCODE', 'SRCODE', 'RESULTTEXT', 'DIGEST', 'DIGEST1'
-		);
+		];
 
-		$this->fields = array(
+		$this->fields = [
 			'OPERATION' 	=> isset($options['OPERATION'])
 				? $options['OPERATION']
 				: NULL,
@@ -57,7 +58,7 @@ class Response extends \Chaching\Message
 			'DIGEST1' 	=> (isset($options['DIGEST1']) AND !empty($options['DIGEST1']))
 				? $options['DIGEST1']
 				: NULL
-		);
+		];
 
 		$this->set_authorization($authorization);
 

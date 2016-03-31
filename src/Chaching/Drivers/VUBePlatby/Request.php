@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,11 +11,12 @@
 
 namespace Chaching\Drivers\VUBePlatby;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
+use \Chaching\Exceptions\InvalidOptionsException;
+
 
 class Request extends \Chaching\Message
 {
@@ -25,29 +26,20 @@ class Request extends \Chaching\Message
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
-			'MID', 'SIGN',
-		);
+		$this->readonly_fields = [ 'MID', 'SIGN' ];
+		$this->required_fields = [ 'AMT', 'VS', 'CS', 'RURL' ];
+		$this->optional_fields = [ 'DESC', 'SS', 'RSMS', 'REM' ];
 
-		$this->required_fields = array(
-			'AMT', 'VS', 'CS', 'RURL'
-		);
-
-		$this->optional_fields = array(
-			'DESC', 'SS', 'RSMS', 'REM'
-		);
-
-		$this->field_map = array(
+		$this->field_map = [
 			Driver::AMOUNT 				=> 'AMT',
 			Driver::DESCRIPTION 		=> 'DESC',
 			Driver::VARIABLE_SYMBOL 	=> 'VS',
 			Driver::CONSTANT_SYMBOL 	=> 'CS',
 			Driver::SPECIFIC_SYMBOL 	=> 'SS',
-
 			Driver::CALLBACK 			=> 'RURL',
 			Driver::RETURN_PHONE 		=> 'RSMS',
 			Driver::RETURN_EMAIL 		=> 'REM'
-		);
+		];
 
 		$this->set_authorization($authorization);
 

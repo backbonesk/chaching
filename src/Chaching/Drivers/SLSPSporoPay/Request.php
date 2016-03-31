@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,37 +11,34 @@
 
 namespace Chaching\Drivers\SLSPSporoPay;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Driver;
 use \Chaching\Encryption\TripleDes;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
+use \Chaching\Exceptions\InvalidOptionsException;
+
 
 class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://ib.slsp.sk/epayment/epayment/epayment.xml';
 
-	private $valid_languages = array(
-		'sk', 'en', 'de'
-	);
+	private $valid_languages = [ 'sk', 'en', 'de' ];
 
 	public function __construct(Array $authorization, Array $options)
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
+		$this->readonly_fields = [
 			'pu_predcislo', 'pu_cislo', 'pu_kbanky', 'sign1'
-		);
+		];
 
-		$this->required_fields = array(
+		$this->required_fields = [
 			'param', 'suma', 'mena', 'vs', 'ss', 'url'
-		);
+		];
 
-		$this->optional_fields = array(
-			'mail_notif_att', 'email_adr'
-		);
+		$this->optional_fields = [ 'mail_notif_att', 'email_adr' ];
 
-		$this->field_map = array(
+		$this->field_map = [
 			Driver::PREFIX 				=> 'pu_predcislo',
 			Driver::ACCOUNT_NO 			=> 'pu_cislo',
 			Driver::BANK_CODE 			=> 'pu_kbanky',
@@ -54,13 +51,13 @@ class Request extends \Chaching\Message
 
 			Driver::CALLBACK 			=> 'url',
 			Driver::RETURN_EMAIL 		=> 'email_adr'
-		);
+		];
 
 		$this->set_authorization($authorization);
 
 		if (($currency = Currencies::get(Currencies::EUR)) !== NULL)
 		{
-			$this->fields['mena'] 		= $currency['alpha_code'];
+			$this->fields['mena'] = $currency['alpha_code'];
 		}
 
 		if (is_array($options) AND !empty($options))

@@ -3,13 +3,14 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
 namespace Chaching;
+
 
 abstract class Driver
 {
@@ -34,13 +35,15 @@ abstract class Driver
 	const CARD_ID 			= 'card_id';
 	const NOTIFICATION_URL 	= 'notification_url';
 
-	protected $authorization 			= array();
+	protected $authorization 	= [];
+	protected $options 			= [];
 
-	public function __construct(Array $authorization)
+	public function __construct(Array $authorization, Array $options = [])
 	{
-		$this->authorization = $authorization;
+		$this->authorization 	= $authorization;
+		$this->options 			= $options;
 	}
 
-	abstract public function request(Array $options);
-	abstract public function response(Array $options);
+	abstract public function request(Array $attributes);
+	abstract public function response(Array $attributes);
 }

@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,7 +18,7 @@ class Hmac extends \Chaching\Encryption
 		$signature_base = pack('A*', $signature_base);
 
 		$shared_secret = (strlen($this->authorization[ 1 ]) === 128)
-			? pack('A*', pack('H*', $this->authorization[ 1 ]))
+			? pack('H*', $this->authorization[ 1 ])
 			: pack('A*', $this->authorization[ 1 ]);
 
 		return strtoupper(hash_hmac(

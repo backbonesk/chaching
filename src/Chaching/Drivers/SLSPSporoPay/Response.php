@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,12 +11,13 @@
 
 namespace Chaching\Drivers\SLSPSporoPay;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
-use \Chaching\TransactionStatuses;
+use \Chaching\Driver;
 use \Chaching\Encryption\TripleDes;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidResponseException;
+use \Chaching\TransactionStatuses;
+
 
 class Response extends \Chaching\Message
 {
@@ -27,11 +28,11 @@ class Response extends \Chaching\Message
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
+		$this->readonly_fields = [
 			'u_predcislo', 'u_cislo', 'u_kbanky', 'pu_predcislo', 'pu_cislo',
 			'pu_kbanky', 'suma', 'mena', 'vs', 'ss', 'url', 'param', 'result',
 			'real', 'SIGN2'
-		);
+		];
 
 		foreach ($this->readonly_fields as $field)
 		{

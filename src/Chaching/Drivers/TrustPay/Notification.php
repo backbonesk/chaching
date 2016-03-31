@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,11 +11,13 @@
 
 namespace Chaching\Drivers\TrustPay;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
+use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;
-use \Chaching\TransactionStatuses;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Exceptions\InvalidResponseException;
+use \Chaching\TransactionStatuses;
+
 
 class Notification extends \Chaching\Message
 {
@@ -31,12 +33,12 @@ class Notification extends \Chaching\Message
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
+		$this->readonly_fields = [
 			'AID', 'TYP', 'AMT', 'CUR', 'REF', 'RES', 'TID', 'OID', 'TSS',
 			'SIG',
 			'CardId', 'CardMask', 'CardExp', 'AuthNumber', 'CardRecTxSec',
 			'CardAcquirerResponseId', 'SIG2'
-		);
+		];
 
 		foreach ($this->readonly_fields as $field_name)
 		{
@@ -59,19 +61,19 @@ class Notification extends \Chaching\Message
 		$signature = $this->sign();
 
 		if ($this->fields['SIG2'] !== $signature)
-			throw new \Chaching\Exceptions\InvalidResponseException(sprintf(
+			throw new InvalidResponseException(sprintf(
 				"Signature received as part of the response is incorrect (" .
 				"'%s' expected, got '%s'). If this persists contact the bank.",
 				$signature, $this->fields['SIG2']
 			));
 
-		$this->reference_number 	= $this->fields['REF'];
+		$this->reference_number = $this->fields['REF'];
 
-		$correct_statuses = array(
+		$correct_statuses = [
 			self::PAYMENT_SUCCESS,
 			self::PAYMENT_AUTHORIZED,
 			self::PAYMENT_PROCESSING
-		);
+		];
 
 		if (in_array($this->fields['RES'], $correct_statuses))
 		{

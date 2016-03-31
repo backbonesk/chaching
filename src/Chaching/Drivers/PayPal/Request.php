@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,47 +14,39 @@ namespace Chaching\Drivers\PayPal;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Encryption\Base64;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidAuthorizationException;
+use \Chaching\Exceptions\InvalidOptionsException;
+
 
 class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://www.paypal.com/cgi-bin/webscr';
 
-	protected $valid_languages = array(
-		'sk', 'cz', 'hu', 'en'
-	);
+	protected $valid_languages = [ 'sk', 'cz', 'hu', 'en' ];
 
 	public function __construct(Array $authorization, Array $options)
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
-			'business', 'cmd', 'charset'
-		);
-
-		$this->required_fields = array(
+		$this->readonly_fields = [ 'business', 'cmd', 'charset' ];
+		$this->required_fields = [
 			'amount', 'currency_code', 'return', 'description'
-		);
+		];
 
-		$this->optional_fields = array(
+		$this->optional_fields = [
 			'no_note', 'no_shipping', 'shipping', 'address_override',
 			'cancel_return', 'email', 'first_name', 'last_name', 'address1',
 			'zip', 'city', 'country', 'address_override', 'cancel_return',
-			'notify_url',
-			'cpp_logo_image', 'cpp_cart_border_color'
-		);
+			'notify_url', 'cpp_logo_image', 'cpp_cart_border_color'
+		];
 
-		$this->field_map = array(
+		$this->field_map = [
 			Driver::VARIABLE_SYMBOL 	=> 'custom',
-
 			Driver::AMOUNT 				=> 'amount',
 			Driver::CURRENCY 			=> 'currency_code',
-
 			Driver::LANGUAGE 			=> 'language',
-
 			Driver::CALLBACK 			=> 'return'
-		);
+		];
 
 		$this->set_authorization($authorization);
 

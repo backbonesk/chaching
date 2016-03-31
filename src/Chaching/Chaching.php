@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,9 +13,10 @@ namespace Chaching;
 
 use \Chaching\Exceptions\InvalidOptionsException;
 
+
 class Chaching
 {
-	const VERSION 		= '0.13.1';
+	const VERSION 		= '0.14.0';
 
 	const CARDPAY 	= 'cardpay';
 	const SPOROPAY 	= 'sporopay';
@@ -26,7 +27,7 @@ class Chaching
 	const PAYPAL	= 'paypal';
 	const GPWEBPAY 	= 'gpwebpay';
 
-	private $payment_drivers = array(
+	private $payment_drivers = [
 		self::SPOROPAY 	=> 'SLSPSporoPay',
 		self::CARDPAY 	=> 'TBCardPay',
 		self::TATRAPAY 	=> 'TBTatraPay',
@@ -35,7 +36,7 @@ class Chaching
 		self::ECARD 	=> 'VUBeCard',
 		self::PAYPAL	=> 'PayPal',
 		self::GPWEBPAY 	=> 'GPwebpay'
-	);
+	];
 
 	/**
 	 * Create object to work with payments via specified driver.
@@ -46,7 +47,7 @@ class Chaching
 	 * @param 	array|NULL 	$additional_information 	additional information
 	 * 													to service
 	 **/
-	public function __construct($driver, Array $authorization)
+	public function __construct($driver, Array $authorization, Array $options = [])
 	{
 		if (!is_string($driver) OR !isset($this->payment_drivers[ $driver ]))
 			throw new InvalidOptionsException(sprintf(
@@ -63,14 +64,14 @@ class Chaching
 				$driver, implode("', '", array_keys($this->payment_drivers))
 			));
 
-		$this->driver = new $driver($authorization);
+		$this->driver = new $driver($authorization, $options);
 	}
 
 	public function __call($method, $arguments)
 	{
 		if (method_exists($this->driver, $method))
 			return call_user_func_array(
-				array($this->driver, $method), $arguments
+				[ $this->driver, $method ], $arguments
 			);
 
 		throw new \BadMethodCallException(sprintf(

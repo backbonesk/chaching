@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2015 BACKBONE, s.r.o.
+ * (c) 2016 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,60 +11,62 @@
 
 namespace Chaching\Drivers\TBTatraPay;
 
-use \Chaching\Driver;
 use \Chaching\Currencies;
-use \Chaching\Encryption\Des;
+use \Chaching\Driver;
 use \Chaching\Encryption\Aes256;
-use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Encryption\Des;
+use \Chaching\Encryption\Hmac;
 use \Chaching\Exceptions\InvalidAuthorizationException;
+use \Chaching\Exceptions\InvalidOptionsException;
+
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
+	private $request_uri = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/tatrapay';
 
-	private $valid_languages = array(
-		'sk', 'en', 'de', 'hu'
-	);
+	private $valid_languages = [ 'sk', 'en' ];
 
 	public function __construct(Array $authorization, Array $options)
 	{
 		parent::__construct();
 
-		$this->readonly_fields = array(
-			'PT', 'MID', 'SIGN',
-		);
+		$this->readonly_fields = [ 'SIGN', 'PT', 'MID' ];
+		$this->required_fields = [ 'AMT', 'CS', 'VS', 'RURL', 'CURR' ];
 
-		$this->required_fields = array(
-			'AMT', 'CURR', 'CS', 'VS', 'RURL'
-		);
-
-		$this->optional_fields = array(
+		$this->optional_fields = [
 			'SS', 'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG'
-		);
+		];
 
-		$this->field_map = array(
+		$this->field_map = [
 			Driver::AMOUNT 				=> 'AMT',
 			Driver::CURRENCY 			=> 'CURR',
 			Driver::DESCRIPTION 		=> 'DESC',
 			Driver::VARIABLE_SYMBOL 	=> 'VS',
 			Driver::CONSTANT_SYMBOL 	=> 'CS',
 			Driver::SPECIFIC_SYMBOL 	=> 'SS',
-
 			Driver::LANGUAGE 			=> 'LANG',
-
 			Driver::CALLBACK 			=> 'RURL',
 			Driver::RETURN_PHONE 		=> 'RSMS',
 			Driver::RETURN_EMAIL 		=> 'REM'
-		);
+		];
 
 		$this->set_authorization($authorization);
 
 		$this->fields['PT'] 			= 'TatraPay';
 		$this->fields['AREDIR'] 		= 1;
-		$this->fields['CURR'] 			= \Chaching\Currencies::EUR;
+		$this->fields['CURR'] 			= Currencies::EUR;
 		$this->fields['LANG'] 			= $this->detect_client_language(
 			$this->valid_languages
 		);
+
+		// Timestamp used in communication with the bank has to be in UTC. Used
+		// only with HMAC encoding.
+		$old_timezone = date_default_timezone_get();
+		date_default_timezone_set('UTC');
+
+		$this->fields['TIMESTAMP'] = date('dmYHis');
+
+		date_default_timezone_set($old_timezone);
 
 		if (is_array($options) AND !empty($options))
 		{
@@ -111,7 +113,7 @@ class Request extends \Chaching\Message
 			$this->fields['AMT'] = sprintf('%01.2F', $this->fields['AMT']);
 		}
 
-		if (!preg_match('/^[0-9]{1,13}(\.[0-9]{1,2})?$/', $this->fields['AMT']))
+		if (!preg_match('/^[0-9]{1,9}(\.[0-9]{1,2})?$/', $this->fields['AMT']))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or AMT) has an unacceptable value '%s'. Valid " .
 				"amount consists of up to 13 base numbers and maximum of two " .
@@ -150,7 +152,7 @@ class Request extends \Chaching\Message
 				$this->fields['RURL']
 			));
 
-		$url_restricted_characters = array('&', '?', ';', '=', '+', '%');
+		$url_restricted_characters = [ '&', '?', ';', '=', '+', '%' ];
 
 		foreach ($url_restricted_characters as $char)
 		{
@@ -182,7 +184,7 @@ class Request extends \Chaching\Message
 				Driver::SPECIFIC_SYMBOL, $this->fields['SS']
 			));
 
-		if (isset($this->fields['RSMS']))
+		if (isset($this->fields['RSMS']) AND !empty($this->fields['RSMS']))
 		{
 			$phone = $this->format_mobile_number($this->fields['RSMS']);
 
@@ -217,7 +219,7 @@ class Request extends \Chaching\Message
 
 		$this->fields['AREDIR'] = (int) $this->fields['AREDIR'];
 
-		if (!in_array($this->fields['AREDIR'], array(0, 1)))
+		if (!in_array($this->fields['AREDIR'], [ 0, 1 ]))
 			throw new InvalidOptionsException(sprintf(
 				"Field AREDIR has an unacceptable value '%s'. Valid value " .
 				"would be either integer 0 or 1.", $this->fields['AREDIR']
@@ -238,7 +240,18 @@ class Request extends \Chaching\Message
 	{
 		$this->validate();
 
-		$this->fields['SIGN'] = $this->sign();
+		if (strlen($this->auth[ 1 ]) === 128)
+		{
+			$this->readonly_fields[ 0 ] = 'HMAC';
+
+			$this->fields['HMAC'] = $this->sign();
+		}
+		else
+		{
+			$this->fields['SIGN'] = $this->sign();
+
+			$this->request_uri = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/e-commerce.jsp';
+		}
 
 		$fields = '?';
 
@@ -247,7 +260,7 @@ class Request extends \Chaching\Message
 			$fields .= sprintf('%s=%s&', $key, urlencode($value));
 		}
 
-		$redirection = self::REQUEST_URI.rtrim($fields, '& ');
+		$redirection = $this->request_uri.rtrim($fields, '& ');
 
 		if ($redirect === TRUE)
 		{
@@ -261,15 +274,38 @@ class Request extends \Chaching\Message
 
 	protected function sign()
 	{
-		$signature_base =
-			$this->fields['MID'] . $this->fields['AMT'] .
-			$this->fields['CURR'] . $this->fields['VS'] .
-			(isset($this->fields['SS']) ? $this->fields['SS'] : '') .
-			$this->fields['CS'] . $this->fields['RURL'];
+		$field_list = [ 'MID', 'AMT', 'CURR', 'VS', 'SS', 'CS', 'RURL' ];
 
-		if (strlen($this->auth[ 1 ]) === 8)
-			return (new Des($this->auth))->sign($signature_base);
+		switch (strlen($this->auth[ 1 ]))
+		{
+			case 8:
+				$encryption = new Des($this->auth);
+				break;
 
-		return (new Aes256($this->auth))->sign($signature_base);
+			case 64:
+				$encryption = new Aes256($this->auth);
+				break;
+
+			case 128:
+			default:
+				array_push($field_list, 'REM', 'TIMESTAMP');
+
+				$encryption = new Hmac($this->auth);
+				break;
+		}
+
+		$signature_base = '';
+
+		foreach ($field_list as $field)
+		{
+			$signature_base .= isset($this->fields[ $field ])
+				? $this->fields[ $field ]
+				: '';
+		}
+
+		if ($encryption instanceof Hmac)
+			return strtolower($encryption->sign($signature_base));
+
+		return $encryption->sign($signature_base);
 	}
 }
