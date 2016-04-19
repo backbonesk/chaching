@@ -223,9 +223,9 @@ abstract class Message
 
 trait ECDSAResponseValidator
 {
-	protected $ecdsa_keys 		= [];
+	public $ecdsa_keys 		= [];
 
-	protected function validate_ecdsa_signature()
+	public function validate_ecdsa_signature()
 	{
 		if (count($this->ecdsa_keys) === 0)
 		{
@@ -309,6 +309,6 @@ trait ECDSAResponseValidator
 
 interface ECDSAResponseInterface
 {
-	function ecdsa_signature_base();
-	function validate_ecdsa_signature();
+	public function ecdsa_signature_base();
+	public function validate_ecdsa_signature();
 }

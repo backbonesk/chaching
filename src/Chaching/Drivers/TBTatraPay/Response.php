@@ -34,7 +34,7 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 	{
 		parent::__construct();
 
-		$this->readonly_fields = [ 'SS', 'VS', 'RES', 'SIGN' ];
+		$this->readonly_fields = [ 'CS', 'SS', 'VS', 'RES', 'SIGN' ];
 
 		$this->set_authorization($authorization);
 
@@ -42,8 +42,7 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 		{
 			array_push(
 				$this->readonly_fields,
-				'AMT', 'CURR', 'VS', 'SS', 'RES', 'TID', 'ECDSA_KEY', 'ECDSA',
-				'TIMESTAMP', 'HMAC'
+				'AMT', 'CURR', 'TID', 'ECDSA_KEY', 'ECDSA', 'TIMESTAMP', 'HMAC'
 			);
 		}
 
