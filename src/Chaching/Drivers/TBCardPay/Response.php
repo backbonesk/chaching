@@ -113,7 +113,11 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 		}
 
 		$this->variable_symbol 	= $this->fields['VS'];
-		$this->transaction_id 	= $this->fields['TID'];
+
+		if (isset($this->fields['TID']))
+		{
+			$this->transaction_id 	= $this->fields['TID'];
+		}
 
 		if (isset($this->fields['TRES']))
 		{
