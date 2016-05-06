@@ -26,6 +26,7 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 	use \Chaching\ECDSAResponseValidator;
 
 	public $card_id 			= NULL;
+	public $card_no 			= NULL;
 	public $transaction_id 		= NULL;
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
@@ -34,7 +35,7 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 	{
 		parent::__construct();
 
-		$this->readonly_fields = [ 'VS', 'RES', 'SIGN', 'AC' ];
+		$this->readonly_fields = [ 'VS', 'RES', 'SIGN', 'AC', 'CC' ];
 
 		if (isset($attributes['TRES']))
 		{
@@ -112,11 +113,16 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 				throw new InvalidResponseException($error_message);
 		}
 
-		$this->variable_symbol 	= $this->fields['VS'];
+		$this->variable_symbol = $this->fields['VS'];
 
 		if (isset($this->fields['TID']))
 		{
-			$this->transaction_id 	= $this->fields['TID'];
+			$this->transaction_id = $this->fields['TID'];
+		}
+
+		if (isset($this->fields['CC']))
+		{
+			$this->card_no = $this->fields['CC'];
 		}
 
 		if (isset($this->fields['TRES']))
@@ -160,7 +166,7 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 			default:
 				$field_list = [
 					'AMT', 'CURR', 'VS', 'TXN', 'RES', 'AC', 'TRES', 'CID',
-					'TID', 'TIMESTAMP'
+					'CC', 'RC', 'TID', 'TIMESTAMP'
 				];
 
 				$encryption = new Hmac($this->auth);
@@ -186,7 +192,7 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 	public function ecdsa_signature_base()
 	{
 		$field_list = [
-			'AMT', 'CURR', 'VS', 'TXN', 'RES', 'AC', 'TRES', 'CID',
+			'AMT', 'CURR', 'VS', 'TXN', 'RES', 'AC', 'TRES', 'CID', 'CC', 'RC',
 			'TID', 'TIMESTAMP', 'SIGN'
 		];
 

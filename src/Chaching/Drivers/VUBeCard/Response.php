@@ -21,6 +21,9 @@ use \Chaching\TransactionStatuses;
 
 class Response extends \Chaching\Message
 {
+	public $card_no 			= NULL;
+	public $card_expire_on 		= NULL;
+	public $transaction_id 		= NULL;
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
 
@@ -28,7 +31,9 @@ class Response extends \Chaching\Message
 	{
 		parent::__construct();
 
-		$this->readonly_fields = [ 'HASHPARAMS', 'HASHPARAMSVAL', 'HASH' ];
+		$this->readonly_fields = [
+			'HASHPARAMS', 'HASHPARAMSVAL', 'HASH'
+		];
 
 		$this->fields = $options;
 
@@ -81,6 +86,27 @@ class Response extends \Chaching\Message
  			case 'error':
  				$this->status = TransactionStatuses::FAILURE;
 				break;
+		}
+
+		if (!empty($this->fields['TransId']))
+		{
+			$this->transaction_id = $this->fields['TransId'];
+		}
+
+		if (!empty($this->fields['MaskedPan']))
+		{
+			$this->card_no = $this->fields['MaskedPan'];
+		}
+
+		if (!empty($this->fields['Ecom_Payment_Card_ExpDate_Year']) AND !empty($this->fields['Ecom_Payment_Card_ExpDate_Month']))
+		{
+			$year = (int) $this->fields['Ecom_Payment_Card_ExpDate_Year'] + 2000;
+			$month = (int) $this->fields['Ecom_Payment_Card_ExpDate_Month'];
+
+			$this->card_expire_on = new \DateTime(sprintf('%d-%d-%d',
+				$year, $month,
+				date('t', strtotime($year . '-' . $month . '-01'))
+			));
 		}
 
 		return $this->status;
