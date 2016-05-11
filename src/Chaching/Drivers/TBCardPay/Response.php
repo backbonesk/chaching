@@ -35,7 +35,7 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 	{
 		parent::__construct();
 
-		$this->readonly_fields = [ 'VS', 'RES', 'SIGN', 'AC', 'CC' ];
+		$this->readonly_fields = [ 'VS', 'RES', 'SIGN', 'AC', 'CC', 'RC' ];
 
 		if (isset($attributes['TRES']))
 		{
