@@ -22,7 +22,8 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Request extends \Chaching\Message
 {
-	private $request_uri = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay';
+	private $request_uri =
+		'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/cardpay';
 
 	protected $valid_languages = [
 		'sk', 'en', 'de', 'hu', 'cz', 'es', 'fr', 'it', 'pl'
@@ -147,7 +148,7 @@ class Request extends \Chaching\Message
 				: NULL;
 		}
 
-		if (Currencies::validate_code($this->fields['CURR']) === NULL)
+		if (Currencies::validate_code($this->fields['CURR']) === FALSE)
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or CURR) has an unacceptable value '%s'. " .
 				"The easiest way is to use constants provided in " .

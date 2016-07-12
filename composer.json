@@ -1,7 +1,7 @@
 {
     "name": "backbone/chaching",
     "type": "library",
-    "version": "0.14.4",
+    "version": "0.15.0",
     "license": "MIT",
     "description": "Universal payment library for banking services in Slovakia",
     "keywords": [
@@ -19,7 +19,8 @@
         "eplatby",
         "ecard",
         "paypal",
-        "gpwebpay"
+        "gpwebpay",
+        "iterminal"
     ],
     "homepage": "http://www.backbone.sk/en/",
     "authors": [
@@ -30,6 +31,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
+        "ext-hash": "*",
         "ext-mcrypt": "*",
         "ext-openssl": "*"
     },

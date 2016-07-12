@@ -12,6 +12,6 @@
 namespace Chaching\Exceptions;
 
 
-class MissingDependencyException extends ChachingException
+class ChachingException extends \RuntimeException
 {
 }

@@ -11,6 +11,7 @@
 
 namespace Chaching\Encryption;
 
+
 class Hmac extends \Chaching\Encryption
 {
 	public function sign($signature_base)

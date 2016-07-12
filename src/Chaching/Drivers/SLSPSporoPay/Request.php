@@ -134,7 +134,7 @@ class Request extends \Chaching\Message
 				: NULL;
 		}
 
-		if (Currencies::validate_code($this->fields['mena']) === NULL)
+		if (Currencies::validate_code($this->fields['mena']) === FALSE)
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or `mena`) has an unacceptable value '%s'. " .
 				"The easiest way is to use constants provided in " .

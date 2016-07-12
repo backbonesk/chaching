@@ -20,10 +20,12 @@ use \Chaching\TransactionStatuses;
 
 class Notification extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate';
+	const REQUEST_URI =
+		'https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate';
 
 	public $status 					= FALSE;
 	public $reference_number 		= NULL;
+	public $transaction_id 			= NULL;
 
 	private $notification_options 	= [];
 
@@ -32,7 +34,9 @@ class Notification extends \Chaching\Message
 		parent::__construct();
 
 		$this->notification_options = $options;
-		$this->readonly_fields = [ 'business', 'custom', 'payment_status' ];
+		$this->readonly_fields = [
+			'business', 'custom', 'payment_status', 'txn_id'
+		];
 
 		foreach ($this->readonly_fields as $field_name)
 		{
@@ -81,6 +85,11 @@ class Notification extends \Chaching\Message
 		}
 
 		$this->reference_nuber = $this->fields['custom'];
+
+		if (isset($this->fields['txn_id']))
+		{
+			$this->transaction_id = $this->fields['txn_id'];
+		}
 	}
 
 	private function validate_notification()

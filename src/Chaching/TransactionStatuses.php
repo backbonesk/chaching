@@ -22,4 +22,5 @@ final class TransactionStatuses
 	const EXPIRED 	= 'expired';
 	const TIMEOUT 	= 'timeout';
 	const UNKNOWN 	= 'unknown';
+	const REVERSED 	= 'reversed';
 }

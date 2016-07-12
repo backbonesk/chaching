@@ -16,26 +16,28 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Chaching
 {
-	const VERSION 		= '0.14.4';
+	const VERSION 		= '0.15.0';
 
-	const CARDPAY 	= 'cardpay';
-	const SPOROPAY 	= 'sporopay';
-	const TATRAPAY 	= 'tatrapay';
-	const TRUSTPAY 	= 'trustpay';
-	const EPLATBY 	= 'eplatby';
-	const ECARD 	= 'ecard';
-	const PAYPAL	= 'paypal';
-	const GPWEBPAY 	= 'gpwebpay';
+	const CARDPAY 		= 'cardpay';
+	const SPOROPAY 		= 'sporopay';
+	const TATRAPAY 		= 'tatrapay';
+	const TRUSTPAY 		= 'trustpay';
+	const EPLATBY 		= 'eplatby';
+	const ECARD 		= 'ecard';
+	const PAYPAL		= 'paypal';
+	const GPWEBPAY 		= 'gpwebpay';
+	const ITERMINAL 	= 'iterminal';
 
 	private $payment_drivers = [
-		self::SPOROPAY 	=> 'SLSPSporoPay',
-		self::CARDPAY 	=> 'TBCardPay',
-		self::TATRAPAY 	=> 'TBTatraPay',
-		self::TRUSTPAY 	=> 'TrustPay',
-		self::EPLATBY 	=> 'VUBePlatby',
-		self::ECARD 	=> 'VUBeCard',
-		self::PAYPAL	=> 'PayPal',
-		self::GPWEBPAY 	=> 'GPwebpay'
+		self::SPOROPAY 		=> 'SLSPSporoPay',
+		self::CARDPAY 		=> 'TBCardPay',
+		self::TATRAPAY 		=> 'TBTatraPay',
+		self::TRUSTPAY 		=> 'TrustPay',
+		self::EPLATBY 		=> 'VUBePlatby',
+		self::ECARD 		=> 'VUBeCard',
+		self::PAYPAL		=> 'PayPal',
+		self::GPWEBPAY 		=> 'GPwebpay',
+		self::ITERMINAL 	=> 'PBiTerminal'
 	];
 
 	/**

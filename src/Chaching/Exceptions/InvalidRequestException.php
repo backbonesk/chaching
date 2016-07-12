@@ -12,6 +12,6 @@
 namespace Chaching\Exceptions;
 
 
-class InvalidRequestException extends \RuntimeException
+class InvalidRequestException extends ChachingException
 {
 }

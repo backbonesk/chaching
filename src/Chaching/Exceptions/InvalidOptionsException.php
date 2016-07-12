@@ -12,6 +12,6 @@
 namespace Chaching\Exceptions;
 
 
-class InvalidOptionsException extends \Exception
+class InvalidOptionsException extends ChachingException
 {
 }

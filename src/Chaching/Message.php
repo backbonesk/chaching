@@ -50,6 +50,17 @@ abstract class Message
 		));
 	}
 
+	public function __isset($name)
+	{
+		if (in_array($name, array_keys($this->fields)))
+			return TRUE;
+
+		if (in_array($name, array_keys($this->field_map)))
+			return (bool) isset($this->fields[ $this->field_map[ $name ] ]);
+
+		return FALSE;
+	}
+
 	public function __set($name, $value)
 	{
 		if (in_array($name, $this->readonly_fields))

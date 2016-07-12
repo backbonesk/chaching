@@ -9,14 +9,17 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 
 * [VÚB eCard](http://www.vub.sk/pre-firmy/nonstop-banking/e-commerce-pre-internetovych-obchodnikov/ecard/) -- VÚB, a.s.
 
-* [TrustCard](http://www.trustpay.eu/contact-references-payment-methods-news/dokumenty-na-stiahnutie-en-GB/) -- TrustPay, a.s.
 * [SporoPay](http://www.slsp.sk/6415/sporopay-elektronicke-platby-na-internete.html) -- Slovenská sporiteľna, a.s.
+
+* [iTerminal](https://www.postovabanka.sk/pre-firmy/eft-pos-terminal/iterminal/) -- Poštová banka, a.s.
 
 * [GP webpay](http://gpwebpay.cz/Content/downloads/GP_webpay_Seznameni_se_systemem_072013.pdf) -- Global Payments Europe, s.r.o.
 
-* [PayPal](http://www.paypal.com) -- PayPal, a.s.
+* [TrustCard](http://www.trustpay.eu/contact-references-payment-methods-news/dokumenty-na-stiahnutie-en-GB/) -- TrustPay, a.s.
 
-The current version of the library is v0.14.4 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+* [PayPal](http://www.paypal.com) -- PayPal (Europe) S.à r.l. et Cie, S.C.A.
+
+The current version of the library is v0.15.0 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -25,7 +28,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.14.4"
+	    "backbone/chaching": "0.15.0"
 	  }
 	}
 
@@ -44,7 +47,7 @@ The library follows the PSR-0 convention of naming classes and after installing 
 
 	$chaching = new Chaching($driver, $authorization, $options);
 
-As already mentioned in the introduction, currently there are seven different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY`, `Chaching::ECARD`, `Chaching::PAYPAL` and `Chaching::GPWEBPAY`.
+As already mentioned in the introduction, currently there are eight different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY` and `Chaching::ITERMINAL`.
 
 In case of `Chaching::GPWEBPAY` use an associated array instead of password, so authentication information would look like this:
 
@@ -57,6 +60,15 @@ In case of `Chaching::GPWEBPAY` use an associated array instead of password, so 
 	];
 
 Public and private key needs to be created according to GP webpay's documentation.
+
+And in case of `Chaching::ITERMINAL` use an associated array as well:
+
+	$authorization = [
+	  NULL, [
+	    'keystore'  => '...../iterminal.pem',
+	    'password'  => 'password'
+	  ]
+	];
 
 Afterwards, we need to create a request for the external service with specific information about the payment.
 
@@ -73,6 +85,8 @@ Afterwards, we need to create a request for the external service with specific i
 
 By running the `process` method in the next code block, we are getting back (when `$auto_redirect` is set to `FALSE`) the URL to redirect the user to, where the user will make the payment.
 
+(Note that with `Chaching::ITERMINAL` the `$auto_redirect` will not ever work as the transaction identifier that is provided for you is strictly needed for thereafter. Only after you succesfully create the transaction you can use the redirection URL. For more information read bank's documetation.)
+
 	try
 	{
 		$redirect_url = $payment->process($auto_redirect = FALSE);
@@ -86,7 +100,7 @@ By running the `process` method in the next code block, we are getting back (whe
 		// General error with authentication or the request itself.
 	}
 
-Remember the `callback` key in the request options? It is a full URL that the banking service will redirect upon completion of the payment. Chaching also has methods to help with handling the response, checking it's validity, etc.
+Remember the `callback` key in the request options? It is an absolute URL that the banking service will redirect to upon completion of the payment. Chaching also has methods to help with handling the response, checking it's validity, etc. However, if you are running with `Chaching::ITERMINAL`'s driver, you do not need to provide a callback as it is set in the merchant's centre provided by the bank.
 
 	try
 	{
@@ -103,7 +117,7 @@ Remember the `callback` key in the request options? It is a full URL that the ba
 		}
 		else
 		{
-			// Failure, the user cancelled or the payment pending.
+			// Failure, the user cancelled, the payment got rejected or the payment pending.
 		}
 	}
 	catch (\Chaching\Exceptions\InvalidResponseException $e)
@@ -124,6 +138,23 @@ TrustPay is a special case with response handling as they use notification mecha
 		// General error with authentication or the response/notification itself.
 	}
 
+When using Poštová banka's iTerminal servie, there is an option of refunding part or full payment that has been successfuly completed before.
+
+	try
+	{
+		$payment = $chaching->refund([
+			'transaction_id' => '...',
+			'amount'         => 1.00,
+			'currency'       => \Chaching\Currencies::EUR
+		]);
+
+		// Check $payment->status and do what's appropriate.
+	}
+	catch (\Chaching\Exceptions\ChachingException $e)
+	{
+		// General error with authentication, request or bank's response.
+	}
+
 ## Contributing
 1. Check for open issues or open a new issue for a feature request or a bug.
 2. Fork the repository and make your changes to the master branch (or branch off of it).
@@ -131,6 +162,11 @@ TrustPay is a special case with response handling as they use notification mecha
 
 ## Changelog
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.15.0: 2016/05/31
+
+Added support for Poštová banka's iTerminal serice for accepting payments as well as refunding them.
+Adds default saving of PayPal's transaction identifier to `transaction_id` on notification object.
 
 ### v0.14.4: 2016/05/11
 
