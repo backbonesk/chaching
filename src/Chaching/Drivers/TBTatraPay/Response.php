@@ -98,7 +98,12 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 
 		if (strlen($this->auth[ 1 ]) === 128)
 		{
-			list($status, $error_message) = $this->validate_ecdsa_signature();
+			list($status, $error_message) = $this->validate_ecdsa_signature(
+				!empty($this->fields['ECDSA']) ? $this->fields['ECDSA'] : '',
+				!empty($this->fields['ECDSA_KEY'])
+					? $this->fields['ECDSA_KEY']
+					: 0
+			);
 
 			if ($status !== TRUE)
 				throw new InvalidResponseException($error_message);

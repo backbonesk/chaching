@@ -68,22 +68,9 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 			unset($this->fields['HMAC']);
 		}
 
-		if (isset($options['ecdsa_keys_file']) AND is_file($options['ecdsa_keys_file']))
+		if (isset($options['ecdsa_keys_file']))
 		{
-			preg_match_all(
-				'/KEY_ID: (\d+)\nSTATUS: ([a-zA-Z0-9]+)\n' .
-				'(-----BEGIN PUBLIC KEY.*END PUBLIC KEY-----\n)/isU',
-				file_get_contents($options['ecdsa_keys_file']),
-				$ecdsa_keys
-			);
-
-			foreach ($ecdsa_keys[ 1 ] as $key => $ecdsa_key)
-			{
-				if ($ecdsa_keys[ 2 ][ $key ] !== 'VALID')
-					continue;
-
-				$this->ecdsa_keys[ $ecdsa_key ] = $ecdsa_keys[ 3 ][ $key ];
-			}
+			$this->load_ecdsa_keys_from_file($options['ecdsa_keys_file']);
 		}
 
 		$this->validate();
@@ -107,7 +94,12 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 
 		if (strlen($this->auth[ 1 ]) === 128)
 		{
-			list($status, $error_message) = $this->validate_ecdsa_signature();
+			list($status, $error_message) = $this->validate_ecdsa_signature(
+				!empty($this->fields['ECDSA']) ? $this->fields['ECDSA'] : '',
+				!empty($this->fields['ECDSA_KEY'])
+					? $this->fields['ECDSA_KEY']
+					: 0
+			);
 
 			if ($status !== TRUE)
 				throw new InvalidResponseException($error_message);

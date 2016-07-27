@@ -19,7 +19,7 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 
 * [PayPal](http://www.paypal.com) -- PayPal (Europe) S.à r.l. et Cie, S.C.A.
 
-The current version of the library is v0.15.0 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.15.1 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -28,7 +28,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.15.0"
+	    "backbone/chaching": "0.15.1"
 	  }
 	}
 
@@ -138,7 +138,7 @@ TrustPay is a special case with response handling as they use notification mecha
 		// General error with authentication or the response/notification itself.
 	}
 
-When using Poštová banka's iTerminal servie, there is an option of refunding part or full payment that has been successfuly completed before.
+When using Poštová banka's iTerminal service or Tatra banka's CardPay service, there is an option of refunding part or full payment that has been successfully completed before. Poštová banka supports only one refund per transaction, in case of CardPay you may refund in as many steps as you'd like until sum of all refunds reaches the amount of original transaction.
 
 	try
 	{
@@ -155,6 +155,8 @@ When using Poštová banka's iTerminal servie, there is an option of refunding p
 		// General error with authentication, request or bank's response.
 	}
 
+Payment status can be one of `TransactionStatuses::REVERSED`, `TransactionStatuses::SUCCESS` or `TransactionStatuses::FAILURE`. First two mean that the payment has been successfully refunded.
+
 ## Contributing
 1. Check for open issues or open a new issue for a feature request or a bug.
 2. Fork the repository and make your changes to the master branch (or branch off of it).
@@ -162,6 +164,10 @@ When using Poštová banka's iTerminal servie, there is an option of refunding p
 
 ## Changelog
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.15.1: 2016/07/27
+
+Added support for CardPay's ability to refund payments.
 
 ### v0.15.0: 2016/05/31
 

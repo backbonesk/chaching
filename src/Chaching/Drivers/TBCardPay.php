@@ -41,4 +41,18 @@ class TBCardPay extends \Chaching\Driver
 
 		return $response;
 	}
+
+	public function refund(Array $attributes)
+	{
+		static $refund = NULL;
+
+		if ($refund === NULL)
+		{
+			$refund = new \Chaching\Drivers\TBCardPay\Refund(
+				$this->authorization, $attributes, $this->options
+			);
+		}
+
+		return $refund;
+	}
 }

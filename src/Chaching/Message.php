@@ -236,7 +236,28 @@ trait ECDSAResponseValidator
 {
 	public $ecdsa_keys 		= [];
 
-	public function validate_ecdsa_signature()
+	public function load_ecdsa_keys_from_file($file)
+	{
+		if (!is_file($file))
+			return FALSE;
+
+		preg_match_all(
+			'/KEY_ID: (\d+)\nSTATUS: ([a-zA-Z0-9]+)\n' .
+			'(-----BEGIN PUBLIC KEY.*END PUBLIC KEY-----\n)/isU',
+			file_get_contents($file),
+			$ecdsa_keys
+		);
+
+		foreach ($ecdsa_keys[ 1 ] as $key => $ecdsa_key)
+		{
+			if ($ecdsa_keys[ 2 ][ $key ] !== 'VALID')
+				continue;
+
+			$this->ecdsa_keys[ $ecdsa_key ] = $ecdsa_keys[ 3 ][ $key ];
+		}
+	}
+
+	public function validate_ecdsa_signature($signature, $key_id = 0)
 	{
 		if (count($this->ecdsa_keys) === 0)
 		{
@@ -249,7 +270,7 @@ trait ECDSAResponseValidator
 				E_USER_WARNING
 			);
 		}
-		else if (!isset($this->fields['ECDSA_KEY']) OR !is_numeric($this->fields['ECDSA_KEY']) OR !isset($this->ecdsa_keys[ $this->fields['ECDSA_KEY'] ]))
+		else if (empty($key_id) OR !is_numeric($key_id) OR !isset($this->ecdsa_keys[ $key_id ]))
 		{
 			trigger_error(
 				sprintf(
@@ -258,7 +279,7 @@ trait ECDSAResponseValidator
 					"set in options array when creating chaching " .
 					"instance to take advantage of additional security " .
 					"when validating messages from the bank.",
-					$this->fields['ECDSA_KEY']
+					$key_id
 				),
 				E_USER_WARNING
 			);
@@ -280,8 +301,8 @@ trait ECDSAResponseValidator
 
 			$openssl_result = openssl_verify(
 				$signature_base,
-				pack('H*', $this->fields['ECDSA']),
-				$this->ecdsa_keys[ $this->fields['ECDSA_KEY'] ],
+				pack('H*', $signature),
+				$this->ecdsa_keys[ $key_id ],
 				OPENSSL_ALGO_SHA256
 			);
 
@@ -308,7 +329,7 @@ trait ECDSAResponseValidator
 							"ECDSA Signature received as part of the " .
 							"response is incorrect (got '%s'). If this " .
 							"persists contact the bank.",
-							$this->fields['ECDSA']
+							$signature
 						)
 					];
 			}
@@ -321,5 +342,5 @@ trait ECDSAResponseValidator
 interface ECDSAResponseInterface
 {
 	public function ecdsa_signature_base();
-	public function validate_ecdsa_signature();
+	public function validate_ecdsa_signature($signature, $key_id = 0);
 }

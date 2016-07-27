@@ -39,6 +39,7 @@ class Curl
 			CURLOPT_URL 			=> $url,
 			CURLOPT_CONNECTTIMEOUT 	=> 30,
 			CURLOPT_TIMEOUT 		=> 30,
+			CURLOPT_HEADER 			=> TRUE,
 			CURLOPT_RETURNTRANSFER 	=> TRUE,
 			CURLOPT_USERAGENT 		=> 'chaching-php-' . Chaching::VERSION
 		] + $custom_options;
@@ -96,7 +97,21 @@ class Curl
 
 		curl_setopt_array($ch, $options);
 
-		$this->content = curl_exec($ch);
+		$data = curl_exec($ch);
+
+		list($headers, $_) = explode("\r\n\r\n", $data, 2);
+
+		foreach (explode("\n", $headers) as $header)
+		{
+			if (preg_match('/([a-z0-9\-]+):(.+)*/i', $header, $matches))
+			{
+				$this->headers[ strtolower($matches[ 1 ]) ] =
+					trim($matches[ 2 ]);
+			}
+		}
+
+		$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+		$this->content = substr($data, $header_size);
 
 		// With dual stacked DNS responses, it's possible for a server to
 		// have IPv6 enabled but not have IPv6 connectivity.  If this is
@@ -141,8 +156,17 @@ class Curl
 			: NULL;
 	}
 
-	public function headers()
+	public function headers($header = NULL)
 	{
+		if (!empty($header) AND is_string($header))
+		{
+			$header = strtolower($header);
+
+			return isset($this->headers[ $header ])
+				? $this->headers[ $header ]
+				: NULL;
+		}
+
 		return !empty($this->headers) ? $this->headers : [];
 	}
 
