@@ -87,7 +87,7 @@ class Request extends \Chaching\Message
 
 		if (!empty($attributes))
 		{
-			$this->set_options($attributes);
+			$this->set_attributes($attributes);
 		}
 
 		if (!empty($options))
