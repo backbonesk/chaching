@@ -21,7 +21,7 @@ class TrustPay extends \Chaching\Driver
 		if ($request === NULL)
 		{
 			$request = new \Chaching\Drivers\TrustPay\Request(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 
@@ -35,7 +35,7 @@ class TrustPay extends \Chaching\Driver
 		if ($response === NULL)
 		{
 			$response = new \Chaching\Drivers\TrustPay\Response(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 
@@ -49,7 +49,7 @@ class TrustPay extends \Chaching\Driver
 		if ($notification === NULL)
 		{
 			$notification = new \Chaching\Drivers\TrustPay\Notification(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 

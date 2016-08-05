@@ -24,7 +24,7 @@ class Response extends \Chaching\Message
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -42,6 +42,11 @@ class Response extends \Chaching\Message
 		}
 
 		$this->set_authorization($authorization);
+
+		if (!empty($options))
+		{
+			$this->set_options($options);
+		}
 
 		$this->validate();
 	}

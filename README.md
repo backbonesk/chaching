@@ -19,7 +19,7 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 
 * [PayPal](http://www.paypal.com) -- PayPal (Europe) S.à r.l. et Cie, S.C.A.
 
-The current version of the library is v0.15.1 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.16.0 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -28,7 +28,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.15.1"
+	    "backbone/chaching": "0.16.0"
 	  }
 	}
 
@@ -69,6 +69,11 @@ And in case of `Chaching::ITERMINAL` use an associated array as well:
 	    'password'  => 'password'
 	  ]
 	];
+
+Beforementioned empty `$options` array may at the moment contain these keys:
+
+* `ecdsa_keys_file` - Absolute file path to file with Tatra banka's ECDSA keys (used only with HMAC message signing in CardPay and TatraPay)
+* `sandbox` - Would you like to use sandbox or production URLs when communicating with the bank or financial institution? Default value is `FALSE`. Due to their limitations, sandbox is available only for `Chaching::TRUSTPAY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY` and `Chaching::ITERMINAL` (if not listed here, production URLs will be used even in sandbox mode).
 
 Afterwards, we need to create a request for the external service with specific information about the payment.
 
@@ -164,6 +169,10 @@ Payment status can be one of `TransactionStatuses::REVERSED`, `TransactionStatus
 
 ## Changelog
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.16.0: 2016/08/05
+
+Added the ability to switch between sandbox and production environment when communicating with banks and financial institutions.
 
 ### v0.15.1: 2016/07/27
 

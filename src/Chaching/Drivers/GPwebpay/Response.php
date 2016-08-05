@@ -24,43 +24,28 @@ class Response extends \Chaching\Message
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
 		$this->readonly_fields = [
-			'OPERATION', 'ORDERNUMBER', 'MERORDERNUM', 'MD',
-			'PRCODE', 'SRCODE', 'RESULTTEXT', 'DIGEST', 'DIGEST1'
+			'OPERATION', 'ORDERNUMBER', 'MERORDERNUM', 'MD', 'PRCODE',
+			'SRCODE', 'RESULTTEXT', 'DIGEST', 'DIGEST1'
 		];
 
-		$this->fields = [
-			'OPERATION' 	=> isset($options['OPERATION'])
-				? $options['OPERATION']
-				: NULL,
-			'ORDERNUMBER' 	=> isset($options['ORDERNUMBER'])
-				? $options['ORDERNUMBER']
-				: NULL,
-			'MERORDERNUM' 	=> (isset($options['MERORDERNUM']) AND !empty($options['MERORDERNUM']))
-				? $options['MERORDERNUM']
-				: NULL,
-			'MD' 			=> (isset($options['MD']) AND !empty($options['MD']))
-				? $options['MD']
-				: NULL,
-			'PRCODE' 		=> isset($options['PRCODE'])
-				? $options['PRCODE']
-				: NULL,
-			'SRCODE' 		=> isset($options['SRCODE'])
-				? $options['SRCODE']
-				: NULL,
-			'RESULTTEXT' 	=> (isset($options['RESULTTEXT']) AND !empty($options['RESULTTEXT']))
-				? $options['RESULTTEXT']
-				: NULL,
-			'DIGEST1' 	=> (isset($options['DIGEST1']) AND !empty($options['DIGEST1']))
-				? $options['DIGEST1']
-				: NULL
-		];
+		foreach ($this->readonly_fields as $field)
+		{
+			$this->fields[ $field ] = !empty($attributes[ $field ])
+				? $attributes[ $field ]
+				: NULL;
+		}
 
 		$this->set_authorization($authorization);
+
+		if (!empty($options))
+		{
+			$this->set_options($options);
+		}
 
 		$this->validate();
 	}
@@ -80,7 +65,7 @@ class Response extends \Chaching\Message
 
 		$this->variable_symbol = $this->fields['ORDER_NUMBER'];
 
-		$this->status = ($this->fields['PRCODE'] == 0 OR empty($this->fields['PRCODE']))
+		$this->status = empty($this->fields['PRCODE'])
 			? TransactionStatuses::SUCCESS
 			: TransactionStatuses::FAILURE;
 
@@ -90,10 +75,7 @@ class Response extends \Chaching\Message
 	protected function verify($given_signature)
 	{
 		$signature_base 	= '';
-		$fields 			= [
-			'OPERATION', 'ORDERNUMBER', 'MERORDERNUM', 'MD', 'PRCODE',
-			'SRCODE', 'RESULTTEXT'
-		];
+		$fields 			= array_slice($this->readonly_fields, 0, 7);
 
 		foreach ($fields as $field)
 		{

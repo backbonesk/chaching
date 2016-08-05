@@ -29,7 +29,7 @@ class Notification extends \Chaching\Message
 	const PAYMENT_AUTHORIZED 	= 3;
 	const PAYMENT_PROCESSING 	= 4;
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -42,12 +42,17 @@ class Notification extends \Chaching\Message
 
 		foreach ($this->readonly_fields as $field_name)
 		{
-			$this->fields[ $field_name ] = isset($options[ $field_name ])
-				? $options[ $field_name ]
+			$this->fields[ $field_name ] = isset($attributes[ $field_name ])
+				? $attributes[ $field_name ]
 				: NULL;
 		}
 
 		$this->set_authorization($authorization);
+
+		if (!empty($options))
+		{
+			$this->set_options($options);
+		}
 
 		$this->validate();
 	}
@@ -70,8 +75,7 @@ class Notification extends \Chaching\Message
 		$this->reference_number = $this->fields['REF'];
 
 		$correct_statuses = [
-			self::PAYMENT_SUCCESS,
-			self::PAYMENT_AUTHORIZED,
+			self::PAYMENT_SUCCESS, self::PAYMENT_AUTHORIZED,
 			self::PAYMENT_PROCESSING
 		];
 
@@ -93,14 +97,14 @@ class Notification extends \Chaching\Message
 
 	protected function sign()
 	{
-		$signature_base = $this->fields['AID'] . $this->fields['TYP'] .
-			$this->fields['AMT'] . $this->fields['CUR'] . $this->fields['REF'] .
-			$this->fields['RES'] . $this->fields['TID'] . $this->fields['OID'] .
-			$this->fields['TSS'] . $this->fields['CardId'] .
-			$this->fields['CardMask'] . $this->fields['CardExp'] .
-			$this->fields['AuthNumber'] . $this->fields['CardRecTxSec'] .
-			$this->fields['CardAcquirerResponseId'];
+		$fields = [
+			'AID', 'TYP', 'AMT', 'CUR', 'REF', 'RES', 'TID', 'OID', 'TSS',
+			'CardId', 'CardMask', 'CardExp', 'AuthNumber', 'CardRecTxSec',
+			'CardAcquirerResponseId'
+		];
 
-		return (new Hmac($this->auth))->sign($signature_base);
+		return (new Hmac($this->auth))->sign(implode(
+			'', array_map(function($field) { return $field; }, $fields)
+		));
 	}
 }

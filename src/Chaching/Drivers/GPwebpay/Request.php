@@ -11,6 +11,7 @@
 
 namespace Chaching\Drivers\GPwebpay;
 
+use \Chaching\Chaching;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Encryption\PemKeys;
@@ -20,9 +21,7 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://3dsecure.gpwebpay.com/csobsk/order.do';
-
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -49,7 +48,12 @@ class Request extends \Chaching\Message
 		$this->fields['MERORDERNUM'] 	= '';
 		$this->fields['MD'] 			= '';
 
-		if (is_array($options) AND !empty($options))
+		if (!empty($attributes))
+		{
+			$this->set_attributes($attributes);
+		}
+
+		if (!empty($options))
 		{
 			$this->set_options($options);
 		}
@@ -239,7 +243,7 @@ class Request extends \Chaching\Message
 			$fields .= sprintf('%s=%s&', $key, urlencode($value));
 		}
 
-		$redirection = self::REQUEST_URI.rtrim($fields, '& ');
+		$redirection = $this->request_server_url().rtrim($fields, '& ');
 
 		if ($redirect === TRUE)
 		{
@@ -247,5 +251,12 @@ class Request extends \Chaching\Message
 		}
 
 		return $redirection;
+	}
+
+	private function request_server_url()
+	{
+		return ($this->environment === Chaching::SANDBOX)
+			? 'https://test.3dsecure.gpwebpay.com/csobsk/order.do'
+			: 'https://3dsecure.gpwebpay.com/csobsk/order.do';
 	}
 }

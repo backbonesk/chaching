@@ -22,23 +22,25 @@ class Response extends \Chaching\Message
 	public $status 				= FALSE;
 	public $reference_number 	= NULL;
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
 		$this->readonly_fields = [ 'RES', 'REF', 'PID' ];
 
-		$this->fields = [
-			'RES' 	=> isset($options['RES']) ? $options['RES'] : NULL,
-			'REF' 	=> (isset($options['REF']) AND !empty($options['REF']))
-				? $options['REF']
-				: NULL,
-			'PID' 	=> (isset($options['PID']) AND !empty($options['PID']))
-				? $options['PID']
-				: NULL
-		];
+		foreach ($this->readonly_fields as $field)
+		{
+			$this->fields[ $field ] = !empty($attributes[ $field ])
+				? $attributes[ $field ]
+				: NULL;
+		}
 
 		$this->set_authorization($authorization);
+
+		if (!empty($options))
+		{
+			$this->set_options($options);
+		}
 
 		$this->validate();
 	}
@@ -49,16 +51,11 @@ class Response extends \Chaching\Message
 	 */
 	protected function validate()
 	{
-		$this->reference_number 	= $this->fields['REF'];
+		$this->reference_number = $this->fields['REF'];
 
-		if ($this->fields['RES'] == 0)
-		{
-			$this->status = TransactionStatuses::SUCCESS;
-		}
-		else
-		{
-			$this->status = TransactionStatuses::FAILURE;
-		}
+		$this->status = ($this->fields['RES'] == 0)
+			? TransactionStatuses::SUCCESS
+			: TransactionStatuses::FAILURE;
 
 		return $this->status;
 	}

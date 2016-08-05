@@ -11,12 +11,15 @@
 
 namespace Chaching;
 
+use \Chaching\Chaching;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidRequestException;
 
 
 abstract class Message
 {
+	protected $environment 		= Chaching::PRODUCTION;
+
 	protected $auth 			= [];
 
 	protected $fields 			= [];
@@ -85,11 +88,26 @@ abstract class Message
 		}
 	}
 
+	public function set_attributes(Array $attributes)
+	{
+		foreach ($attributes as $attribute => $value)
+		{
+			$this->$attribute = $value;
+		}
+	}
+
 	public function set_options(Array $options)
 	{
-		foreach ($options as $option => $value)
+		if (isset($options['sandbox']))
 		{
-			$this->$option = $value;
+			$this->environment = empty($options['sandbox'])
+				? Chaching::PRODUCTION
+				: Chaching::SANDBOX;
+		}
+
+		if (isset($options['ecdsa_keys_file']) AND method_exists($this, 'load_ecdsa_keys_from_file'))
+		{
+			$this->load_ecdsa_keys_from_file($options['ecdsa_keys_file']);
 		}
 	}
 

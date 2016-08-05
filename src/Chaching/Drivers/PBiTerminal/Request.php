@@ -11,6 +11,7 @@
 
 namespace Chaching\Drivers\PBiTerminal;
 
+use \Chaching\Chaching;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Exceptions\InvalidAuthorizationException;
@@ -21,14 +22,9 @@ use \Chaching\Transport\Curl;
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_SERVER_URI 	=
-		'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler';
-	const REQUEST_CLIENT_URI 	=
-		'https://secureshop.firstdata.lv/ecomm/ClientHandler';
-
 	public $transaction_id 		= NULL;
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -57,7 +53,12 @@ class Request extends \Chaching\Message
 			? $_SERVER['REMOTE_ADDR']
 			: $_SERVER['SERVER_ADDR'];
 
-		if (is_array($options) AND !empty($options))
+		if (!empty($attributes))
+		{
+			$this->set_attributes($attributes);
+		}
+
+		if (!empty($options))
 		{
 			$this->set_options($options);
 		}
@@ -188,7 +189,8 @@ class Request extends \Chaching\Message
 		$this->validate();
 
 		$request = new Curl(
-			Curl::METHOD_POST, self::REQUEST_SERVER_URI,
+			Curl::METHOD_POST,
+			$this->request_server_url(),
 			http_build_query($this->fields),
 			[
 				CURLOPT_SSLKEYPASSWD 	=> $this->auth[ 1 ]['password'],
@@ -205,7 +207,8 @@ class Request extends \Chaching\Message
 
 			$redirection = sprintf(
 				'%s?trans_id=%s',
-				self::REQUEST_CLIENT_URI, $this->transaction_id
+				$this->request_client_url(),
+				$this->transaction_id
 			);
 
 			if ($redirect === TRUE)
@@ -226,5 +229,19 @@ class Request extends \Chaching\Message
 		throw new InvalidRequestException(sprintf(
 			"Incorrect response from the bank: %s", $request->content()
 		));
+	}
+
+	private function request_server_url()
+	{
+		return ($this->environment === Chaching::SANDBOX)
+			? 'https://secureshop-test.firstdata.lv:8443/ecomm/MerchantHandler'
+			: 'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler';
+	}
+
+	private function request_client_url()
+	{
+		return ($this->environment === Chaching::SANDBOX)
+			? 'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler'
+			: 'https://secureshop.firstdata.lv/ecomm/ClientHandler';
 	}
 }

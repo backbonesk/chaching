@@ -21,7 +21,7 @@ class PayPal extends \Chaching\Driver
 		if ($request === NULL)
 		{
 			$request = new \Chaching\Drivers\PayPal\Request(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 
@@ -35,7 +35,7 @@ class PayPal extends \Chaching\Driver
 		if ($response === NULL)
 		{
 			$response = new \Chaching\Drivers\PayPal\Response(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 
@@ -49,7 +49,7 @@ class PayPal extends \Chaching\Driver
 		if ($notification === NULL)
 		{
 			$notification = new \Chaching\Drivers\PayPal\Notification(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 

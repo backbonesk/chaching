@@ -21,7 +21,7 @@ class PBiTerminal extends \Chaching\Driver
 		if ($request === NULL)
 		{
 			$request = new \Chaching\Drivers\PBiTerminal\Request(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 
@@ -35,7 +35,7 @@ class PBiTerminal extends \Chaching\Driver
 		if ($response === NULL)
 		{
 			$response = new \Chaching\Drivers\PBiTerminal\Response(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 
@@ -49,7 +49,7 @@ class PBiTerminal extends \Chaching\Driver
 		if ($refund === NULL)
 		{
 			$refund = new \Chaching\Drivers\PBiTerminal\Refund(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 

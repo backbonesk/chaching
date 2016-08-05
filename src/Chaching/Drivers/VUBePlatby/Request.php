@@ -22,7 +22,7 @@ class Request extends \Chaching\Message
 {
 	const REQUEST_URI = 'https://ib.vub.sk/e-platbyeuro.aspx';
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -43,7 +43,12 @@ class Request extends \Chaching\Message
 
 		$this->set_authorization($authorization);
 
-		if (is_array($options) AND !empty($options))
+		if (!empty($attributes))
+		{
+			$this->set_attributes($attributes);
+		}
+
+		if (!empty($options))
 		{
 			$this->set_options($options);
 		}
@@ -188,7 +193,7 @@ class Request extends \Chaching\Message
 			);
 		}
 
-		$fields .= "\t<input type=\"submit\" value=\"Odoslat\">\n</form>";
+		$fields .= "\t<input type=\"submit\" value=\"OK\">\n</form>";
 		$fields .= "<script type=\"text/javascript\">\n";
 		$fields .= "\tdocument.getElementById('eplatby').submit();\n</script>";
 

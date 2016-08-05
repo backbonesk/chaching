@@ -29,7 +29,7 @@ class Request extends \Chaching\Message
 		'sk', 'en', 'de', 'hu', 'cz', 'es', 'fr', 'it', 'pl'
 	];
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -85,7 +85,12 @@ class Request extends \Chaching\Message
 
 		date_default_timezone_set($old_timezone);
 
-		if (is_array($options) AND !empty($options))
+		if (!empty($attributes))
+		{
+			$this->set_options($attributes);
+		}
+
+		if (!empty($options))
 		{
 			$this->set_options($options);
 		}

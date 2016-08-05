@@ -18,11 +18,16 @@ class Response extends \Chaching\Message
 {
 	public $status 	= FALSE;
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
 		$this->set_authorization($authorization);
+
+		if (!empty($options))
+		{
+			$this->set_options($options);
+		}
 
 		$this->validate();
 	}

@@ -11,6 +11,7 @@
 
 namespace Chaching\Drivers\PBiTerminal;
 
+use \Chaching\Chaching;
 use \Chaching\Driver;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\TransactionStatuses;
@@ -19,16 +20,13 @@ use \Chaching\Transport\Curl;
 
 class Response extends \Chaching\Message
 {
-	const REQUEST_SERVER_URI 	=
-		'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler';
-
 	public $status 				= FALSE;
 	public $card_no 			= NULL;
 	public $transaction_id 		= NULL;
 
 	public $verbose_response 	= '';
 
-	public function __construct(Array $authorization, Array $attributes)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -47,6 +45,11 @@ class Response extends \Chaching\Message
 		if (!empty($attributes['trans_id']))
 		{
 			$this->fields['trans_id'] = $attributes['trans_id'];
+		}
+
+		if (!empty($options))
+		{
+			$this->set_options($options);
 		}
 
 		$this->validate();
@@ -101,7 +104,8 @@ class Response extends \Chaching\Message
 			);
 
 		$request = new Curl(
-			Curl::METHOD_POST, self::REQUEST_SERVER_URI,
+			Curl::METHOD_POST,
+			$this->request_server_url(),
 			http_build_query($this->fields),
 			[
 				CURLOPT_SSLKEYPASSWD 	=> $this->auth[ 1 ]['password'],
@@ -141,5 +145,12 @@ class Response extends \Chaching\Message
 		}
 
 		return $this->status;
+	}
+
+	private function request_server_url()
+	{
+		return ($this->environment === Chaching::SANDBOX)
+			? 'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler'
+			: 'https://secureshop.firstdata.lv/ecomm/ClientHandler';
 	}
 }

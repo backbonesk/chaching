@@ -23,28 +23,25 @@ class Response extends \Chaching\Message
 	public $status 				= FALSE;
 	public $variable_symbol 	= NULL;
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
 		$this->readonly_fields = [ 'SS', 'VS', 'RES', 'SIGN' ];
 
-		$this->fields = [
-			'SS' 	=> (isset($options['SS']) AND !empty($options['SS']))
-				? $options['SS']
-				: NULL,
-			'VS' 	=> (isset($options['VS']) AND !empty($options['VS']))
-				? $options['VS']
-				: NULL,
-			'RES' 	=> (isset($options['RES']) AND !empty($options['RES']))
-				? $options['RES']
-				: NULL,
-			'SIGN' 	=> (isset($options['SIGN']) AND !empty($options['SIGN']))
-				? $options['SIGN']
-				: NULL
-		];
+		foreach ($this->readonly_fields as $field)
+		{
+			$this->fields[ $field ] = !empty($attributes[ $field ])
+				? $attributes[ $field ]
+				: NULL;
+		}
 
 		$this->set_authorization($authorization);
+
+		if (!empty($options))
+		{
+			$this->set_options($options);
+		}
 
 		$this->validate();
 	}

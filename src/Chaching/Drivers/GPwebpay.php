@@ -21,7 +21,7 @@ class GPwebpay extends \Chaching\Driver
 		if ($request === NULL)
 		{
 			$request = new \Chaching\Drivers\GPwebpay\Request(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 
@@ -35,7 +35,7 @@ class GPwebpay extends \Chaching\Driver
 		if ($response === NULL)
 		{
 			$response = new \Chaching\Drivers\GPwebpay\Response(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 

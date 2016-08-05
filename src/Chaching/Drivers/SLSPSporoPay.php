@@ -19,7 +19,7 @@ class SLSPSporoPay extends \Chaching\Driver
 		if (!isset($authorization[ 0 ]) OR !preg_match('/^(?<prefix>[0-9]{1,6})?-?(?<account_no>[0-9]{10})\/(?<bank_code>[0-9]{4})$/', $authorization[ 0 ], $match))
 			return;
 
-		$this->authorization = [
+		$this->authorization 	= [
 			'prefix' 			=> isset($match['prefix'])
 				? $match['prefix']
 				: '000000',
@@ -29,6 +29,8 @@ class SLSPSporoPay extends \Chaching\Driver
 				? $authorization[ 1 ]
 					: ''
 		];
+
+		$this->options 			= $options;
 	}
 
 	public function request(Array $attributes)
@@ -38,7 +40,7 @@ class SLSPSporoPay extends \Chaching\Driver
 		if ($request === NULL)
 		{
 			$request = new \Chaching\Drivers\SLSPSporoPay\Request(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 
@@ -52,7 +54,7 @@ class SLSPSporoPay extends \Chaching\Driver
 		if ($response === NULL)
 		{
 			$response = new \Chaching\Drivers\SLSPSporoPay\Response(
-				$this->authorization, $attributes
+				$this->authorization, $attributes, $this->options
 			);
 		}
 

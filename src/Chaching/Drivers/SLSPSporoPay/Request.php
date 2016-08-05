@@ -24,7 +24,7 @@ class Request extends \Chaching\Message
 
 	private $valid_languages = [ 'sk', 'en', 'de' ];
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -60,7 +60,12 @@ class Request extends \Chaching\Message
 			$this->fields['mena'] = $currency['alpha_code'];
 		}
 
-		if (is_array($options) AND !empty($options))
+		if (!empty($attributes))
+		{
+			$this->set_attributes($attributes);
+		}
+
+		if (!empty($options))
 		{
 			$this->set_options($options);
 		}

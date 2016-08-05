@@ -56,7 +56,7 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 
 		foreach ($this->readonly_fields as $field)
 		{
-			$this->fields[ $field ] = (isset($attributes[ $field ]) AND !empty($attributes[ $field ]))
+			$this->fields[ $field ] = !empty($attributes[ $field ])
 				? $attributes[ $field ]
 				: NULL;
 		}
@@ -68,9 +68,9 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 			unset($this->fields['HMAC']);
 		}
 
-		if (isset($options['ecdsa_keys_file']))
+		if (!empty($options))
 		{
-			$this->load_ecdsa_keys_from_file($options['ecdsa_keys_file']);
+			$this->set_options($options);
 		}
 
 		$this->validate();

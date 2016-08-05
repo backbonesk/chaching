@@ -29,7 +29,7 @@ class Refund extends \Chaching\Message
 
 	public $verbose_response 	= '';
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -55,7 +55,12 @@ class Refund extends \Chaching\Message
 			? $_SERVER['REMOTE_ADDR']
 			: $_SERVER['SERVER_ADDR'];
 
-		if (is_array($options) AND !empty($options))
+		if (!empty($attributes))
+		{
+			$this->set_attributes($attributes);
+		}
+
+		if (!empty($options))
 		{
 			$this->set_options($options);
 		}

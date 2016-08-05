@@ -28,6 +28,9 @@ class Chaching
 	const GPWEBPAY 		= 'gpwebpay';
 	const ITERMINAL 	= 'iterminal';
 
+	const PRODUCTION 	= 'production';
+	const SANDBOX 		= 'sandbox';
+
 	private $payment_drivers = [
 		self::SPOROPAY 		=> 'SLSPSporoPay',
 		self::CARDPAY 		=> 'TBCardPay',
@@ -81,13 +84,13 @@ class Chaching
 		));
 	}
 
-	public function request($options)
+	public function request($attributes)
 	{
-		return $this->driver->request((array) $options);
+		return $this->driver->request((array) $attributes);
 	}
 
-	public function response($options)
+	public function response($attributes)
 	{
-		return $this->driver->response((array) $options);
+		return $this->driver->response((array) $attributes);
 	}
 }

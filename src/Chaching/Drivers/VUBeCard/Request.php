@@ -11,6 +11,7 @@
 
 namespace Chaching\Drivers\VUBeCard;
 
+use \Chaching\Chaching;
 use \Chaching\Currencies;
 use \Chaching\Driver;
 use \Chaching\Encryption\Base64;
@@ -20,11 +21,9 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://vub.eway2pay.com/fim/est3dgate';
-
 	protected $valid_languages = [ 'sk', 'cz', 'hu', 'en' ];
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -55,7 +54,12 @@ class Request extends \Chaching\Message
 			$this->valid_languages
 		);
 
-		if (is_array($options) AND !empty($options))
+		if (!empty($attributes))
+		{
+			$this->set_attributes($attributes);
+		}
+
+		if (!empty($options))
 		{
 			$this->set_options($options);
 		}
@@ -193,7 +197,7 @@ class Request extends \Chaching\Message
 
 		$fields = sprintf(
 			"<form action=\"%s\" method=\"post\" id=\"ecard\">\n",
-			self::REQUEST_URI
+			$this->request_server_url()
 		);
 
 		foreach ($this->fields as $key => $value)
@@ -204,10 +208,17 @@ class Request extends \Chaching\Message
 			);
 		}
 
-		$fields .= "\t<input type=\"submit\" value=\"Odoslat\">\n</form>";
+		$fields .= "\t<input type=\"submit\" value=\"OK\">\n</form>";
 		$fields .= "<script type=\"text/javascript\">\n";
 		$fields .= "\tdocument.getElementById('ecard').submit();\n</script>";
 
 		return $fields;
+	}
+
+	private function request_server_url()
+	{
+		return ($this->environment === Chaching::SANDBOX)
+			? 'https://testsecurepay.intesasanpaolocard.com/fim/est3dgate'
+			: 'https://vub.eway2pay.com/fim/est3dgate';
 	}
 }

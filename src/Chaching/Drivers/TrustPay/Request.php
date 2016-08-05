@@ -11,6 +11,7 @@
 
 namespace Chaching\Drivers\TrustPay;
 
+use \Chachinbg\Chaching;
 use \Chaching\Currencies;
 use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;
@@ -20,14 +21,12 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://ib.trustpay.eu/mapi/pay.aspx';
-
 	private $valid_languages = [
 		'bg', 'bs', 'cz', 'en', 'es', 'et', 'hr', 'hu', 'it', 'lt', 'lv',
 		'pl', 'ro', 'ru', 'sk', 'sl', 'sr', 'tr', 'uk'
 	];
 
-	public function __construct(Array $authorization, Array $options)
+	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
 
@@ -57,7 +56,12 @@ class Request extends \Chaching\Message
 			$this->valid_languages
 		);
 
-		if (is_array($options) AND !empty($options))
+		if (!empty($attributes))
+		{
+			$this->set_attributes($attributes);
+		}
+
+		if (!empty($options))
 		{
 			$this->set_options($options);
 		}
@@ -237,7 +241,7 @@ class Request extends \Chaching\Message
 			$fields .= sprintf('%s=%s&', $key, urlencode($value));
 		}
 
-		$redirection = self::REQUEST_URI.rtrim($fields, '& ');
+		$redirection = $this->request_server_url().rtrim($fields, '& ');
 
 		if ($redirect === TRUE)
 		{
@@ -247,5 +251,12 @@ class Request extends \Chaching\Message
 		{
 			return $redirection;
 		}
+	}
+
+	private function request_server_url()
+	{
+		return ($this->environment === Chaching::SANDBOX)
+			? 'https://ib.test.trustpay.eu/mapi/pay.aspx'
+			: 'https://ib.trustpay.eu/mapi/pay.aspx';
 	}
 }

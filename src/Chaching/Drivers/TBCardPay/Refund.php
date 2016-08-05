@@ -61,14 +61,14 @@ class Refund extends \Chaching\Message implements \Chaching\ECDSAResponseInterfa
 
 		date_default_timezone_set($old_timezone);
 
-		if (is_array($options) AND !empty($attributes))
+		if (!empty($attributes))
 		{
-			$this->set_options($attributes);
+			$this->set_attributes($attributes);
 		}
 
-		if (!empty($options['ecdsa_keys_file']))
+		if (!empty($options))
 		{
-			$this->load_ecdsa_keys_from_file($options['ecdsa_keys_file']);
+			$this->set_options($options);
 		}
 
 		$this->validate();

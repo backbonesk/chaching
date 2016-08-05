@@ -1,7 +1,7 @@
 {
     "name": "backbone/chaching",
     "type": "library",
-    "version": "0.15.1",
+    "version": "0.16.0",
     "license": "MIT",
     "description": "Universal payment library for banking services in Slovakia",
     "keywords": [
