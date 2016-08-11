@@ -241,7 +241,7 @@ class Request extends \Chaching\Message
 	private function request_client_url()
 	{
 		return ($this->environment === Chaching::SANDBOX)
-			? 'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler'
+			? 'https://secureshop-test.firstdata.lv/ecomm/ClientHandler'
 			: 'https://secureshop.firstdata.lv/ecomm/ClientHandler';
 	}
 }
