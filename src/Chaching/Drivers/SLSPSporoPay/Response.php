@@ -36,8 +36,8 @@ class Response extends \Chaching\Message
 
 		foreach ($this->readonly_fields as $field)
 		{
-			$this->fields[ $field ] = (isset($options[ $field ]) AND !empty($options[ $field ]))
-				? $options[ $field ]
+			$this->fields[ $field ] = (isset($attributes[ $field ]) AND !empty($attributes[ $field ]))
+				? $attributes[ $field ]
 				: NULL;
 		}
 

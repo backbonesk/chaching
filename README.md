@@ -19,7 +19,7 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 
 * [PayPal](http://www.paypal.com) -- PayPal (Europe) S.à r.l. et Cie, S.C.A.
 
-The current version of the library is v0.16.1 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.16.2 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -28,7 +28,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.16.1"
+	    "backbone/chaching": "0.16.2"
 	  }
 	}
 
@@ -169,6 +169,10 @@ Payment status can be one of `TransactionStatuses::REVERSED`, `TransactionStatus
 
 ## Changelog
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.16.2: 2016/08/15
+
+Fixes SLSP's SporoPay signature handling on response.
 
 ### v0.16.1: 2016/08/05
 
