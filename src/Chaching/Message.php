@@ -260,8 +260,8 @@ trait ECDSAResponseValidator
 			return FALSE;
 
 		preg_match_all(
-			'/KEY_ID: (\d+)\nSTATUS: ([a-zA-Z0-9]+)\n' .
-			'(-----BEGIN PUBLIC KEY.*END PUBLIC KEY-----\n)/isU',
+			'/KEY_ID: (\d+)\r?\nSTATUS: ([a-zA-Z0-9]+)\r?\n' .
+			'(-----BEGIN PUBLIC KEY.*END PUBLIC KEY-----\r?\n)/isU',
 			file_get_contents($file),
 			$ecdsa_keys
 		);
