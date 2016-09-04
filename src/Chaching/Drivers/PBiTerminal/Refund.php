@@ -21,9 +21,6 @@ use \Chaching\Transport\Curl;
 
 class Refund extends \Chaching\Message
 {
-	const REQUEST_SERVER_URI 	=
-		'https://secureshop-test.firstdata.lv:8443/ecomm/MerchantHandler';
-
 	public $status 				= FALSE;
 	public $transaction_id 		= NULL;
 
@@ -150,7 +147,7 @@ class Refund extends \Chaching\Message
 			));
 
 		$request = new Curl(
-			Curl::METHOD_POST, self::REQUEST_SERVER_URI,
+			Curl::METHOD_POST, $this->request_server_url(),
 			http_build_query($this->fields),
 			[
 				CURLOPT_SSLKEYPASSWD 	=> $this->auth[ 1 ]['password'],
@@ -195,5 +192,12 @@ class Refund extends \Chaching\Message
 		}
 
 		return $this->status;
+	}
+	
+	private function request_server_url()
+	{
+		return ($this->environment === Chaching::SANDBOX)
+			? 'https://secureshop-test.firstdata.lv:8443/ecomm/MerchantHandler'
+			: 'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler';
 	}
 }

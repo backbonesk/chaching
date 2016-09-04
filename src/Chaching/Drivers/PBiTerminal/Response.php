@@ -150,7 +150,7 @@ class Response extends \Chaching\Message
 	private function request_server_url()
 	{
 		return ($this->environment === Chaching::SANDBOX)
-			? 'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler'
-			: 'https://secureshop.firstdata.lv/ecomm/ClientHandler';
+			? 'https://secureshop-test.firstdata.lv:8443/ecomm/MerchantHandler'
+			: 'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler';
 	}
 }
