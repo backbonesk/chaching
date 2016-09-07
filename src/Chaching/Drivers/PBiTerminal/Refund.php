@@ -11,6 +11,7 @@
 
 namespace Chaching\Drivers\PBiTerminal;
 
+use \Chaching\Chaching;
 use \Chaching\Driver;
 use \Chaching\Currencies;
 use \Chaching\Exceptions\InvalidAuthorizationException;
@@ -193,7 +194,7 @@ class Refund extends \Chaching\Message
 
 		return $this->status;
 	}
-	
+
 	private function request_server_url()
 	{
 		return ($this->environment === Chaching::SANDBOX)
