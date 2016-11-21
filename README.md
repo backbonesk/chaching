@@ -111,11 +111,11 @@ Remember the `callback` key in the request options? It is an absolute URL that t
 	{
 		$payment = $chaching->response($_REQUEST);
 
-		if ($payment->status === \Chaching\Statuses::SUCCESS)
+		if ($payment->status === \Chaching\TransactionStatuses::SUCCESS)
 		{
 			// Wohoo, we've got the money!
 		}
-		elseif ($payment->status === \Chaching\Statuses::TIMEOUT)
+		elseif ($payment->status === \Chaching\TransactionStatuses::TIMEOUT)
 		{
 			// Special type that is only returned by TatraPay service. In general
 			// it's a good idea to check for it nonetheless.
