@@ -19,7 +19,7 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 
 * [PayPal](http://www.paypal.com) -- PayPal (Europe) S.à r.l. et Cie, S.C.A.
 
-The current version of the library is v0.16.5 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.17.0 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -28,7 +28,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.16.5"
+	    "backbone/chaching": "0.17.0"
 	  }
 	}
 
@@ -162,6 +162,28 @@ When using Poštová banka's iTerminal service or Tatra banka's CardPay service,
 
 Payment status can be one of `TransactionStatuses::REVERSED`, `TransactionStatuses::SUCCESS` or `TransactionStatuses::FAILURE`. First two mean that the payment has been successfully refunded.
 
+Newest addition to the different services provided by supported payment institutions is the ability to check whether Tatra banka's TatraPay service is available and accepting requests.
+
+	use \Chaching\Chaching;
+	use \Chaching\ServiceStatuses;
+
+	$authorization = [ 'merchant_id', 'password' ];
+	$chaching = new Chaching(Chaching::TATRAPAY, $authorization);
+
+	try
+	{
+		$status = $chaching->status();
+
+		if ($status->status === ServiceStatuses::ONLINE)
+		{
+			// TatraPay is alive and well!
+		}
+	}
+	catch (\Chaching\Exceptions\ChachingException $e)
+	{
+		// General error with authentication, request or bank's response.
+	}
+
 ## Contributing
 1. Check for open issues or open a new issue for a feature request or a bug.
 2. Fork the repository and make your changes to the master branch (or branch off of it).
@@ -169,6 +191,10 @@ Payment status can be one of `TransactionStatuses::REVERSED`, `TransactionStatus
 
 ## Changelog
 To release v1.0 code of the library needs to have a more thorough tutorial to explain it's usage as well as complete tests.
+
+### v0.17.0: 2016/12/09
+
+Added support for checking online status of Tatra banka's TatraPay service.
 
 ### v0.16.5: 2016/09/07
 

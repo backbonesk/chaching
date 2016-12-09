@@ -41,4 +41,11 @@ class TBTatraPay extends \Chaching\Driver
 
 		return $response;
 	}
+
+	public function status()
+	{
+		return new \Chaching\Drivers\TBTatraPay\Status(
+			$this->authorization
+		);
+	}
 }
