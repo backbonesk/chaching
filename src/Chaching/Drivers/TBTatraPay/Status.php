@@ -26,7 +26,7 @@ class Status extends \Chaching\Message
 		'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/isoffline.jsp';
 
 	public $status 				= ServiceStatuses::OFFLINE;
-	public $verbose_content 	= '';
+	public $verbose_response 	= '';
 
 	public function __construct(Array $authorization)
 	{
@@ -100,9 +100,9 @@ class Status extends \Chaching\Message
 			]
 		);
 
-		$this->verbose_content = $request->content();
+		$this->verbose_response = $request->content();
 
-		if (($response = simplexml_load_string($this->verbose_content)) === FALSE)
+		if (($response = simplexml_load_string($this->verbose_response)) === FALSE)
 		{
 			$message = (($error = libxml_get_last_error()) !== FALSE)
 				? $error->message
