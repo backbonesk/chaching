@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.17.2: 2017/01/08
+
+Fixes refusal to accept non-ASCII character payer names when creating Tatra banka's CardPay request. The bank allows only basic characters to appear in name so other characters were omitted. In case there were no charactes left, the request would be refused and exception thrown. Now a placeholder "unknown" value is provided to successfully process the request and return a redirection URL.
+
 ### v0.17.1: 2016/12/10
 
 Fixes incorrect variable handling when TatraPay's monitor fails due to invalid bank response.

@@ -16,7 +16,7 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Chaching
 {
-	const VERSION 		= '0.17.1';
+	const VERSION 		= '0.17.2';
 
 	const CARDPAY 		= 'cardpay';
 	const SPOROPAY 		= 'sporopay';

@@ -103,7 +103,17 @@ class Request extends \Chaching\Message
 	protected function validate()
 	{
 		$this->fields['LANG'] 	= strtolower($this->fields['LANG']);
-		$this->fields['NAME'] 	= $this->deaccentize($this->fields['NAME']);
+
+		$original_name = $this->fields['NAME'];
+
+		$this->fields['NAME'] 	= $this->deaccentize($original_name);
+
+		// Check if the name consisted of only unacceptable characters
+		// and set a placeholder name instead.
+		if ($original_name AND empty($this->fields['NAME']))
+		{
+			$this->fields['NAME'] = 'Unknown';
+		}
 
 		if (!is_array($this->auth) OR count($this->auth) !== 2)
 			throw new InvalidAuthorizationException(
