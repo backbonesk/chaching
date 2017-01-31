@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2016 BACKBONE, s.r.o.
+ * (c) 2017 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,7 +16,7 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Chaching
 {
-	const VERSION 		= '0.17.2';
+	const VERSION 		= '0.17.3';
 
 	const CARDPAY 		= 'cardpay';
 	const SPOROPAY 		= 'sporopay';

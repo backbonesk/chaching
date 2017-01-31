@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2016 BACKBONE, s.r.o.
+ * (c) 2017 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -21,6 +21,8 @@ use \Chaching\TransactionStatuses;
 
 class Notification extends \Chaching\Message
 {
+	const PREFERRED_ENCODING 		= 'utf-8';
+
 	public $status 					= FALSE;
 	public $reference_number 		= NULL;
 	public $transaction_id 			= NULL;
@@ -33,14 +35,45 @@ class Notification extends \Chaching\Message
 
 		$this->notification_options 	= $attributes;
 		$this->readonly_fields 			= [
-			'business', 'custom', 'payment_status', 'txn_id'
+			'business', 'receiver_id', 'receiver_email',
+			'custom', 'txn_id', 'txn_type',
+			'item_name', 'item_number', 'quantity',
+			'payment_status', 'payment_type',
+			'payer_id', 'payer_email', 'payer_status',
+			'first_name', 'last_name', 'residence_country',
+			'ipn_track_id', 'notify_version',
+			'mc_currency', 'mc_fee', 'mc_gross'
 		];
+
+		$original_encoding = isset($attributes['charset'])
+			? strtolower($attributes['charset'])
+			: self::PREFERRED_ENCODING;
+
+		$is_encoding_conversion_required = (
+			$original_encoding !== self::PREFERRED_ENCODING
+		);
 
 		foreach ($this->readonly_fields as $field_name)
 		{
-			$this->fields[ $field_name ] = isset($attributes[ $field_name ])
-				? $attributes[ $field_name ]
-				: NULL;
+			if (empty($attributes[ $field_name ]))
+			{
+				$this->fields[ $field_name ] = NULL;
+
+				continue;
+			}
+
+			if ($is_encoding_conversion_required AND $this->is_mbstring_supported())
+			{
+				$this->fields[ $field_name ] = mb_convert_encoding(
+					$attributes[ $field_name ],
+					self::PREFERRED_ENCODING,
+					$original_encoding
+				);
+			}
+			else
+			{
+				$this->fields[ $field_name ] = $attributes[ $field_name ];
+			}
 		}
 
 		$this->set_authorization($authorization);
@@ -51,6 +84,18 @@ class Notification extends \Chaching\Message
 		}
 
 		$this->validate();
+	}
+
+	private function is_mbstring_supported()
+	{
+		static $is_supported = NULL;
+
+		if ($is_supported === NULL)
+		{
+			$is_supported = extension_loaded('mbstring');
+		}
+
+		return $is_supported;
 	}
 
 	/**
@@ -87,7 +132,7 @@ class Notification extends \Chaching\Message
 				break;
 		}
 
-		$this->reference_nuber = $this->fields['custom'];
+		$this->reference_number = $this->fields['custom'];
 
 		if (isset($this->fields['txn_id']))
 		{

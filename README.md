@@ -19,7 +19,7 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 
 * [PayPal](http://www.paypal.com) -- PayPal (Europe) S.à r.l. et Cie, S.C.A.
 
-The current version of the library is v0.17.2 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.17.3 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -28,7 +28,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.17.2"
+	    "backbone/chaching": "0.17.3"
 	  }
 	}
 
@@ -184,6 +184,8 @@ Newest addition to the different services provided by supported payment institut
 		// General error with authentication, request or bank's response.
 	}
 
+PayPal deserves an honourable mention here: Please, set the instant payment notification's (IPNs) character encoding to UTF-8. Go to your Paypal profile, click "My selling tools" in the sidebar, scroll to the bottom and click "PayPal button language encoding", click "More options" and set the encoding to UTF-8. It will save you so much pain.
+
 ## Contributing
 1. Check for open issues or open a new issue for a feature request or a bug.
 2. Fork the repository and make your changes to the master branch (or branch off of it).
@@ -195,4 +197,4 @@ To release a proper v1.0 code of the library needs to have a more thorough tutor
 
 ---
 
-&copy; 2016 BACKBONE, s.r.o.
+&copy; 2017 BACKBONE, s.r.o.
