@@ -32,13 +32,13 @@ class PemKeys extends \Chaching\Encryption
 		return $signature;
 	}
 
-	public function verify($given_signature, $signature_base)
+	public function verify($given_signature, $signature)
 	{
 		$resource_id = openssl_pkey_get_public(
 			file_get_contents($this->authorization[ 1 ]['key'])
 		);
 
-		$signature_base = base64_encode($signature_base);
+		$signature = base64_encode($signature);
 		$result = openssl_verify($given_signature, $signature, $resource_id);
 
 		openssl_free_key($resource_id);

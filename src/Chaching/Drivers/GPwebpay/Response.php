@@ -63,7 +63,7 @@ class Response extends \Chaching\Message
 				$signature, $this->fields['DIGEST1']
 			));
 
-		$this->variable_symbol = $this->fields['ORDER_NUMBER'];
+		$this->variable_symbol = $this->fields['ORDERNUMBER'];
 
 		$this->status = empty($this->fields['PRCODE'])
 			? TransactionStatuses::SUCCESS
@@ -90,7 +90,7 @@ class Response extends \Chaching\Message
 		$signature_base .= sprintf('|%s', $this->auth[ 0 ]);
 
 		return (new PemKeys($this->auth))->verify(
-			$given_stignature, $signature_base
+			$given_signature, $signature_base
 		);
 	}
 }
