@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.17.4: 2018/06/18
+
+In some circustances VUB's eCard service might return month of card expiration as a three-letter string, eg. "080" instead of "08". Thus, work explicitly only with the first two.
+
 ### v0.17.3: 2017/01/31
 
 Process further fields from PayPal's responses like buyer's name, account etc. which might be useful for further analysis. Also tries to sort out the encoding issues if IPNs do not come in UTF-8.

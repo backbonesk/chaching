@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2017 BACKBONE, s.r.o.
+ * (c) 2018 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -103,8 +103,13 @@ class Response extends \Chaching\Message
 
 		if (!empty($this->fields['Ecom_Payment_Card_ExpDate_Year']) AND !empty($this->fields['Ecom_Payment_Card_ExpDate_Month']))
 		{
-			$year = (int) $this->fields['Ecom_Payment_Card_ExpDate_Year'] + 2000;
-			$month = (int) $this->fields['Ecom_Payment_Card_ExpDate_Month'];
+			$year = (int) substr(
+				$this->fields['Ecom_Payment_Card_ExpDate_Year'], 0, 2
+			) + 2000;
+
+			$month = (int) substr(
+				$this->fields['Ecom_Payment_Card_ExpDate_Month'], 0, 2
+			);
 
 			$this->card_expire_on = new \DateTime(sprintf('%d-%d-%d',
 				$year, $month,
