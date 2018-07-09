@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.17.5: 2018/07/09
+
+iTerminal service returns transaction ID as `base64` so encoding the parameter as part of the URL for redirection is required for their servers to process the transaction correctly.
+
 ### v0.17.4: 2018/06/18
 
 In some circustances VUB's eCard service might return month of card expiration as a three-letter string, eg. "080" instead of "08". Thus, work explicitly only with the first two.

@@ -208,7 +208,7 @@ class Request extends \Chaching\Message
 			$redirection = sprintf(
 				'%s?trans_id=%s',
 				$this->request_client_url(),
-				$this->transaction_id
+				urlencode($this->transaction_id)
 			);
 
 			if ($redirect === TRUE)
