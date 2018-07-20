@@ -23,16 +23,20 @@ class TripleDes extends \Chaching\Encryption
 			$hash .= chr(0xFF);
 		}
 
-		$shared_secret 	= base64_decode($this->authorization['shared_secret']);
-		$key 			= $shared_secret . substr($shared_secret, 0, 8);
+		$shared_secret = base64_decode($this->authorization['shared_secret']);
+		$key = $shared_secret . substr($shared_secret, 0, 8);
 
 		$iv = chr(0x00);
 		$iv .= $iv;
 		$iv .= $iv;
 		$iv .= $iv;
 
-		return base64_encode(mcrypt_encrypt(
-			MCRYPT_TRIPLEDES, $key, $hash, MCRYPT_MODE_CBC, $iv
+		return base64_encode(openssl_encrypt(
+			$hash,
+			'des-ede3-cbc',
+			$key,
+			OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
+			$iv
 		));
 	}
 }

@@ -18,20 +18,11 @@ class Aes256 extends \Chaching\Encryption
 {
 	public function sign($signature_base)
 	{
-		$hash = substr(mhash(MHASH_SHA1, $signature_base), 0, 16);
-
-		if (!function_exists('mcrypt_module_open'))
-			throw new MissingDependencyException(
-				'mcrypt PHP extension is required'
-			);
-
-		$iv = mcrypt_create_iv(mcrypt_get_iv_size(
-			MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB
-		), MCRYPT_DEV_URANDOM);
-
-		return strtoupper(bin2hex(mcrypt_encrypt(
-			MCRYPT_RIJNDAEL_128,
-			pack('H*', $this->authorization[ 1 ]), $hash, MCRYPT_MODE_ECB, $iv
+		return strtoupper(bin2hex(openssl_encrypt(
+			substr(openssl_digest($signature_base, 'sha1', TRUE), 0, 16),
+			'aes-128-ecb',
+			pack('H*', $this->authorization[ 1 ]),
+			OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
 		)));
 	}
 }

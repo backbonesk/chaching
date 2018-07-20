@@ -19,7 +19,7 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 
 * [PayPal](http://www.paypal.com) -- PayPal (Europe) S.à r.l. et Cie, S.C.A.
 
-The current version of the library is v0.17.5 and requires PHP 5.4 or PHP 7 to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.18.0 and requires PHP 5.4 or PHP 7+ to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -28,7 +28,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.17.5"
+	    "backbone/chaching": "0.18.0"
 	  }
 	}
 
@@ -90,7 +90,7 @@ Afterwards, we need to create a request for the external service with specific i
 
 By running the `process` method in the next code block, we are getting back (when `$auto_redirect` is set to `FALSE`) the URL to redirect the user to, where the user will make the payment.
 
-(Note that with `Chaching::ITERMINAL` the `$auto_redirect` will not ever work as the transaction identifier that is provided for you is strictly needed for thereafter. Only after you succesfully create the transaction you can use the redirection URL. For more information read bank's documetation.)
+(Note that with `Chaching::ITERMINAL` the `$auto_redirect` will not ever work as the transaction identifier that is provided for you is strictly needed for thereafter. Only after you succesfully create the transaction you can use the redirection URL. For more information read bank's documentation.)
 
 	try
 	{
@@ -142,6 +142,8 @@ TrustPay is a special case with response handling as they use notification mecha
 	{
 		// General error with authentication or the response/notification itself.
 	}
+
+You can also use a `notification` method with SporoPay and their mail notifications to the account own They come not at the same time as regular responses when user redirects their browser from SporoPay's interface, it is just another redundant way of checking payment status in case not everything goes according to the plan. (The same use case true for Tatra banka's services CardPay and TatraPay, but in those cases you can just use the `response`.)
 
 When using Poštová banka's iTerminal service or Tatra banka's CardPay service, there is an option of refunding part or full payment that has been successfully completed before. Poštová banka supports only one refund per transaction, in case of CardPay you may refund in as many steps as you'd like until sum of all refunds reaches the amount of original transaction.
 
@@ -197,4 +199,4 @@ To release a proper v1.0 code of the library needs to have a more thorough tutor
 
 ---
 
-&copy; 2017 BACKBONE, s.r.o.
+&copy; 2018 BACKBONE, s.r.o.

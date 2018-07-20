@@ -16,14 +16,15 @@ class Hmac extends \Chaching\Encryption
 {
 	public function sign($signature_base)
 	{
-		$signature_base = pack('A*', $signature_base);
-
 		$shared_secret = (strlen($this->authorization[ 1 ]) === 128)
 			? pack('H*', $this->authorization[ 1 ])
 			: pack('A*', $this->authorization[ 1 ]);
 
 		return strtoupper(hash_hmac(
-			'sha256', $signature_base, $shared_secret, FALSE
+			'sha256',
+			pack('A*', $signature_base),
+			$shared_secret,
+			FALSE
 		));
 	}
 }

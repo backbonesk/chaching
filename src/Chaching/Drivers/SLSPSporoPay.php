@@ -60,4 +60,18 @@ class SLSPSporoPay extends \Chaching\Driver
 
 		return $response;
 	}
+
+	public function notification(Array $attributes)
+	{
+		static $notification = NULL;
+
+		if ($notification === NULL)
+		{
+			$notification = new \Chaching\Drivers\SLSPSporoPay\Notification(
+				$this->authorization, $attributes, $this->options
+			);
+		}
+
+		return $notification;
+	}
 }

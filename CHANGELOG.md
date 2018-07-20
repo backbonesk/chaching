@@ -1,5 +1,11 @@
 ## Changelog
 
+### v0.18.0: 2018/07/21
+
+Added `notification` method to `SLSPSporoPay` driver to allow to validate mail notifications (signatures) coming from the SporoPay service.
+
+Removed dependency on `mcrypt` extension that is to be removed from the core into PECL in PHP 7.2; calls were replaced by OpenSSL that was also a dependency before. Removed `MissingDependencyException`.
+
 ### v0.17.5: 2018/07/09
 
 iTerminal service returns transaction ID as `base64` so encoding the parameter as part of the URL for redirection is required for their servers to process the transaction correctly.
@@ -95,7 +101,7 @@ Added support for PayPal through "Buy now" payment buttons along with Instant Pa
 
 ### v0.11.2: 2015/03/27
 
-If client requests email notification after a payment when using ComfortPay, always request also the longer notification with `CID` (card identifier). Just as well, if `REM` (return email) attribute is present with a valid value `TEM` will be set automatically.
+If client requests mail notification after a payment when using ComfortPay, always request also the longer notification with `CID` (card identifier). Just as well, if `REM` (return mail) attribute is present with a valid value `TEM` will be set automatically.
 
 ### v0.11.1: 2015/03/26
 
