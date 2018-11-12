@@ -218,7 +218,7 @@ class Request extends \Chaching\Message
 	private function request_server_url()
 	{
 		return ($this->environment === Chaching::SANDBOX)
-			? 'https://testsecurepay.intesasanpaolocard.com/fim/est3dgate'
+			? 'https://testsecurepay.eway2pay.com/fim/est3dgate'
 			: 'https://vub.eway2pay.com/fim/est3dgate';
 	}
 }
