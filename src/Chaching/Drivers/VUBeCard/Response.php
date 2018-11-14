@@ -32,6 +32,10 @@ class Response extends \Chaching\Message
 		parent::__construct();
 
 		$this->readonly_fields = [ 'HASHPARAMS', 'HASHPARAMSVAL', 'HASH' ];
+		$this->required_fields = [
+			'clientid','oid','Response'
+		];
+
 
 		$this->fields = $attributes;
 
@@ -57,6 +61,8 @@ class Response extends \Chaching\Message
 	 */
 	protected function validate()
 	{
+		$this->validate_required_fields();
+
 		if (!isset($this->auth[ 1 ]) OR empty($this->auth[ 1 ]))
 			throw new InvalidOptionsException(
 				"Authorization information are unacceptable as it does " .
@@ -70,7 +76,7 @@ class Response extends \Chaching\Message
 			throw new InvalidResponseException(sprintf(
 				"Signature received as part of the response is incorrect (" .
 				"'%s' expected, got '%s'). If this persists contact the bank.",
-				$signature, $this->fields['SIGN']
+				$signature, $this->fields['HASH']
 			));
 
 		$this->variable_symbol 	= $this->fields['oid'];
