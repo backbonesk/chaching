@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.19.0
+
+Removed usage of deprecated `FILTER_FLAG_HOST_REQUIRED` when checking for valid URL via `filter_var` in PHP 7.3.
+
 ### v0.18.0: 2018/07/21
 
 Added `notification` method to `SLSPSporoPay` driver to allow to validate mail notifications (signatures) coming from the SporoPay service.

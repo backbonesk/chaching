@@ -150,7 +150,7 @@ class Request extends \Chaching\Message
 				Driver::VARIABLE_SYMBOL, $this->fields['VS']
 			));
 
-		if (!filter_var($this->fields['RURL'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+		if (!filter_var($this->fields['RURL'], FILTER_VALIDATE_URL))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or RURL) has an unacceptable value '%s'. Valid " .
 				"return URL has to be properly formatted.", Driver::CALLBACK,

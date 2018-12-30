@@ -185,7 +185,7 @@ class Request extends \Chaching\Message
 				Driver::VARIABLE_SYMBOL, $this->fields['ORDERNUMBER']
 			));
 
-		if (!filter_var($this->fields['URL'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+		if (!filter_var($this->fields['URL'], FILTER_VALIDATE_URL))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or URL) has an unacceptable value '%s'. Valid " .
 				"return URL has to be properly formatted.", Driver::CALLBACK,

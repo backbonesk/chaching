@@ -138,7 +138,7 @@ class Request extends \Chaching\Message
 				Driver::VARIABLE_SYMBOL, $this->fields['oid']
 			));
 
-		if (!filter_var($this->fields['okurl'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+		if (!filter_var($this->fields['okurl'], FILTER_VALIDATE_URL))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or okurl) has an unacceptable value '%s'. Valid " .
 				"return URL has to be properly formatted.", Driver::CALLBACK,
@@ -151,7 +151,7 @@ class Request extends \Chaching\Message
 		}
 		else
 		{
-			if (!filter_var($this->fields['failurl'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+			if (!filter_var($this->fields['failurl'], FILTER_VALIDATE_URL))
 				throw new InvalidOptionsException(sprintf(
 					"Field failurl has an unacceptable value '%s'. Valid " .
 					"return URL has to be properly formatted.",
