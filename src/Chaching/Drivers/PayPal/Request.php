@@ -14,7 +14,6 @@ namespace Chaching\Drivers\PayPal;
 use \Chaching\Chaching;
 use \Chaching\Driver;
 use \Chaching\Currencies;
-use \Chaching\Encryption\Base64;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;
 
