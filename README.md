@@ -199,4 +199,4 @@ To release a proper v1.0 code of the library needs to have a more thorough tutor
 
 ---
 
-&copy; 2018 BACKBONE, s.r.o.
+&copy; 2019 BACKBONE, s.r.o.
