@@ -1,6 +1,6 @@
 ## Changelog
 
-### v0.19.0
+### v0.19.0: 2018/12/31
 
 Updated VUB eCard service driver with proper testing URLs, fixed validating results of payment not exactly according to the documentation ([igor-kamil](https://github.com/igor-kamil)) and added support for newer version of generating signatures (enabled by default).
 
