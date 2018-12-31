@@ -14,6 +14,7 @@ namespace Chaching\Drivers\VUBeCard;
 use \Chaching\Chaching;
 use \Chaching\Currencies;
 use \Chaching\Driver;
+use \Chaching\Drivers\VUBeCard;
 use \Chaching\Encryption\Base64;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;
@@ -44,13 +45,13 @@ class Request extends \Chaching\Message
 
 		$this->set_authorization($authorization);
 
-		$this->fields['trantype'] 	= 'Auth';
-		$this->fields['storetype'] 	= '3d_pay_hosting';
-		$this->fields['rnd'] 		= uniqid();
-
-		$this->fields['currency'] 	= Currencies::EUR;
-		$this->fields['encoding'] 	= 'utf-8';
-		$this->fields['lang'] 		= $this->detect_client_language(
+		$this->fields['trantype'] 		= 'Auth';
+		$this->fields['storetype'] 		= '3d_pay_hosting';
+		$this->fields['hashAlgorithm'] 	= VUBeCard::HASH_ALGORITHM_VERSION_2;
+		$this->fields['rnd'] 			= uniqid();
+		$this->fields['currency'] 		= Currencies::EUR;
+		$this->fields['encoding'] 		= 'utf-8';
+		$this->fields['lang'] 			= $this->detect_client_language(
 			$this->valid_languages
 		);
 
@@ -170,23 +171,44 @@ class Request extends \Chaching\Message
 
 	protected function sign()
 	{
-		$field_list = [
-			'clientid', 'oid', 'amount', 'okurl', 'failurl', 'trantype',
-			'rnd', 'storekey'
-		];
-
 		$signature_base = '';
 
-		foreach ($field_list as $field)
+		if (!empty($this->fields['hashAlgorithm']) AND $this->fields['hashAlgorithm'] === VUBeCard::HASH_ALGORITHM_VERSION_2)
 		{
-			$signature_base .= isset($this->fields[ $field ])
-				? $this->fields[ $field ]
-				: '';
+			$field_list = [
+				'clientid', 'oid', 'amount', 'okurl', 'failurl', 'trantype', '_', 'rnd',
+				'_', '_', '_', 'currency'
+			];
+
+			foreach ($field_list as $field)
+			{
+				$signature_base .= !empty($this->fields[ $field ])
+					? $this->fields[ $field ]
+					: '';
+				$signature_base .= '|';
+			}
+
+			$hash_algorithm = 'sha512';
+			$signature_base .= $this->escape_special_chars($this->auth[ 1 ]);
+		}
+		else
+		{
+			$field_list = [
+				'clientid', 'oid', 'amount', 'okurl', 'failurl', 'trantype', 'rnd'
+			];
+
+			foreach ($field_list as $field)
+			{
+				$signature_base .= !empty($this->fields[ $field ])
+					? $this->fields[ $field ]
+					: '';
+			}
+
+			$hash_algorithm = 'sha1';
+			$signature_base .= $this->auth[ 1 ];
 		}
 
-		$signature_base .= $this->auth[ 1 ];
-
-		return (new Base64($this->auth))->sign($signature_base);
+		return (new Base64($this->auth))->sign($signature_base, $hash_algorithm);
 	}
 
 	public function process($redirect = TRUE)

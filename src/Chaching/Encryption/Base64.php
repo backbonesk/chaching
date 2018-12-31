@@ -14,8 +14,8 @@ namespace Chaching\Encryption;
 
 class Base64 extends \Chaching\Encryption
 {
-	public function sign($signature_base)
+	public function sign($signature_base, $hash_algorithm = 'sha512')
 	{
-		return base64_encode(pack('H*', sha1($signature_base)));
+		return base64_encode(pack('H*', hash($hash_algorithm, $signature_base)));
 	}
 }

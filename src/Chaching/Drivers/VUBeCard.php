@@ -14,6 +14,8 @@ namespace Chaching\Drivers;
 
 class VUBeCard extends \Chaching\Driver
 {
+	const HASH_ALGORITHM_VERSION_2 = 'ver2';
+
 	public function request(Array $attributes)
 	{
 		static $request = NULL;

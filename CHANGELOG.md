@@ -2,7 +2,10 @@
 
 ### v0.19.0
 
-Removed usage of deprecated `FILTER_FLAG_HOST_REQUIRED` when checking for valid URL via `filter_var` in PHP 7.3.
+Updated VUB eCard service driver with proper testing URLs, fixed validating results of payment not exactly according to the documentation ([igor-kamil](https://github.com/igor-kamil)) and added support for newer version of generating signatures (enabled by default).
+
+Removed usage of deprecated `FILTER_FLAG_HOST_REQUIRED` when checking for valid URL via `filter_var` in PHP 7.3 and other minor code style improvements.
+
 
 ### v0.18.0: 2018/07/21
 
