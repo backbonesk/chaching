@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.19.1: 2019/05/29
+
+Again fixes incorrect variable naming in verifying `PemKeys` signature that resurfaced in abf1b89 (see PR #2).
+
 ### v0.19.0: 2018/12/31
 
 Updated VUB eCard service driver with proper testing URLs, fixed validating results of payment not exactly according to the documentation ([igor-kamil](https://github.com/igor-kamil)) and added support for newer version of generating signatures (enabled by default).
