@@ -182,7 +182,7 @@ class Request extends \Chaching\Message
 
 			foreach ($field_list as $field)
 			{
-				$signature_base .= !empty($this->fields[ $field ])
+				$signature_base .= isset($this->fields[ $field ])
 					? $this->fields[ $field ]
 					: '';
 				$signature_base .= '|';
@@ -199,7 +199,7 @@ class Request extends \Chaching\Message
 
 			foreach ($field_list as $field)
 			{
-				$signature_base .= !empty($this->fields[ $field ])
+				$signature_base .= isset($this->fields[ $field ])
 					? $this->fields[ $field ]
 					: '';
 			}

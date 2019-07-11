@@ -143,9 +143,7 @@ class Response extends \Chaching\Message
 				{
 					if (isset($this->fields[ $param ]))
 					{
-						$signature_base .= !empty($this->fields[ $param ])
-							? $this->escape_special_chars($this->fields[ $param ])
-							: '';
+						$signature_base .= $this->escape_special_chars($this->fields[ $param ]);
 					}
 
 					$signature_base .= '|';
@@ -160,9 +158,10 @@ class Response extends \Chaching\Message
 
 				foreach ($params as $param)
 				{
-					$signature_base .= !empty($this->fields[ $param ])
-						? $this->fields[ $param ]
-						: '';
+					if (isset($this->fields[ $param ]))
+					{
+						$signature_base .= $this->fields[ $param ];
+					}
 				}
 
 				$signature_base .= $this->auth[ 1 ];

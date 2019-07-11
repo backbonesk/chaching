@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.19.2: 2019/07/11
+
+Fixed incorrect handling of "empty" characters such as number zero in generating signatures for `VUBeCard` service drvier.
+
 ### v0.19.1: 2019/05/29
 
 Again fixes incorrect variable naming in verifying `PemKeys` signature that resurfaced in abf1b89 (see PR #2).
