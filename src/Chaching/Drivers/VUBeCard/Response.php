@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2018 BACKBONE, s.r.o.
+ * (c) 2019 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,6 +13,7 @@ namespace Chaching\Drivers\VUBeCard;
 
 use \Chaching\Currencies;
 use \Chaching\Driver;
+use \Chaching\Drivers\VUBeCard;
 use \Chaching\Encryption\Base64;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidResponseException;
@@ -31,11 +32,8 @@ class Response extends \Chaching\Message
 	{
 		parent::__construct();
 
-		$this->readonly_fields = [ 'HASHPARAMS', 'HASHPARAMSVAL', 'HASH' ];
-		$this->required_fields = [
-			'clientid','oid','Response'
-		];
-
+		$this->readonly_fields = [ 'HASHPARAMS', 'HASHPARAMSVAL', 'HASH', 'hashAlgorithm' ];
+		$this->required_fields = [ 'clientid', 'oid' ];
 
 		$this->fields = $attributes;
 
@@ -51,7 +49,8 @@ class Response extends \Chaching\Message
 		unset(
 			$this->fields['HASH'],
 			$this->fields['HASHPARAMS'],
-			$this->fields['HASHPARAMSVAL']
+			$this->fields['HASHPARAMSVAL'],
+			$this->fields['hashAlgorithm']
 		);
 	}
 
@@ -81,7 +80,11 @@ class Response extends \Chaching\Message
 
 		$this->variable_symbol 	= $this->fields['oid'];
 
-		switch (strtolower($this->fields['Response']))
+		$response = !empty($this->fields['Response'])
+			? strtolower($this->fields['Response'])
+			: 'error';
+
+		switch ($response)
 		{
 			case 'approved':
 				$this->status = TransactionStatuses::SUCCESS;
@@ -132,18 +135,40 @@ class Response extends \Chaching\Message
 
 		if (isset($this->fields['HASHPARAMS']))
 		{
-			$params = explode(':', $this->fields['HASHPARAMS']);
-
-			foreach ($params as $param)
+			if (!empty($this->fields['hashAlgorithm']) AND $this->fields['hashAlgorithm'] === VUBeCard::HASH_ALGORITHM_VERSION_2)
 			{
-				$signature_base .= isset($this->fields[ $param ])
-					? $this->fields[ $param ]
-					: '';
+				$params = explode('|', $this->fields['HASHPARAMS']);
+
+				foreach ($params as $param)
+				{
+					if (isset($this->fields[ $param ]))
+					{
+						$signature_base .= $this->escape_special_chars($this->fields[ $param ]);
+					}
+
+					$signature_base .= '|';
+				}
+
+				$signature_base .= $this->escape_special_chars($this->auth[ 1 ]);
+				$hash_algorithm = 'sha512';
+			}
+			else
+			{
+				$params = explode(':', $this->fields['HASHPARAMS']);
+
+				foreach ($params as $param)
+				{
+					if (isset($this->fields[ $param ]))
+					{
+						$signature_base .= $this->fields[ $param ];
+					}
+				}
+
+				$signature_base .= $this->auth[ 1 ];
+				$hash_algorithm = 'sha1';
 			}
 		}
 
-		$signature_base .= $this->auth[ 1 ];
-
-		return (new Base64($this->auth))->sign($signature_base);
+		return (new Base64($this->auth))->sign($signature_base, $hash_algorithm);
 	}
 }

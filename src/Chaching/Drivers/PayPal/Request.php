@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2018 BACKBONE, s.r.o.
+ * (c) 2019 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,7 +14,6 @@ namespace Chaching\Drivers\PayPal;
 use \Chaching\Chaching;
 use \Chaching\Driver;
 use \Chaching\Currencies;
-use \Chaching\Encryption\Base64;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;
 
@@ -108,7 +107,7 @@ class Request extends \Chaching\Message
 				$this->fields['amount']
 			));
 
-		if (!filter_var($this->fields['return'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+		if (!filter_var($this->fields['return'], FILTER_VALIDATE_URL))
 			throw new InvalidOptionsException(sprintf(
 				"Field return has an unacceptable value '%s'. Valid " .
 				"return URL has to be properly formatted.",
@@ -122,7 +121,7 @@ class Request extends \Chaching\Message
 		}
 		else
 		{
-			if (!filter_var($this->fields['cancel_return'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+			if (!filter_var($this->fields['cancel_return'], FILTER_VALIDATE_URL))
 				throw new InvalidOptionsException(sprintf(
 					"Field cancel_return has an unacceptable value '%s'. " .
 					"Valid return URL has to be properly formatted.",
@@ -132,7 +131,7 @@ class Request extends \Chaching\Message
 
 		if (!empty($this->fields['notify_url']))
 		{
-			if (!filter_var($this->fields['notify_url'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+			if (!filter_var($this->fields['notify_url'], FILTER_VALIDATE_URL))
 				throw new InvalidOptionsException(sprintf(
 					"Field notify_url has an unacceptable value '%s'. Valid " .
 					"return URL has to be properly formatted.",

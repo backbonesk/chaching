@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2018 BACKBONE, s.r.o.
+ * (c) 2019 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -38,7 +38,7 @@ class PemKeys extends \Chaching\Encryption
 			file_get_contents($this->authorization[ 1 ]['key'])
 		);
 
-		$signature_base = base64_encode($signature_base);
+		$signature = base64_encode($signature_base);
 		$result = openssl_verify($given_signature, $signature, $resource_id);
 
 		openssl_free_key($resource_id);
