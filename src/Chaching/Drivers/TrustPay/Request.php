@@ -3,7 +3,7 @@
 /*
  * This file is part of Chaching.
  *
- * (c) 2018 BACKBONE, s.r.o.
+ * (c) 2019 BACKBONE, s.r.o.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -127,7 +127,7 @@ class Request extends \Chaching\Message
 		// Optional fields
 		if (isset($this->fields['URL']))
 		{
-			if (!filter_var($this->fields['URL'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+			if (!filter_var($this->fields['URL'], FILTER_VALIDATE_URL))
 				throw new InvalidOptionsException(sprintf(
 					"Field %s (or URL) has an unacceptable value '%s'. Valid " .
 					"return URL has to be properly formatted.",
@@ -137,7 +137,7 @@ class Request extends \Chaching\Message
 
 		if (isset($this->fields['RURL']))
 		{
-			if (!filter_var($this->fields['RURL'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+			if (!filter_var($this->fields['RURL'], FILTER_VALIDATE_URL))
 				throw new InvalidOptionsException(sprintf(
 					"Field RURL has an unacceptable value '%s'. Valid " .
 					"return URL has to be properly formatted.",
@@ -147,7 +147,7 @@ class Request extends \Chaching\Message
 
 		if (isset($this->fields['CURL']))
 		{
-			if (!filter_var($this->fields['CURL'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+			if (!filter_var($this->fields['CURL'], FILTER_VALIDATE_URL))
 				throw new InvalidOptionsException(sprintf(
 					"Field CURL has an unacceptable value '%s'. Valid " .
 					"return URL has to be properly formatted.",
@@ -157,7 +157,7 @@ class Request extends \Chaching\Message
 
 		if (isset($this->fields['EURL']))
 		{
-		if (!filter_var($this->fields['EURL'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+		if (!filter_var($this->fields['EURL'], FILTER_VALIDATE_URL))
 			throw new InvalidOptionsException(sprintf(
 				"Field EURL has an unacceptable value '%s'. Valid " .
 				"return URL has to be properly formatted.",
@@ -167,7 +167,7 @@ class Request extends \Chaching\Message
 
 		if (isset($this->fields['NURL']))
 		{
-			if (!filter_var($this->fields['NURL'], FILTER_VALIDATE_URL, FILTER_FLAG_HOST_REQUIRED))
+			if (!filter_var($this->fields['NURL'], FILTER_VALIDATE_URL))
 				throw new InvalidOptionsException(sprintf(
 					"Field NURL has an unacceptable value '%s'. Valid " .
 					"return URL has to be properly formatted.",

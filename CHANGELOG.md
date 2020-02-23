@@ -1,5 +1,20 @@
 ## Changelog
 
+### v0.19.2: 2019/07/11
+
+Fixed incorrect handling of "empty" characters such as number zero in generating signatures for `VUBeCard` service drvier.
+
+### v0.19.1: 2019/05/29
+
+Again fixes incorrect variable naming in verifying `PemKeys` signature that resurfaced in abf1b89 (see PR #2).
+
+### v0.19.0: 2018/12/31
+
+Updated VUB eCard service driver with proper testing URLs, fixed validating results of payment not exactly according to the documentation ([igor-kamil](https://github.com/igor-kamil)) and added support for newer version of generating signatures (enabled by default).
+
+Removed usage of deprecated `FILTER_FLAG_HOST_REQUIRED` when checking for valid URL via `filter_var` in PHP 7.3 and other minor code style improvements.
+
+
 ### v0.18.0: 2018/07/21
 
 Added `notification` method to `SLSPSporoPay` driver to allow to validate mail notifications (signatures) coming from the SporoPay service.
