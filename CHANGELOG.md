@@ -2,7 +2,7 @@
 
 ### v0.19.3
 
-Force using HTTP 1.1 with PayPal IPN validation to conform to PayPal's [security guidelines and best practices](https://developer.paypal.com/docs/api/info-security-guidelines/) ([igor-kamil](https://github.com/igor-kamil)).
+Force using HTTP 1.1 with PayPal IPN validation to conform to PayPal's [security guidelines and best practices](https://developer.paypal.com/docs/api/info-security-guidelines/) and removed duplicated `cancel_return` attribute when issuing PayPal payment request ([igor-kamil](https://github.com/igor-kamil)).
 
 ### v0.19.2: 2019/07/11
 

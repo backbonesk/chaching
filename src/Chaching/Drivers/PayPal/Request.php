@@ -37,9 +37,8 @@ class Request extends \Chaching\Message
 		$this->optional_fields = [
 			'no_note', 'no_shipping', 'shipping', 'address_override',
 			'cancel_return', 'email', 'first_name', 'last_name', 'address1',
-			'zip', 'city', 'country', 'address_override', 'cancel_return',
-			'notify_url', 'cpp_logo_image', 'cpp_cart_border_color', 'lc',
-			'page_style'
+			'zip', 'city', 'country', 'address_override', 'notify_url',
+			'cpp_logo_image', 'cpp_cart_border_color', 'lc', 'page_style'
 		];
 
 		$this->field_map = [
