@@ -144,10 +144,11 @@ class Notification extends \Chaching\Message
 	{
 		$context = stream_context_create([
 			'http' => [
-				'header' 	=>
+				'protocol_version' 	=> 1.1,
+				'header' 			=>
 					"Content-type: application/x-www-form-urlencoded\r\n",
-				'method' 	=> 'POST',
-				'content' 	=> http_build_query($this->notification_options)
+				'method' 			=> 'POST',
+				'content' 			=> http_build_query($this->notification_options)
 			]
 		]);
 

@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.19.3
+
+Force using HTTP 1.1 with PayPal IPN validation to conform to PayPal's [security guidelines and best practices](https://developer.paypal.com/docs/api/info-security-guidelines/) ([igor-kamil](https://github.com/igor-kamil)).
+
 ### v0.19.2: 2019/07/11
 
 Fixed incorrect handling of "empty" characters such as number zero in generating signatures for `VUBeCard` service drvier.
