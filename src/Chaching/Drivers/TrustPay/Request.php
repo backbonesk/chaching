@@ -11,7 +11,7 @@
 
 namespace Chaching\Drivers\TrustPay;
 
-use \Chachinbg\Chaching;
+use \Chaching\Chaching;
 use \Chaching\Currencies;
 use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;

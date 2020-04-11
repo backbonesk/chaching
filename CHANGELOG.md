@@ -1,6 +1,10 @@
 ## Changelog
 
-### v0.19.3: 2020/08/03
+### v0.19.4: 2020/04/11
+
+Fixes minor typo in TrustPay request implementation causing defunct sandbox environment checking ([gregaroland](https://github.com/gregaroland)).
+
+### v0.19.3: 2020/03/08
 
 Force using HTTP 1.1 with PayPal IPN validation to conform to PayPal's [security guidelines and best practices](https://developer.paypal.com/docs/api/info-security-guidelines/) and removed duplicated `cancel_return` attribute when issuing PayPal payment request ([igor-kamil](https://github.com/igor-kamil)).
 
