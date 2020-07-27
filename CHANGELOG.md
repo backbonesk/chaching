@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.20.0: 2020/07/27
+
+Added support for ePlatby VÚB sandbox.
+
 ### v0.19.4: 2020/04/11
 
 Fixes minor typo in TrustPay request implementation causing defunct sandbox environment checking ([gregaroland](https://github.com/gregaroland)).

@@ -11,6 +11,7 @@
 
 namespace Chaching\Drivers\VUBePlatby;
 
+use \Chaching\Chaching;
 use \Chaching\Currencies;
 use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;
@@ -20,8 +21,6 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Request extends \Chaching\Message
 {
-	const REQUEST_URI = 'https://ib.vub.sk/e-platbyeuro.aspx';
-
 	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
 		parent::__construct();
@@ -182,7 +181,7 @@ class Request extends \Chaching\Message
 
 		$fields = sprintf(
 			"<form action=\"%s\" method=\"post\" id=\"eplatby\">\n",
-			self::REQUEST_URI
+			$this->request_server_url()
 		);
 
 		foreach ($this->fields as $key => $value)
@@ -198,5 +197,12 @@ class Request extends \Chaching\Message
 		$fields .= "\tdocument.getElementById('eplatby').submit();\n</script>";
 
 		return $fields;
+	}
+
+	private function request_server_url()
+	{
+		return ($this->environment === Chaching::SANDBOX)
+			? 'https://nib.vub.sk/nepay/merchant'
+			: 'https://ib.vub.sk/e-platbyeuro.aspx';
 	}
 }
