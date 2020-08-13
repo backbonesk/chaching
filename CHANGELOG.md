@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.20.1: 2020/08/13
+
+Always format SLSPSporoPay amount to two decimal places.
+
 ### v0.20.0: 2020/07/27
 
 Added support for ePlatby VÚB sandbox.

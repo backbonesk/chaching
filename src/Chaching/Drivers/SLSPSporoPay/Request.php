@@ -117,10 +117,7 @@ class Request extends \Chaching\Message
 		// Validate all required fields first
 		$this->validate_required_fields();
 
-		if (!is_string($this->fields['suma']))
-		{
-			$this->fields['suma'] = sprintf('%01.2F', $this->fields['suma']);
-		}
+		$this->fields['suma'] = sprintf('%01.2F', $this->fields['suma']);
 
 		if (!preg_match('/^[0-9]{1,13}(\.[0-9]{1,2})?$/', $this->fields['suma']))
 			throw new InvalidOptionsException(sprintf(
