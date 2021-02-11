@@ -2,24 +2,24 @@
 
 Simple and unified object-oriented library written in PHP for e-commerce services offered by Slovak banks and financial institutions.
 
-* [CardPay](https://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/cardpay.html) with optional addition for [ComfortPay](http://www.tatrabanka.sk/cardpay/CardPay_ComfortPay_technicka_prirucka.pdf) service -- Tatra banka, a.s.
-* [TatraPay](http://www.tatrabanka.sk/sk/business/ucty-platby-karty/elektronicke-bankovnictvo/tatrapay.html) -- Tatra banka, a.s.
+* [CardPay](https://www.tatrabanka.sk/sk/business/ucty-platby/prijimanie-platieb/cardpay/) with optional addition for [ComfortPay](http://www.tatrabanka.sk/cardpay/CardPay_ComfortPay_technicka_prirucka.pdf) service -- Tatra banka, a.s.
+* [TatraPay](https://www.tatrabanka.sk/sk/business/ucty-platby/prijimanie-platieb/tatrapay/) -- Tatra banka, a.s.
 
-* [ePlatby VÚB](https://www.vub.sk/pre-podnikatelov/nonstop-banking/e-commerce-pre-internetovych-obchodnikov/e-platby-vub/) -- VÚB, a.s.
+* [ePlatby VÚB](https://www.vub.sk/firmy-podnikatelia/platby/eplatby/) -- VÚB, a.s.
 
-* [VÚB eCard](http://www.vub.sk/pre-firmy/nonstop-banking/e-commerce-pre-internetovych-obchodnikov/ecard/) -- VÚB, a.s.
+* [VÚB eCard](https://www.vub.sk/firmy-podnikatelia/platby/ecard/) -- VÚB, a.s.
 
-* [SporoPay](http://www.slsp.sk/6415/sporopay-elektronicke-platby-na-internete.html) -- Slovenská sporiteľna, a.s.
+* [SporoPay](https://www.slsp.sk/sk/biznis/prijimanie-platieb/sporopay) -- Slovenská sporiteľna, a.s.
 
-* [iTerminal](https://www.postovabanka.sk/pre-firmy/eft-pos-terminal/iterminal/) -- Poštová banka, a.s.
+* [iTerminal](https://www.postovabanka.sk/korporatni-klienti/eft-pos-terminal/iterminal/) -- Poštová banka, a.s.
 
-* [GP webpay](http://gpwebpay.cz/Content/downloads/GP_webpay_Seznameni_se_systemem_072013.pdf) -- Global Payments Europe, s.r.o.
+* [GP webpay](https://gpwebpay.cz/downloads/GP_webpay_Gateway.pdf) -- Global Payments Europe, s.r.o.
 
-* [TrustCard](http://www.trustpay.eu/contact-references-payment-methods-news/dokumenty-na-stiahnutie-en-GB/) -- TrustPay, a.s.
+* [TrustCard](https://doc.trustpay.eu/v02?ShowDirectDebits=true&ShowDirectBanking=true&ShowApiBanking=true&ShowApiBankingVibans=true#overview) -- TrustPay, a.s.
 
 * [PayPal](http://www.paypal.com) -- PayPal (Europe) S.à r.l. et Cie, S.C.A.
 
-The current version of the library is v0.20.1 and requires PHP 5.4 or PHP 7+ to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+The current version of the library is v0.20.2 and requires PHP 5.4 or PHP 7+ to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -28,7 +28,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.20.1"
+	    "backbone/chaching": "0.20.2"
 	  }
 	}
 
@@ -47,7 +47,7 @@ The library follows the PSR-0 convention of naming classes and after installing 
 
 	$chaching = new Chaching($driver, $authorization, $options);
 
-As already mentioned in the introduction, currently there are eight different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY` and `Chaching::ITERMINAL`.
+As already mentioned in the introduction, currently there are eight different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY`, `Chaching::ITERMINAL` and `Chaching::ITERMINAL2`.
 
 In case of `Chaching::GPWEBPAY` use an associated array instead of password, so authentication information would look like this:
 
@@ -61,7 +61,7 @@ In case of `Chaching::GPWEBPAY` use an associated array instead of password, so 
 
 Public and private key needs to be created according to GP webpay's documentation.
 
-And in case of `Chaching::ITERMINAL` use an associated array as well:
+And in case of `Chaching::ITERMINAL` or `Chaching::ITERMINAL2` use an associated array as well:
 
 	$authorization = [
 	  NULL, [
@@ -73,7 +73,7 @@ And in case of `Chaching::ITERMINAL` use an associated array as well:
 Beforementioned empty `$options` array may at the moment contain these keys:
 
 * `ecdsa_keys_file` - Absolute file path to file with Tatra banka's ECDSA keys (used only with HMAC message signing in CardPay and TatraPay)
-* `sandbox` - Would you like to use sandbox or production URLs when communicating with the bank or financial institution? Default value is `FALSE`. Due to their limitations, sandbox is available only for `Chaching::TRUSTPAY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY` and `Chaching::ITERMINAL` (if not listed here, production URLs will be used even in sandbox mode).
+* `sandbox` - Would you like to use sandbox or production URLs when communicating with the bank or financial institution? Default value is `FALSE`. Due to their limitations, sandbox is available only for `Chaching::TRUSTPAY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY`, `Chaching::ITERMINAL` and `Chaching::ITERMINAL2` (if not listed here, production URLs will be used even in sandbox mode).
 
 Afterwards, we need to create a request for the external service with specific information about the payment.
 
@@ -90,7 +90,7 @@ Afterwards, we need to create a request for the external service with specific i
 
 By running the `process` method in the next code block, we are getting back (when `$auto_redirect` is set to `FALSE`) the URL to redirect the user to, where the user will make the payment.
 
-(Note that with `Chaching::ITERMINAL` the `$auto_redirect` will not ever work as the transaction identifier that is provided for you is strictly needed for thereafter. Only after you succesfully create the transaction you can use the redirection URL. For more information read bank's documentation.)
+(Note that with `Chaching::ITERMINAL` or `Chaching::ITERMINAL2` the `$auto_redirect` will not ever work as the transaction identifier that is provided for you is strictly needed for thereafter. Only after you succesfully create the transaction you can use the redirection URL. For more information read bank's documentation.)
 
 	try
 	{
@@ -105,7 +105,7 @@ By running the `process` method in the next code block, we are getting back (whe
 		// General error with authentication or the request itself.
 	}
 
-Remember the `callback` key in the request options? It is an absolute URL that the banking service will redirect to upon completion of the payment. Chaching also has methods to help with handling the response, checking it's validity, etc. However, if you are running with `Chaching::ITERMINAL`'s driver, you do not need to provide a callback as it is set in the merchant's centre provided by the bank.
+Remember the `callback` key in the request options? It is an absolute URL that the banking service will redirect to upon completion of the payment. Chaching also has methods to help with handling the response, checking it's validity, etc. However, if you are running with `Chaching::ITERMINAL`'s (or `Chaching::ITERMINAL2`'s) driver, you do not need to provide a callback as it is set in the merchant's centre provided by the bank.
 
 	try
 	{
@@ -199,4 +199,4 @@ To release a proper v1.0 code of the library needs to have a more thorough tutor
 
 ---
 
-&copy; 2020 BACKBONE, s.r.o.
+&copy; 2021 BACKBONE, s.r.o.

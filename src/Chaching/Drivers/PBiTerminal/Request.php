@@ -231,14 +231,14 @@ class Request extends \Chaching\Message
 		));
 	}
 
-	private function request_server_url()
+	protected function request_server_url()
 	{
 		return ($this->environment === Chaching::SANDBOX)
 			? 'https://secureshop-test.firstdata.lv:8443/ecomm/MerchantHandler'
 			: 'https://secureshop.firstdata.lv:8443/ecomm/MerchantHandler';
 	}
 
-	private function request_client_url()
+	protected function request_client_url()
 	{
 		return ($this->environment === Chaching::SANDBOX)
 			? 'https://secureshop-test.firstdata.lv/ecomm/ClientHandler'

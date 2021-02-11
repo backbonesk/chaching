@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.20.2: 2021/01/07
+
+Added support for new (sia.eu) Poštová banka's iTerminal service sandbox and production environments 
+(available as `PBIterminal2` driver / `ITERMINAL2` service).
+
 ### v0.20.1: 2020/08/13
 
 Always format SLSPSporoPay amount to two decimal places.
