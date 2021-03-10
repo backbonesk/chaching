@@ -1,8 +1,12 @@
 ## Changelog
 
+### v0.20.3: 2021/03/10
+
+Added support for VUB eCard's `INVOICENUMBER` attribute to display order number in XML / HTML card transactions export. By default, it is being automatically filled with contents of `oid` (order ID), but may be customized.
+
 ### v0.20.2: 2021/01/07
 
-Added support for new (sia.eu) Poštová banka's iTerminal service sandbox and production environments 
+Added support for new (sia.eu) Poštová banka's iTerminal service sandbox and production environments
 (available as `PBIterminal2` driver / `ITERMINAL2` service).
 
 ### v0.20.1: 2020/08/13

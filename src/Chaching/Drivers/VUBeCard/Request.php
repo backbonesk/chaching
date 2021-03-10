@@ -33,7 +33,7 @@ class Request extends \Chaching\Message
 		];
 
 		$this->required_fields = [ 'oid', 'amount', 'currency', 'okurl' ];
-		$this->optional_fields = [ 'failurl', 'lang', 'encoding' ];
+		$this->optional_fields = [ 'failurl', 'lang', 'encoding', 'INVOICENUMBER' ];
 
 		$this->field_map = [
 			Driver::VARIABLE_SYMBOL 	=> 'oid',
@@ -138,6 +138,11 @@ class Request extends \Chaching\Message
 				"order ID consists of up to 10 digits.",
 				Driver::VARIABLE_SYMBOL, $this->fields['oid']
 			));
+
+		if (empty($this->fields['INVOICENUMBER']))
+		{
+			$this->fields['INVOICENUMBER'] = $this->fields['oid'];
+		}
 
 		if (!filter_var($this->fields['okurl'], FILTER_VALIDATE_URL))
 			throw new InvalidOptionsException(sprintf(
