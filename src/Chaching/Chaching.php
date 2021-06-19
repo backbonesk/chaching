@@ -16,7 +16,7 @@ use \Chaching\Exceptions\InvalidOptionsException;
 
 class Chaching
 {
-	const VERSION 		= '0.20.3';
+	const VERSION 		= '0.21.0';
 
 	const CARDPAY 		= 'cardpay';
 	const SPOROPAY 		= 'sporopay';
@@ -28,6 +28,7 @@ class Chaching
 	const GPWEBPAY 		= 'gpwebpay';
 	const ITERMINAL 	= 'iterminal';
 	const ITERMINAL2 	= 'iterminal2';
+	const BENEFITPLUS 	= 'benefitplus';
 
 	const PRODUCTION 	= 'production';
 	const SANDBOX 		= 'sandbox';
@@ -42,7 +43,8 @@ class Chaching
 		self::PAYPAL		=> 'PayPal',
 		self::GPWEBPAY 		=> 'GPwebpay',
 		self::ITERMINAL 	=> 'PBiTerminal',
-		self::ITERMINAL2 	=> 'PBiTerminal2'
+		self::ITERMINAL2 	=> 'PBiTerminal2',
+		self::BENEFITPLUS 	=> 'BenefitPlus'
 	];
 
 	/**

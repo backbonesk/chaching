@@ -1,7 +1,7 @@
 {
     "name": "backbone/chaching",
     "type": "library",
-    "version": "0.20.3",
+    "version": "0.21.0",
     "license": "MIT",
     "description": "Universal payment library for banking services in Slovakia",
     "keywords": [
@@ -20,13 +20,14 @@
         "ecard",
         "paypal",
         "gpwebpay",
-        "iterminal"
+        "iterminal",
+        "benefitplus"
     ],
-    "homepage": "http://www.backbone.sk/en/",
+    "homepage": "https://www.backbone.sk/en/",
     "authors": [
         {
             "name": "Palo Sopko",
-            "email": "pavol.sopko@backbone.sk"
+            "email": "pavol@sopko.sk"
         }
     ],
     "require": {

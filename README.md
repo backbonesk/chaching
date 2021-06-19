@@ -19,7 +19,9 @@ Simple and unified object-oriented library written in PHP for e-commerce service
 
 * [PayPal](http://www.paypal.com) -- PayPal (Europe) S.à r.l. et Cie, S.C.A.
 
-The current version of the library is v0.20.3 and requires PHP 5.4 or PHP 7+ to work. Even though there are things to make better, it is already being used in production without any sort of problems.
+* [BenefitPlus](https://www.benefit-plus.eu/sk/pre-partnerov/) -- Benefit Management s.r.o.
+
+The current version of the library is v0.21.0 and requires PHP 5.4 or PHP 7+ to work. Even though there are things to make better, it is already being used in production without any sort of problems.
 
 Chaching library is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
@@ -28,7 +30,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.20.3"
+	    "backbone/chaching": "0.21.0"
 	  }
 	}
 
@@ -47,7 +49,7 @@ The library follows the PSR-0 convention of naming classes and after installing 
 
 	$chaching = new Chaching($driver, $authorization, $options);
 
-As already mentioned in the introduction, currently there are eight different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY`, `Chaching::ITERMINAL` and `Chaching::ITERMINAL2`.
+As already mentioned in the introduction, currently there are eight different payment methods that are supported with each having it's own driver constant: `Chaching::CARDPAY`, `Chaching::TATRAPAY`, `Chaching::TRUSTPAY`, `Chaching::EPLATBY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY`, `Chaching::ITERMINAL`, `Chaching::ITERMINAL2` and `Chaching::BENEFITPLUS`.
 
 In case of `Chaching::GPWEBPAY` use an associated array instead of password, so authentication information would look like this:
 
@@ -73,7 +75,7 @@ And in case of `Chaching::ITERMINAL` or `Chaching::ITERMINAL2` use an associated
 Beforementioned empty `$options` array may at the moment contain these keys:
 
 * `ecdsa_keys_file` - Absolute file path to file with Tatra banka's ECDSA keys (used only with HMAC message signing in CardPay and TatraPay)
-* `sandbox` - Would you like to use sandbox or production URLs when communicating with the bank or financial institution? Default value is `FALSE`. Due to their limitations, sandbox is available only for `Chaching::TRUSTPAY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY`, `Chaching::ITERMINAL` and `Chaching::ITERMINAL2` (if not listed here, production URLs will be used even in sandbox mode).
+* `sandbox` - Would you like to use sandbox or production URLs when communicating with the bank or financial institution? Default value is `FALSE`. Due to their limitations, sandbox is available only for `Chaching::TRUSTPAY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY`, `Chaching::ITERMINAL`, `Chaching::ITERMINAL2` and `Chaching::BENEFITPLUS` (if not listed here, production URLs will be used even in sandbox mode).
 
 Afterwards, we need to create a request for the external service with specific information about the payment.
 
@@ -145,7 +147,7 @@ TrustPay is a special case with response handling as they use notification mecha
 
 You can also use a `notification` method with SporoPay and their mail notifications to the account own They come not at the same time as regular responses when user redirects their browser from SporoPay's interface, it is just another redundant way of checking payment status in case not everything goes according to the plan. (The same use case true for Tatra banka's services CardPay and TatraPay, but in those cases you can just use the `response`.)
 
-When using Poštová banka's iTerminal service or Tatra banka's CardPay service, there is an option of refunding part or full payment that has been successfully completed before. Poštová banka supports only one refund per transaction, in case of CardPay you may refund in as many steps as you'd like until sum of all refunds reaches the amount of original transaction.
+When using Poštová banka's iTerminal service, Tatra banka's CardPay service or Benefit Plus service, there is an option of refunding part or full payment that has been successfully completed before. Poštová banka and Benefit Plus supports only one refund per transaction, in case of CardPay you may refund in as many steps as you'd like until sum of all refunds reaches the amount of original transaction.
 
 	try
 	{

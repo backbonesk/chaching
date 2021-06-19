@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.21.0: 2021/06/20
+
+Added support for Benefit Plus payment gateway.
+
 ### v0.20.3: 2021/03/10
 
 Added support for VUB eCard's `INVOICENUMBER` attribute to display order number in XML / HTML card transactions export. By default, it is being automatically filled with contents of `oid` (order ID), but may be customized.
