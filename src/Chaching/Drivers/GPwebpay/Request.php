@@ -255,8 +255,15 @@ class Request extends \Chaching\Message
 
 	private function request_server_url()
 	{
+		$url_handle = 'csobsk';
+
+		if (array_key_exists('url_handle', $this->auth[1]))
+		{
+			$url_handle = $this->auth[1]['url_handle'];
+		}
+
 		return ($this->environment === Chaching::SANDBOX)
-			? 'https://test.3dsecure.gpwebpay.com/csobsk/order.do'
-			: 'https://3dsecure.gpwebpay.com/csobsk/order.do';
+			? sprintf('https://test.3dsecure.gpwebpay.com/%s/order.do', $url_handle)
+			: sprintf('https://3dsecure.gpwebpay.com/%s/order.do', $url_handle);
 	}
 }

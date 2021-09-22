@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.22.0: 2021/09/22
+
+Ability to pass a `url_handle` to the `GPwebpay` driver using `auth` property (default value is `csobsk`).
+
 ### v0.21.0: 2021/06/20
 
 Added support for Benefit Plus payment gateway.
