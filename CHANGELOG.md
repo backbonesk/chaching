@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.22.1: 2021/10/04
+
+Removed strict emptiness condition validating required fields fixing sending `partialPayment` attributes in Benefit Plus payment gateway integration.
+
 ### v0.22.0: 2021/09/22
 
 Ability to pass a `url_handle` to the `GPwebpay` driver using `auth` property (default value is `csobsk`).

@@ -154,7 +154,7 @@ abstract class Message
 	{
 		foreach ($this->required_fields as $required_field)
 		{
-			if (!isset($this->fields[ $required_field ]) OR empty($this->fields[ $required_field ]))
+			if (!isset($this->fields[ $required_field ]))
 				throw new InvalidRequestException(sprintf(
 					"Required field '%s' is missing a value.", $required_field
 				));
