@@ -11,10 +11,8 @@
 
 namespace Chaching\Drivers\GPwebpay;
 
-use \Chaching\Driver;
 use \Chaching\Encryption\PemKeys;
 use \Chaching\TransactionStatuses;
-use \Chaching\Exceptions\InvalidOptionsException;
 
 
 class Response extends \Chaching\Message
@@ -56,14 +54,14 @@ class Response extends \Chaching\Message
 	 */
 	protected function validate()
 	{
-		if ($this->verify($this->fields['DIGEST1']))
+		if (!$this->verify($this->fields['DIGEST']))
 			throw new \Chaching\Exceptions\InvalidResponseException(sprintf(
 				"Signature received as part of the response is incorrect (" .
-				"'%s' expected, got '%s'). If this persists contact the bank.",
-				$signature, $this->fields['DIGEST1']
+				"'%s'). If this persists contact the bank.",
+				$this->fields['DIGEST']
 			));
 
-		$this->variable_symbol = $this->fields['ORDERNUMBER'];
+		$this->variable_symbol = $this->fields['MERORDERNUM'] != NULL ? $this->fields['MERORDERNUM'] : $this->fields['ORDERNUMBER'];
 
 		$this->status = empty($this->fields['PRCODE'])
 			? TransactionStatuses::SUCCESS

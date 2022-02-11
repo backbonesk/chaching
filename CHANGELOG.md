@@ -1,5 +1,11 @@
 ## Changelog
 
+### v0.23.0: 2022/02/11
+
+GPwebpay driver fills `ORDERNUMBER` with the microtime (as int) because this value have to be always unique. For the 
+variable symbol the `MERORDERNUM` is used. Response signature verification have been fixed (fallback from invalid used 
+`DIGEST1` to `DIGEST`).
+
 ### v0.22.1: 2021/10/04
 
 Removed strict emptiness condition validating required fields fixing sending `partialPayment` attributes in Benefit Plus payment gateway integration.

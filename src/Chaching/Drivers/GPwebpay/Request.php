@@ -36,7 +36,7 @@ class Request extends \Chaching\Message
 			Driver::AMOUNT 				=> 'AMOUNT',
 			Driver::CURRENCY 			=> 'CURRENCY',
 			Driver::DESCRIPTION 		=> 'DESCRIPTION',
-			Driver::VARIABLE_SYMBOL 	=> 'ORDERNUMBER',
+			Driver::VARIABLE_SYMBOL 	=> 'MERORDERNUM',
 			Driver::CALLBACK 			=> 'URL'
 		];
 
@@ -47,6 +47,7 @@ class Request extends \Chaching\Message
 		$this->fields['CURRENCY'] 		= Currencies::EUR;
 		$this->fields['MERORDERNUM'] 	= '';
 		$this->fields['MD'] 			= '';
+		$this->fields['ORDERNUMBER'] 	= (int) (microtime(true) * 1000);  // Have to be a unique number
 
 		if (!empty($attributes))
 		{
