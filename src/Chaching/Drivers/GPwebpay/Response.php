@@ -28,14 +28,20 @@ class Response extends \Chaching\Message
 
 		$this->readonly_fields = [
 			'OPERATION', 'ORDERNUMBER', 'MERORDERNUM', 'MD', 'PRCODE',
-			'SRCODE', 'RESULTTEXT', 'DIGEST', 'DIGEST1'
+			'SRCODE', 'RESULTTEXT', 'DETAILS', 'USERPARAM1', 'ADDINFO',
+			'DIGEST', 'DIGEST1'
 		];
 
 		foreach ($this->readonly_fields as $field)
 		{
-			$this->fields[ $field ] = !empty($attributes[ $field ])
-				? $attributes[ $field ]
-				: NULL;
+			if(array_key_exists($field, $attributes))
+			{
+				$this->fields[ $field ] = $attributes[ $field ];
+			}
+			else
+			{
+				$this->fields[ $field ] = NULL;
+			}
 		}
 
 		$this->set_authorization($authorization);
@@ -54,11 +60,11 @@ class Response extends \Chaching\Message
 	 */
 	protected function validate()
 	{
-		if (!$this->verify($this->fields['DIGEST']))
+		if (!$this->verify($this->fields['DIGEST1']))
 			throw new \Chaching\Exceptions\InvalidResponseException(sprintf(
 				"Signature received as part of the response is incorrect (" .
 				"'%s'). If this persists contact the bank.",
-				$this->fields['DIGEST']
+				$this->fields['DIGEST1']
 			));
 
 		$this->variable_symbol = $this->fields['MERORDERNUM'] != NULL ? $this->fields['MERORDERNUM'] : $this->fields['ORDERNUMBER'];
@@ -73,10 +79,13 @@ class Response extends \Chaching\Message
 	protected function verify($given_signature)
 	{
 		$signature_base 	= '';
-		$fields 			= array_slice($this->readonly_fields, 0, 7);
+		$fields 			= array_slice($this->readonly_fields, 0, 10);
 
 		foreach ($fields as $field)
 		{
+			if ($this->fields[ $field ] === NULL)
+				continue;
+
 			if (!empty($signature_base))
 			{
 				$signature_base .= '|';

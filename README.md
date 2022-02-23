@@ -30,7 +30,7 @@ The recommended way to install the library is to use [composer](http://getcompos
 
 	{
 	  "require": {
-	    "backbone/chaching": "0.23.0"
+	    "backbone/chaching": "0.23.1"
 	  }
 	}
 

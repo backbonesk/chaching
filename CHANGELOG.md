@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.23.1: 2022/02/23
+
+Fixed signature verification in GPwebpay response.
+
 ### v0.23.0: 2022/02/11
 
 GPwebpay driver fills `ORDERNUMBER` with the microtime (as int) because this value have to be always unique. For the 
