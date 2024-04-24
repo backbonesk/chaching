@@ -256,7 +256,7 @@ class Request extends \Chaching\Message
 
 	private function request_server_url()
 	{
-		$url_handle = 'csobsk';
+		$url_handle = 'pgw';
 
 		if (array_key_exists('url_handle', $this->auth[1]))
 		{
