@@ -124,7 +124,7 @@ class Request extends \Chaching\Message
 			? $this->auth[ 0 ]
 			: '';
 
-		if (!preg_match('/^[a-z0-9]{3,4}$/', $this->fields['MID']))
+		if (!preg_match('/^[a-z0-9]{3,5}$/', $this->fields['MID']))
 			throw new InvalidOptionsException(sprintf(
 				"Authorization information (Merchant ID or MID) has an " .
 				"unacceptable value '%s'. Try changing it to value you " .
