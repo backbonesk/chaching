@@ -89,13 +89,6 @@ class Refund extends \Chaching\Message implements \Chaching\ECDSAResponseInterfa
 			? $this->auth[ 0 ]
 			: '';
 
-		if (!preg_match('/^[a-z0-9]{3,4}$/', $this->fields['MID']))
-			throw new InvalidOptionsException(sprintf(
-				"Authorization information (Merchant ID or MID) has an " .
-				"unacceptable value '%s'. Try changing it to value you " .
-				"got from the bank.", $this->fields['MID']
-			));
-
 		if (!isset($this->auth[ 1 ]) OR empty($this->auth[ 1 ]))
 			throw new InvalidOptionsException(
 				"Authorization information are unacceptable as it does " .
