@@ -190,7 +190,7 @@ class Request extends \Chaching\Message
 				));
 		}
 
-		if (!filter_var($this->fields['IPC'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_RES_RANGE))
+		if (!filter_var($this->fields['IPC'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 | FILTER_FLAG_NO_RES_RANGE))
 			throw new InvalidOptionsException(sprintf(
 				"Field %s (or IPC) has an unacceptable value '%s'. Valid " .
 				"client IP address has to be a properly formatted IPv4.",
