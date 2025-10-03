@@ -32,6 +32,8 @@ class Chaching
 
 	const PRODUCTION 	= 'production';
 	const SANDBOX 		= 'sandbox';
+	
+	private $driver = NULL;
 
 	private $payment_drivers = [
 		self::SPOROPAY 		=> 'SLSPSporoPay',

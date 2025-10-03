@@ -17,17 +17,24 @@ use \Chaching\Currencies;
 use \Chaching\Encryption\PemKeys;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Spatie\ArrayToXml\ArrayToXml;
 
+if (!function_exists('str_contains')) {
+    function str_contains (string $haystack, string $needle)
+    {
+        return empty($needle) || strpos($haystack, $needle) !== false;
+    }
+}
 
 class Request extends \Chaching\Message
 {
 	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
-		parent::__construct();
+		parent::__construct();		
 
 		$this->readonly_fields = [ 'OPERATION', 'DEPOSITFLAG', 'DIGEST' ];
 		$this->required_fields = [
-			'MERCHANTNUMBER', 'ORDERNUMBER', 'AMOUNT', 'CURRENCY', 'URL'
+			'MERCHANTNUMBER', 'ORDERNUMBER', 'AMOUNT', 'CURRENCY', 'URL', 'PAYMETHODS', 'PAYMETHODS'
 		];
 
 		$this->optional_fields = [ 'MERORDERNUM', 'MD', 'DESCRIPTION' ];
@@ -37,10 +44,27 @@ class Request extends \Chaching\Message
 			Driver::CURRENCY 			=> 'CURRENCY',
 			Driver::DESCRIPTION 		=> 'DESCRIPTION',
 			Driver::VARIABLE_SYMBOL 	=> 'MERORDERNUM',
-			Driver::CALLBACK 			=> 'URL'
+			Driver::CALLBACK 			=> 'URL',
+			Driver::CLIENT_EMAIL		=> Driver::CLIENT_EMAIL,
+			Driver::CLIENT_IP			=> Driver::CLIENT_IP,
+			Driver::CLIENT_NAME			=> Driver::CLIENT_NAME
 		];
 
 		$this->set_authorization($authorization);
+		if (isset($options['payment_methods'])) {
+			if (!str_contains($options['payment_methods'], 'CRD')) {
+				throw new InvalidOptionsException(sprintf(
+					"payment_methods option has an unacceptable value '%s'. Valid " .
+					"payment_methods is a comma separated list of payment methods," .
+					" which must include \"CRD\" (card payment)", 
+					$options['payment_methods']
+				));
+			} else {
+				$payment_methods = $options['payment_methods'];
+			}
+		} else {
+			$payment_methods = 'CRD';
+		}
 
 		$this->fields['DEPOSITFLAG'] 	= 1;
 		$this->fields['OPERATION'] 		= 'CREATE_ORDER';
@@ -48,6 +72,8 @@ class Request extends \Chaching\Message
 		$this->fields['MERORDERNUM'] 	= '';
 		$this->fields['MD'] 			= '';
 		$this->fields['ORDERNUMBER'] 	= (int) (microtime(true) * 1000);  // Have to be a unique number
+		$this->fields['PAYMETHOD']		= 'CRD';		
+		$this->fields['PAYMETHODS']		= $payment_methods; // CRD = Card Payment, APAY = APPLE PAY, GPAY = GOOGLE PAY, PAYPAL = PAYPAL, CTP = ClickToPay, APM-BTR (vsetky dostupne APM metody obchodnika)
 
 		if (!empty($attributes))
 		{
@@ -58,6 +84,36 @@ class Request extends \Chaching\Message
 		{
 			$this->set_options($options);
 		}
+		
+		$this->fields['ADDINFO']		= $this->addinfo();
+
+		unset($this->fields[Driver::CLIENT_EMAIL]);
+		unset($this->fields[Driver::CLIENT_IP]);
+		unset($this->fields[Driver::CLIENT_NAME]);
+	}
+	
+	protected function addinfo()
+	{
+		$default_values = [
+			'_attributes'     => [
+				'xmlns'			=> "http://gpe.cz/gpwebpay/additionalInfo/request",
+				'version'		=> '5.0'
+			],
+		];
+		$cardholder_info = [
+			'cardholderInfo' => [
+				'cardholderDetails' => [
+					'name' => $this->fields[Driver::CLIENT_NAME],
+					'email' => $this->fields[Driver::CLIENT_EMAIL],
+					'clientIpAddress' => $this->fields[Driver::CLIENT_IP]
+				]
+			]
+		];
+		$xml = ArrayToXml::convert(
+			array_merge($default_values, $cardholder_info),
+			'additionalInfoRequest'
+		);
+		return trim(str_replace("\t"," ",str_replace("\r","",str_replace("\n"," ",$xml))));
 	}
 
 	/**
@@ -209,20 +265,23 @@ class Request extends \Chaching\Message
 	protected function sign()
 	{
 		$signature_base 	= '';
+
 		$fields 			= [
 			'MERCHANTNUMBER', 'OPERATION', 'ORDERNUMBER', 'AMOUNT',
 			'CURRENCY', 'DEPOSITFLAG', 'MERORDERNUM', 'URL', 'DESCRIPTION',
-			'MD'
+			'MD', 'PAYMETHOD', 'PAYMETHODS', 'EMAIL', 'ADDINFO'
 		];
 
 		foreach ($fields as $field)
 		{
-			if (!empty($signature_base))
-			{
-				$signature_base .= '|';
-			}
+			if (isset($this->fields[$field])) {
+				if (!empty($signature_base))
+				{
+					$signature_base .= '|';
+				}
 
-			$signature_base .= $this->fields[ $field ];
+				$signature_base .= $this->fields[ $field ];
+			}
 		}
 
 		return (new PemKeys($this->auth))->sign($signature_base);
@@ -231,27 +290,54 @@ class Request extends \Chaching\Message
 	/**
 	 * @throw 	\Chaching\Exceptions\InvalidRequestException
 	 */
-	public function process($redirect = TRUE)
+	public function process($redirect = TRUE, $method = "GET")
 	{
 		$this->validate();
 
 		$this->fields['DIGEST'] = $this->sign();
-
-		$fields = '?';
-
-		foreach ($this->fields as $key => $value)
-		{
-			$fields .= sprintf('%s=%s&', $key, urlencode($value));
+		
+		if ($method != "GET" && $method != "POST") {
+			$method = "GET";
 		}
+			
+		if ($method == "GET") {
+			$fields = '?';
 
-		$redirection = $this->request_server_url().rtrim($fields, '& ');
+			foreach ($this->fields as $key => $value)
+			{
+				$fields .= sprintf('%s=%s&', $key, urlencode($value));
+			}
 
-		if ($redirect === TRUE)
-		{
-			header('Location: ' . $redirection);
+			$redirection = $this->request_server_url().rtrim($fields, '& ');
+
+			if ($redirect === TRUE)
+			{
+				header('Location: ' . $redirection);
+			}
+
+			return $redirection;
 		}
+		
+		if ($method == "POST") {
+			$fields = sprintf(
+				"<form action=\"%s\" method=\"post\" id=\"gpwebpay\">\n",
+				$this->request_server_url()
+			);
 
-		return $redirection;
+			foreach ($this->fields as $key => $value)
+			{
+				$fields .= sprintf(
+					"\t<input type=\"hidden\" name=\"%s\" value=\"%s\">\n",
+					$key, rtrim(htmlspecialchars($value, ENT_QUOTES))
+				);
+			}
+
+			$fields .= "\t<input type=\"submit\" value=\"OK\">\n</form>";
+			$fields .= "<script type=\"text/javascript\">\n";
+			$fields .= "\tdocument.getElementById('gpwebpay').submit();\n</script>";
+
+			return $fields;
+		}
 	}
 
 	private function request_server_url()

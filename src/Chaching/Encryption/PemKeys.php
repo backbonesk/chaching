@@ -27,10 +27,9 @@ class PemKeys extends \Chaching\Encryption
 
 		$signature = base64_encode($signature);
 
-    // PHP 8 deprecates openssl_free_key (actually openssl_pkey_free which it aliases) and automatically destroys the key instance when it goes out of scope.
-    if (PHP_VERSION_ID < 80000) {
-      openssl_free_key($resource_id);
-    }
+		if (PHP_VERSION_ID < 80000) {
+			openssl_free_key($resource_id);
+		}
 
 		return $signature;
 	}
@@ -44,10 +43,9 @@ class PemKeys extends \Chaching\Encryption
 		$given_signature = base64_decode($given_signature);
 		$result = openssl_verify($signature_base, $given_signature, $resource_id);
 
-    // PHP 8 deprecates openssl_free_key (actually openssl_pkey_free which it aliases) and automatically destroys the key instance when it goes out of scope.
-    if (PHP_VERSION_ID < 80000) {
-      openssl_free_key($resource_id);
-    }
+		if (PHP_VERSION_ID < 80000) {
+			openssl_free_key($resource_id);
+		}
 
 		return (bool) ($result === 1);
 	}

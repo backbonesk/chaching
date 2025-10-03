@@ -201,4 +201,5 @@ To release a proper v1.0 code of the library needs to have a more thorough tutor
 
 ---
 
-&copy; 2021 BACKBONE, s.r.o.
+&copy; 2025 BACKBONE, s.r.o.
+&copy; 2022 Global Payments s.r.o. (Drivers/GPWebPay/GPwebpayAdditionalInfoRequest_v.5.xsd)

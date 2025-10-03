@@ -1,5 +1,27 @@
 ## Changelog
 
+### v0.24.0: 2025/10/03
+
+Various small PHP8 compatibility changes 
+
+GPWebPay:
+ - Fixes default url_handle for GPWebPay requests ([dusanpernicky](https://github.com/dusanpernickyl))
+ - Added support for most basic mandatory ADDIFNO (customer e-mail and name) in GPWebPay requests
+ - Added support for specifiying allowed payment methods in GPWebPay requests using the PAYMETHODS parameter
+
+TB CardPay:
+ - Fixes TB CardPay MID validation (allow longer MIDs) ([grencik](https://github.com/grencik))
+ - Fixes TB CardPay IPC validation (allow IPv6 addresses) ([RomanTicka](https://github.com/RomanTicka))
+ - Added automatic sending of now mandatory TDS_EMAIL parameter in TB CardPay requests
+ - Added support for automatic redirects in TB CardPay using the AREDIR parameter
+
+TB TatraPay:
+ - Fixes TB TatraPay MID validation (allow longer MIDs) ([grencik](https://github.com/grencik))
+
+TB ComfortPay:
+ - Added automatic sending of now mandatory TDS_EMAIL parameter in TB CardPay requests
+ - Return transaction status as successful even if no CID was returned (this means the transaction was successful, but no future payment is possible)
+
 ### v0.23.1: 2022/02/23
 
 Fixed signature verification in GPwebpay response.

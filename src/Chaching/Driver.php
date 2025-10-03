@@ -35,6 +35,7 @@ abstract class Driver
 	const CARD_ID 			= 'card_id';
 	const NOTIFICATION_URL 	= 'notification_url';
 	const TRANSACTION_ID 	= 'transaction_id';
+	const AUTOREDIRECT		= 'redirect_url';
 
 	protected $authorization 	= [];
 	protected $options 			= [];

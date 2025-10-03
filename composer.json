@@ -1,7 +1,7 @@
 {
     "name": "backbone/chaching",
     "type": "library",
-    "version": "0.23.1",
+    "version": "0.24.0",
     "license": "MIT",
     "description": "Universal payment library for banking services in Slovakia",
     "keywords": [
@@ -26,14 +26,16 @@
     "homepage": "https://www.backbone.sk/en/",
     "authors": [
         {
-            "name": "Palo Sopko",
-            "email": "pavol@sopko.sk"
+            "name": "BACKBONE, s.r.o.",
+            "email": "office@backbone.sk"
         }
     ],
     "require": {
         "php": ">=5.4.0",
         "ext-hash": "*",
-        "ext-openssl": "*"
+        "ext-openssl": "*",
+        "ext-xml": "*",
+        "spatie/array-to-xml": "^3.3"
     },
     "autoload": {
         "psr-0": {

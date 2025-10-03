@@ -38,12 +38,12 @@ class Request extends \Chaching\Message
 		];
 
 		$this->required_fields = [
-			'AMT', 'CURR', 'VS', 'RURL', 'IPC', 'NAME'
+			'AMT', 'CURR', 'VS', 'RURL', 'IPC', 'NAME', 'TDS_EMAIL'
 		];
 
 		$this->optional_fields = [
 			'CS', 'RSMS', 'REM', 'DESC', 'AREDIR', 'LANG', 'TXN', 'TPAY',
-			'CID', 'TEM', 'TSMS'
+			'CID', 'TEM', 'TSMS', 'AREDIR'
 		];
 
 		$this->field_map = [
@@ -53,6 +53,7 @@ class Request extends \Chaching\Message
 			Driver::VARIABLE_SYMBOL 	=> 'VS',
 			Driver::CONSTANT_SYMBOL 	=> 'CS',
 			Driver::CLIENT_NAME 		=> 'NAME',
+			Driver::CLIENT_EMAIL		=> 'TDS_EMAIL',
 			Driver::CLIENT_IP 			=> 'IPC',
 			Driver::LANGUAGE 			=> 'LANG',
 			Driver::CALLBACK 			=> 'RURL',
@@ -64,7 +65,7 @@ class Request extends \Chaching\Message
 		$this->set_authorization($authorization);
 
 		$this->fields['PT'] 			= 'CardPay';
-		$this->fields['AREDIR'] 		= 1;
+		$this->fields['AREDIR'] 		= isset($options['automatic_redirect']) ? $options['automatic_redirect'] : 0;
 
 		$this->fields['CURR'] 			= Currencies::EUR;
 		$this->fields['IPC'] 			= isset($_SERVER['REMOTE_ADDR'])
@@ -209,6 +210,14 @@ class Request extends \Chaching\Message
 				Driver::CLIENT_NAME, $this->fields['NAME']
 			));
 
+		if (!filter_var($this->fields['TDS_EMAIL'], FILTER_VALIDATE_EMAIL))
+			throw new InvalidOptionsException(sprintf(
+				"Field %s (or REM) has an unacceptable value '%s'. Valid " .
+				"customer email address has to be properly formatted.",
+				Driver::CLIENT_EMAIL, $this->fields['TDS_EMAIL']
+			));
+
+
 		// Optional fields
 		if ($this->fields['PT'] !== 'CardPay')
 		{
@@ -326,7 +335,7 @@ class Request extends \Chaching\Message
 			default:
 				$field_list = [
 					'MID', 'AMT', 'CURR', 'VS', 'TXN', 'RURL', 'IPC', 'NAME',
-					'REM', 'TPAY', 'CID', 'TIMESTAMP'
+					'REM', 'TPAY', 'CID', 'TDS_EMAIL', 'TIMESTAMP'
 				];
 
 				$encryption = new Hmac($this->auth);

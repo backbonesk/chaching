@@ -122,7 +122,7 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 			$this->fields['TRES'] 	= strtolower($this->fields['TRES']);
 
 			$this->card_id 			= $this->fields['CID'];
-			$this->status 			= ($this->fields['TRES'] === 'ok' AND !empty($this->fields['VS']) AND !empty($this->fields['CID']))
+			$this->status 			= ($this->fields['TRES'] === 'ok' AND !empty($this->fields['VS']))
 				? TransactionStatuses::SUCCESS
 				: TransactionStatuses::FAILURE;
 		}
