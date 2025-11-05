@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.24.1: 2025/11/05
+
+TB ComfortPay:
+ - Return transaction status as successful in case where `TRES` has the value of `fail`, but `RES` has value of `ok` - this case indicates that the transaction was successfully processed, but card registration for future transactions has failed
+
 ### v0.24.0: 2025/10/03
 
 Various small PHP8 compatibility changes 
