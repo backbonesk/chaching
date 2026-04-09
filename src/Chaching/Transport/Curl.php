@@ -29,6 +29,7 @@ class Curl
 	private $raw_content 	= NULL;
 
 	private $command 		= '';
+	private $curl_opts 		= [];
 
 	public function __construct($method, $url, $data, $custom_options = [])
 	{
