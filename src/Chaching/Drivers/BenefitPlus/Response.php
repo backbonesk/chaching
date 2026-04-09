@@ -15,7 +15,9 @@ use SOAPClient;
 
 use \Chaching\Chaching;
 use \Chaching\Driver;
+use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;
+use \Chaching\Exceptions\InvalidResponseException;
 use \Chaching\TransactionStatuses;
 
 
@@ -87,7 +89,7 @@ class Response extends \Chaching\Message
 				'external_guid' 	=> $this->transaction_id
 			]);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			throw new InvalidResponseException(sprintf(
 				"Web service used to validate payment has failed: %s",
