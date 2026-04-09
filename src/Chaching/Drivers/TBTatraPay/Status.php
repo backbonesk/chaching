@@ -109,6 +109,17 @@ class Status extends \Chaching\Message
 			));
 		}
 
+		// Handle XML default namespace — Tatra Banka's response uses
+		// xmlns="http://www.tatrabanka.sk/ecommerce/isoffline" which
+		// requires explicit namespace-aware child access in SimpleXML.
+		$namespaces = $response->getNamespaces(true);
+
+		if (!empty($namespaces))
+		{
+			$ns = reset($namespaces);
+			$response = $response->children($ns);
+		}
+
 		if (isset($response->error) AND isset($response->error->error_code))
 		{
 			$error_code = (int) $response->error->error_code;
