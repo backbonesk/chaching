@@ -1,5 +1,19 @@
 ## Changelog
 
+### v0.24.2: 2026/04/09
+
+Fixed missing curl_opts property declaration
+Removed unused imports
+
+TB TatraPay:
+ - Fixed incorrect handling of XML default namespace in TatraPay status response
+
+BenefitPlus:
+ - Fixed missing imports
+
+PBiTerminal:
+ - Fixed missing imports
+
 ### v0.24.1: 2025/11/05
 
 TB ComfortPay:

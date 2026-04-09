@@ -14,7 +14,6 @@ namespace Chaching\Drivers\BenefitPlus;
 use SOAPClient;
 
 use \Chaching\Chaching;
-use \Chaching\Driver;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidResponseException;
@@ -57,7 +56,7 @@ class Response extends \Chaching\Message
 	}
 
 	/**
-	 * @return 	bool
+	 * @return 	string
 	 * @throw 	\Chaching\Exceptions\InvalidResponseException
 	 */
 	protected function validate()

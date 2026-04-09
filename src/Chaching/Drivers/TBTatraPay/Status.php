@@ -11,7 +11,6 @@
 
 namespace Chaching\Drivers\TBTatraPay;
 
-use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;
@@ -51,7 +50,7 @@ class Status extends \Chaching\Message
 	}
 
 	/**
-	 * @return 	bool
+	 * @return 	string
 	 * @throw 	\Chaching\Exceptions\InvalidResponseException
 	 */
 	protected function validate()

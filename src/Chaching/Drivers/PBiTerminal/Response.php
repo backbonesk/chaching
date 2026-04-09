@@ -12,9 +12,7 @@
 namespace Chaching\Drivers\PBiTerminal;
 
 use \Chaching\Chaching;
-use \Chaching\Driver;
 use \Chaching\Exceptions\InvalidAuthorizationException;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\Exceptions\InvalidResponseException;
 use \Chaching\TransactionStatuses;
 use \Chaching\Transport\Curl;

@@ -11,9 +11,6 @@
 
 namespace Chaching\Drivers\TrustPay;
 
-use \Chaching\Currencies;
-use \Chaching\Driver;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\TransactionStatuses;
 
 

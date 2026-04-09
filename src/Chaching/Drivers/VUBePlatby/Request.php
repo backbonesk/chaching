@@ -12,7 +12,6 @@
 namespace Chaching\Drivers\VUBePlatby;
 
 use \Chaching\Chaching;
-use \Chaching\Currencies;
 use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;
 use \Chaching\Exceptions\InvalidAuthorizationException;

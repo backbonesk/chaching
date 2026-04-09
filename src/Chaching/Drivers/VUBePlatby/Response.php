@@ -11,10 +11,7 @@
 
 namespace Chaching\Drivers\VUBePlatby;
 
-use \Chaching\Currencies;
-use \Chaching\Driver;
 use \Chaching\Encryption\Hmac;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\TransactionStatuses;
 
 

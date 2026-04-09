@@ -12,10 +12,6 @@
 namespace Chaching\Drivers\PayPal;
 
 use \Chaching\Chaching;
-use \Chaching\Driver;
-use \Chaching\Currencies;
-use \Chaching\Encryption\Hmac;
-use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\TransactionStatuses;
 
 

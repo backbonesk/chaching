@@ -12,7 +12,6 @@
 namespace Chaching\Drivers\TBCardPay;
 
 use \Chaching\Driver;
-use \Chaching\Currencies;
 use \Chaching\Encryption\Hmac;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;

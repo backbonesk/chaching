@@ -11,8 +11,6 @@
 
 namespace Chaching\Drivers\VUBeCard;
 
-use \Chaching\Currencies;
-use \Chaching\Driver;
 use \Chaching\Drivers\VUBeCard;
 use \Chaching\Encryption\Base64;
 use \Chaching\Exceptions\InvalidOptionsException;
