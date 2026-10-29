@@ -1,7 +1,7 @@
 {
     "name": "backbone/chaching",
     "type": "library",
-    "version": "0.24.2",
+    "version": "0.24.3",
     "license": "MIT",
     "description": "Universal payment library for banking services in Slovakia",
     "keywords": [
@@ -39,7 +39,7 @@
         "ext-soap": "*",
         "ext-libxml": "*",
         "ext-xml": "*",
-        "spatie/array-to-xml": "^3.3"
+        "ext-dom": "*"
     },
     "autoload": {
         "psr-0": {

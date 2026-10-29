@@ -17,7 +17,7 @@ use \Chaching\Currencies;
 use \Chaching\Encryption\PemKeys;
 use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;
-use \Spatie\ArrayToXml\ArrayToXml;
+use \Chaching\ArrayToXml;
 
 if (!function_exists('str_contains')) {
     function str_contains (string $haystack, string $needle)
