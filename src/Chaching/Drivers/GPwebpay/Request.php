@@ -19,22 +19,28 @@ use \Chaching\Exceptions\InvalidAuthorizationException;
 use \Chaching\Exceptions\InvalidOptionsException;
 use \Chaching\ArrayToXml;
 
-if (!function_exists('str_contains')) {
-    function str_contains (string $haystack, string $needle)
-    {
-        return empty($needle) || strpos($haystack, $needle) !== false;
-    }
-}
-
 class Request extends \Chaching\Message
 {
+	/**
+	 * Payment method codes accepted in `PAYMETHOD` and `PAYMETHODS` fields
+	 * (GP webpay HTTP API v1.19, appendix 5). APM (alternative payment
+	 * method) codes are intentionally not supported at the moment.
+	 */
+	const PAYMENT_METHODS = [
+		'CRD',		// Card payment
+		'GPAY',		// Google Pay
+		'APAY',		// Apple Pay
+		'PAYPAL',	// PayPal
+		'CTP'		// Click to Pay
+	];
+
 	public function __construct(Array $authorization, Array $attributes, Array $options = [])
 	{
-		parent::__construct();		
+		parent::__construct();
 
 		$this->readonly_fields = [ 'OPERATION', 'DEPOSITFLAG', 'DIGEST' ];
 		$this->required_fields = [
-			'MERCHANTNUMBER', 'ORDERNUMBER', 'AMOUNT', 'CURRENCY', 'URL', 'PAYMETHODS', 'PAYMETHODS'
+			'MERCHANTNUMBER', 'ORDERNUMBER', 'AMOUNT', 'CURRENCY', 'URL'
 		];
 
 		$this->optional_fields = [ 'MERORDERNUM', 'MD', 'DESCRIPTION' ];
@@ -51,20 +57,6 @@ class Request extends \Chaching\Message
 		];
 
 		$this->set_authorization($authorization);
-		if (isset($options['payment_methods'])) {
-			if (!str_contains($options['payment_methods'], 'CRD')) {
-				throw new InvalidOptionsException(sprintf(
-					"payment_methods option has an unacceptable value '%s'. Valid " .
-					"payment_methods is a comma separated list of payment methods," .
-					" which must include \"CRD\" (card payment)", 
-					$options['payment_methods']
-				));
-			} else {
-				$payment_methods = $options['payment_methods'];
-			}
-		} else {
-			$payment_methods = 'CRD';
-		}
 
 		$this->fields['DEPOSITFLAG'] 	= 1;
 		$this->fields['OPERATION'] 		= 'CREATE_ORDER';
@@ -72,8 +64,8 @@ class Request extends \Chaching\Message
 		$this->fields['MERORDERNUM'] 	= '';
 		$this->fields['MD'] 			= '';
 		$this->fields['ORDERNUMBER'] 	= (int) (microtime(true) * 1000);  // Have to be a unique number
-		$this->fields['PAYMETHOD']		= 'CRD';		
-		$this->fields['PAYMETHODS']		= $payment_methods; // CRD = Card Payment, APAY = APPLE PAY, GPAY = GOOGLE PAY, PAYPAL = PAYPAL, CTP = ClickToPay, APM-BTR (vsetky dostupne APM metody obchodnika)
+
+		$this->set_payment_methods($options);
 
 		if (!empty($attributes))
 		{
@@ -92,6 +84,137 @@ class Request extends \Chaching\Message
 		unset($this->fields[Driver::CLIENT_NAME]);
 	}
 	
+	/**
+	 * Set `PAYMETHODS` and `PAYMETHOD` fields based on the options.
+	 *
+	 *  - `payment_methods` (comma separated string or array of method codes)
+	 *    is sent as `PAYMETHODS`, the list of methods offered to the customer.
+	 *  - `force_payment_method` (single method code, or TRUE for `CRD`) is
+	 *    sent as `PAYMETHOD`, the preferred method the gateway should open.
+	 *
+	 * When an option is not set, the corresponding field is not sent at all,
+	 * so the gateway falls back to the methods enabled for the merchant.
+	 * Neither field is ever sent with an empty value.
+	 *
+	 * @param 	array 	$options
+	 * @return 	void
+	 * @throw 	\Chaching\Exceptions\InvalidOptionsException
+	 */
+	protected function set_payment_methods(Array $options)
+	{
+		unset($this->fields['PAYMETHOD']);
+		unset($this->fields['PAYMETHODS']);
+
+		$payment_methods = NULL;
+
+		if (isset($options['payment_methods']))
+		{
+			$payment_methods = $this->parse_payment_methods(
+				$options['payment_methods'], 'payment_methods'
+			);
+
+			if (empty($payment_methods))
+				throw new InvalidOptionsException(sprintf(
+					"Option `payment_methods` has an unacceptable value " .
+					"'%s'. Valid value is a non-empty comma separated list " .
+					"(or array) of payment method codes: %s.",
+					$this->stringify_option($options['payment_methods']),
+					implode(', ', self::PAYMENT_METHODS)
+				));
+
+			$this->fields['PAYMETHODS'] = implode(',', $payment_methods);
+		}
+
+		if (isset($options['force_payment_method']) AND $options['force_payment_method'] !== FALSE)
+		{
+			$force_payment_method = ($options['force_payment_method'] === TRUE)
+				? 'CRD'
+				: $options['force_payment_method'];
+
+			$parsed = $this->parse_payment_methods(
+				$force_payment_method, 'force_payment_method'
+			);
+
+			if (count($parsed) !== 1)
+				throw new InvalidOptionsException(sprintf(
+					"Option `force_payment_method` has an unacceptable value " .
+					"'%s'. Valid value is exactly one payment method code: %s.",
+					$this->stringify_option($options['force_payment_method']),
+					implode(', ', self::PAYMENT_METHODS)
+				));
+
+			$force_payment_method = reset($parsed);
+
+			if ($payment_methods !== NULL AND !in_array($force_payment_method, $payment_methods))
+				throw new InvalidOptionsException(sprintf(
+					"Option `force_payment_method` has an unacceptable value " .
+					"'%s'. The forced payment method has to be one of the " .
+					"methods listed in `payment_methods` option (%s).",
+					$force_payment_method, implode(',', $payment_methods)
+				));
+
+			$this->fields['PAYMETHOD'] = $force_payment_method;
+		}
+	}
+
+	/**
+	 * Normalize a comma separated string or array of payment method codes
+	 * into a unique list of upper-case codes, validating every code against
+	 * the list of supported ones.
+	 *
+	 * @param 	string|array 	$value
+	 * @param 	string 			$option_name 	used in exception message
+	 * @return 	array
+	 * @throw 	\Chaching\Exceptions\InvalidOptionsException
+	 */
+	private function parse_payment_methods($value, $option_name)
+	{
+		if (!is_array($value))
+		{
+			if (!is_scalar($value))
+				throw new InvalidOptionsException(sprintf(
+					"Option `%s` has an unacceptable value of type %s. " .
+					"Valid value is a comma separated string or an array " .
+					"of payment method codes.", $option_name, gettype($value)
+				));
+
+			$value = explode(',', (string) $value);
+		}
+
+		$methods = [];
+
+		foreach ($value as $method)
+		{
+			$method = strtoupper(trim((string) $method));
+
+			if ($method === '')
+				continue;
+
+			if (!in_array($method, self::PAYMENT_METHODS, TRUE))
+				throw new InvalidOptionsException(sprintf(
+					"Option `%s` contains an unacceptable payment method " .
+					"'%s'. Supported payment methods are: %s.",
+					$option_name, $method, implode(', ', self::PAYMENT_METHODS)
+				));
+
+			if (!in_array($method, $methods, TRUE))
+			{
+				$methods[] = $method;
+			}
+		}
+
+		return $methods;
+	}
+
+	/**
+	 * @param 	mixed 	$value
+	 * @return 	string
+	 */
+	private function stringify_option($value)
+	{
+		return is_array($value) ? implode(',', $value) : (string) $value;
+	}
+
 	protected function addinfo()
 	{
 		$default_values = [

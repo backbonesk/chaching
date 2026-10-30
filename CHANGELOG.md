@@ -1,5 +1,12 @@
 ## Changelog
 
+### v0.24.4: 2026/10/30
+
+GPWebPay:
+ - `PAYMETHOD` and `PAYMETHODS` are no longer sent by default; `PAYMETHODS` is sent only when the `payment_methods` option is set and `PAYMETHOD` only when the new `force_payment_method` option is set
+ - Values of `payment_methods` and `force_payment_method` options are validated against the list of supported payment methods (`CRD`, `GPAY`, `APAY`, `PAYPAL`, `CTP`), `CRD` is no longer required to be included
+ - Removed the `str_contains` polyfill that is no longer needed
+
 ### v0.24.3: 2026/10/29
 
 Removed the `spatie/array-to-xml` dependency (requires PHP 8+) and replaced it with the built-in `\Chaching\ArrayToXml` class, restoring compatibility with PHP 7.4

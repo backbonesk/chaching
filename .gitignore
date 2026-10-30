@@ -15,5 +15,10 @@ Icon
 .Spotlight-V100
 .Trashes
 
+# Other
+docs
+*.crt
+*.key
+
 # Composer dependencies
 vendor

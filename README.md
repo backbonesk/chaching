@@ -76,6 +76,8 @@ Beforementioned empty `$options` array may at the moment contain these keys:
 
 * `ecdsa_keys_file` - Absolute file path to file with Tatra banka's ECDSA keys (used only with HMAC message signing in CardPay and TatraPay)
 * `sandbox` - Would you like to use sandbox or production URLs when communicating with the bank or financial institution? Default value is `FALSE`. Due to their limitations, sandbox is available only for `Chaching::TRUSTPAY`, `Chaching::ECARD`, `Chaching::PAYPAL`, `Chaching::GPWEBPAY`, `Chaching::ITERMINAL`, `Chaching::ITERMINAL2` and `Chaching::BENEFITPLUS` (if not listed here, production URLs will be used even in sandbox mode).
+* `payment_methods` - Used only with `Chaching::GPWEBPAY`. Comma separated string (or array) of payment methods the customer may choose from, sent as the `PAYMETHODS` field. Supported values are `CRD` (card), `GPAY` (Google Pay), `APAY` (Apple Pay), `PAYPAL` and `CTP` (Click to Pay). When the option is not set, the field is not sent and the gateway offers all methods enabled for the merchant.
+* `force_payment_method` - Used only with `Chaching::GPWEBPAY`. A single payment method (one of the values above, or `TRUE` as a shortcut for `CRD`) that the gateway should open as the preferred one, sent as the `PAYMETHOD` field. When `payment_methods` is also set, the forced method has to be one of them. When the option is not set, the field is not sent.
 
 Afterwards, we need to create a request for the external service with specific information about the payment.
 
