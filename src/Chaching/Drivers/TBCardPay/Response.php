@@ -118,6 +118,10 @@ class Response extends \Chaching\Message implements \Chaching\ECDSAResponseInter
 		{
 			$this->fields['TRES'] 	= strtolower($this->fields['TRES']);
 
+            if ($this->fields['TRES'] === 'ok') {
+                $this->card_id = $this->fields['CID'];
+            }
+
             // TRES === 'fail' AND RES === 'ok' is returned in case of a successful transaction, but registration of card for future payment has failed (for various reasons). In this scenario CID is also not returned.
             $this->status 			= (!empty($this->fields['VS']) AND ($this->fields['TRES'] === 'ok' OR ($this->fields['TRES'] === 'fail' AND strtolower($this->fields['RES']) === 'ok')))
                 ? TransactionStatuses::SUCCESS

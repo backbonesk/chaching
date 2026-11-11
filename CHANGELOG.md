@@ -1,5 +1,10 @@
 ## Changelog
 
+### 0.24.5: 2026/11/11
+
+TBCardPay / ComfortPay:
+ - fixed a problem present since v0.24.1 with empty $this->card_id even if TRES=='OK'
+
 ### v0.24.4: 2026/10/30
 
 GPWebPay:
@@ -129,7 +134,7 @@ iTerminal service returns transaction ID as `base64` so encoding the parameter a
 
 ### v0.17.4: 2018/06/18
 
-In some circustances VUB's eCard service might return month of card expiration as a three-letter string, eg. "080" instead of "08". Thus, work explicitly only with the first two.
+In some circustances VUB's eCard service might return month of card expiration as a three-letter string, e.g. "080" instead of "08". Thus, work explicitly only with the first two.
 
 ### v0.17.3: 2017/01/31
 
